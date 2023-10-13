@@ -11,6 +11,10 @@
     "composite": true,
     "module": "ESNext",
     "moduleResolution": "Bundler",
-    "types": ["node"]
+    // 要包含的类型声明文件名列表
+    "types": [
+      "vite/client",
+      "node"
+    ],
   }
 }
