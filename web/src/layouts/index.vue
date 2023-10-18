@@ -1,23 +1,31 @@
+<script setup lang="ts">
+  import Logo from './components/logo.vue';
+  import Menu from './components/menu.vue';
+  import MainView from './components/main.vue';
+</script>
+
 <template>
   <n-layout class="layout" has-sider>
     <n-layout-sider
       show-trigger="bar"
       collapse-mode="width"
+      :collapsed="true"
       :collapsed-width="64"
       :width="200"
       :native-scrollbar="false"
       class="layout-sider"
     >
-      <AsideMenu />
+      <Logo />
+      <Menu />
     </n-layout-sider>
-    <MainView />
+
+    <n-layout>
+      <n-layout-content>
+        <MainView />
+      </n-layout-content>
+    </n-layout>
   </n-layout>
 </template>
-
-<script setup lang="ts">
-  import { ref } from 'vue';
-  import MainView from './components/main.vue';
-</script>
 
 <style lang="less" scoped>
   .layout {
