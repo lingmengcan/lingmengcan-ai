@@ -15,6 +15,7 @@
     "@vicons/antd": "^0.12.0",
     "axios": "^1.5.1",
     "axios-mapper": "^0.5.9",
+    "js-cookie": "^3.0.5",
     "naive-ui": "^2.35.0",
     "pinia": "^2.1.6",
     "vue": "^3.3.4",

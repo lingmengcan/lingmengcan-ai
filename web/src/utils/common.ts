@@ -7,3 +7,6 @@ import { h } from 'vue';
 export function renderIcon(icon) {
   return () => h(NIcon, null, { default: () => h(icon) });
 }
+// export function renderIcon(icon: typeof NIcon): () => VNode {
+//   return (): VNode => h(NIcon, null, { default: () => h(icon) });
+// }

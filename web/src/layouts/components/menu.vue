@@ -29,6 +29,7 @@
 
   function updateMenu() {
     menus.value = generatorMenu(asyncRouteStore.getMenus);
+    console.log('menus', menus.value);
 
     updateSelectedKeys();
   }

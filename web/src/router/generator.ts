@@ -1,5 +1,5 @@
 import { constantRouterIcon } from '@/router/icons';
-import { Layout, ParentLayout } from '@/router/constant';
+import { Layout, ParentLayout } from '@/router/basic';
 import type { AppRouteRecordRaw } from '@/router/types';
 
 const iframe = () => import('@/views/iframe.vue');

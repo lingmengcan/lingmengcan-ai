@@ -2,7 +2,7 @@ import { toRaw } from 'vue';
 import { defineStore } from 'pinia';
 import { RouteRecordRaw } from 'vue-router';
 import { store } from '@/store';
-import { asyncRoutes, constantRouter } from '@/router';
+import { asyncRoutes, defaultRoutes } from '@/router';
 
 interface TreeHelperConfig {
   id: string;
@@ -50,7 +50,7 @@ export const useAsyncRouteStore = defineStore({
   id: 'app-async-route',
   state: (): AsyncRouteState => ({
     menus: [],
-    routers: constantRouter,
+    routers: defaultRoutes,
     routersAdded: [],
     keepAliveComponents: [],
     // Whether the route has been dynamically added
@@ -74,7 +74,7 @@ export const useAsyncRouteStore = defineStore({
     // 设置动态路由
     setRouters(routers: RouteRecordRaw[]) {
       this.routersAdded = routers;
-      this.routers = constantRouter.concat(routers);
+      this.routers = defaultRoutes.concat(routers);
     },
     setMenus(menus: RouteRecordRaw[]) {
       // 设置动态路由
