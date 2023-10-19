@@ -1,10 +1,13 @@
+import { ACCESS_TOKEN } from '@/constants';
 import HttpClient, { HttpClientConfig } from 'axios-mapper';
+import DataStorage from './storage';
 
 export const httpConfig = (hasToken = true) => {
+  const token = DataStorage.get(ACCESS_TOKEN, '');
   const config: HttpClientConfig = {
     baseURL: import.meta.env.VITE_APP_BASE_API?.toString(),
     headers: {
-      Authorization: hasToken ? `Bearer ` : '',
+      Authorization: hasToken ? `Bearer ${token}` : '',
     },
   };
   return config;
@@ -22,9 +25,11 @@ request.httpClient.interceptors.request.use(
 
 // 响应拦截器
 request.httpClient.interceptors.response.use(
-  (response) =>
+  (response) => {
     // 未设置状态码则默认成功状态
-    response,
+    console.log(response);
+    return response;
+  },
   (error) => {
     const { response } = error;
 

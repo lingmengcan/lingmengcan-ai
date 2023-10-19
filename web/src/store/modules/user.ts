@@ -2,13 +2,8 @@ import { defineStore } from 'pinia';
 import { store } from '@/store';
 import { ACCESS_TOKEN, CURRENT_USER, ResultEnum } from '@/constants';
 import DataStorage from '@/utils/storage';
-import { login } from '@/api/system/user';
-
-export type UserInfoType = {
-  // TODO: add your own data
-  name: string;
-  email: string;
-};
+import { getUserInfo, login } from '@/api/system/user';
+import { User } from '@/models/user';
 
 export interface UserState {
   token: string;
@@ -16,7 +11,7 @@ export interface UserState {
   welcome: string;
   avatar: string;
   permissions: string[];
-  info: UserInfoType;
+  userInfo: User;
 }
 
 export const useUserStore = defineStore({
@@ -27,7 +22,7 @@ export const useUserStore = defineStore({
     welcome: '',
     avatar: '',
     permissions: [],
-    info: DataStorage.get(CURRENT_USER, {}),
+    userInfo: DataStorage.get(CURRENT_USER, {}),
   }),
   getters: {
     getToken(): string {
@@ -42,8 +37,8 @@ export const useUserStore = defineStore({
     getPermissions(): string[] {
       return this.permissions;
     },
-    getUserInfo(): UserInfoType {
-      return this.info;
+    getUserInfo(): User {
+      return this.userInfo;
     },
   },
   actions: {
@@ -56,8 +51,8 @@ export const useUserStore = defineStore({
     setPermissions(permissions: string[]) {
       this.permissions = permissions;
     },
-    setUserInfo(info: UserInfoType) {
-      this.info = info;
+    setUserInfo(info: User) {
+      this.userInfo = info;
     },
     // 登录
     async login(params: any) {
@@ -73,23 +68,32 @@ export const useUserStore = defineStore({
     },
 
     // 获取用户信息
-    // async getInfo() {
-    //   const result = await getUserInfoApi();
-    //   if (result.permissions && result.permissions.length) {
-    //     const permissionsList = result.permissions;
-    //     this.setPermissions(permissionsList);
-    //     this.setUserInfo(result);
-    //   } else {
-    //     throw new Error('getInfo: permissionsList must be a non-null array !');
-    //   }
-    //   this.setAvatar(result.avatar);
-    //   return result;
-    // },
+    async getInfo() {
+      const res = await getUserInfo();
+      if (res && res.code === 0) {
+        const { user, permissions } = res.data;
+        this.setPermissions(permissions);
+        this.setUserInfo(user);
+        this.setAvatar(user.avatar as string);
+      }
+    },
 
     // 登出
     async logout() {
       this.setPermissions([]);
-      this.setUserInfo({ name: '', email: '' });
+      this.setUserInfo({
+        userName: '',
+        email: '',
+        userId: '',
+        deptId: '',
+        chineseName: '',
+        phone: '',
+        sex: '',
+        password: '',
+        status: 0,
+        createdUser: '',
+        updatedUser: '',
+      });
       DataStorage.remove(ACCESS_TOKEN);
       DataStorage.remove(CURRENT_USER);
     },

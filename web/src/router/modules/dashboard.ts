@@ -24,7 +24,7 @@ const routes: Array<RouteRecordRaw> = [
     meta: {
       title: 'Dashboard',
       icon: renderIcon(DashboardOutlined),
-      permissions: ['dashboard_console', 'dashboard_console', 'dashboard_workplace'],
+      permissions: ['dashboard_console', 'dashboard_console', 'dashboard_workspace'],
       sort: 0,
     },
     children: [
@@ -39,7 +39,7 @@ const routes: Array<RouteRecordRaw> = [
         component: () => import('@/views/dashboard/console.vue'),
       },
       {
-        path: 'workplace',
+        path: 'workspace',
         name: `${routeName}_workplace`,
         meta: {
           title: '工作台',
