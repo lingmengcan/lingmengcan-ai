@@ -1,4 +1,4 @@
-import { lighten } from '@/utils/common';
+import { lighten } from '@/utils';
 import * as NaiveUI from 'naive-ui';
 import { computed } from 'vue';
 

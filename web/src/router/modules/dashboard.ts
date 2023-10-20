@@ -1,7 +1,7 @@
 import { RouteRecordRaw } from 'vue-router';
 import { Layout } from '@/router/basic';
 import { DashboardOutlined } from '@vicons/antd';
-import { renderIcon } from '@/utils/common';
+import { renderIcon } from '@/utils';
 
 const routeName = 'dashboard';
 
@@ -46,7 +46,7 @@ const routes: Array<RouteRecordRaw> = [
           keepAlive: true,
           permissions: ['dashboard_workplace'],
         },
-        component: () => import('@/views/dashboard/workplace.vue'),
+        component: () => import('@/views/dashboard/workspace.vue'),
       },
     ],
   },

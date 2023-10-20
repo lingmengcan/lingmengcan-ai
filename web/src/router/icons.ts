@@ -1,4 +1,4 @@
-import { renderIcon } from '@/utils/common';
+import { renderIcon } from '@/utils';
 import { DashboardOutlined } from '@vicons/antd';
 
 //前端路由图标映射表

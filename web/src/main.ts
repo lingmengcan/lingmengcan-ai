@@ -25,6 +25,12 @@ async function bootstrap() {
   // https://router.vuejs.org/api/interfaces/router.html#isready
   await router.isReady();
 
+  // 解决naive 样式被tailwind 覆盖问题
+  // https://www.naiveui.com/en-US/os-theme/docs/style-conflict#About-Tailwind's-Preflight-Style-Override
+  const meta = document.createElement('meta');
+  meta.name = 'naive-ui-style';
+  document.head.appendChild(meta);
+
   app.mount('#app');
 }
 

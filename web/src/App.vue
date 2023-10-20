@@ -1,14 +1,19 @@
 <script lang="ts" setup>
   import { computed } from 'vue';
-  import { zhCN, dateZhCN } from 'naive-ui';
-  import { lighten } from '@/utils/common';
+  import { zhCN, dateZhCN, darkTheme } from 'naive-ui';
+  import { lighten } from '@/utils';
   import { NDialogProvider, NNotificationProvider, NMessageProvider } from 'naive-ui';
+
+  const designStore = {
+    appTheme: '#2d8cf0',
+    darkTheme: false,
+  };
 
   /**
    * @type import('naive-ui').GlobalThemeOverrides
    */
   const getThemeOverrides = computed(() => {
-    const appTheme = '#2d8cf0';
+    const appTheme = designStore.appTheme;
     const lightenStr = lighten(appTheme, 6);
     return {
       common: {
@@ -23,7 +28,7 @@
     };
   });
 
-  const getDarkTheme = computed(() => undefined);
+  const getDarkTheme = computed(() => (designStore.darkTheme ? darkTheme : undefined));
 </script>
 
 <template>
@@ -46,3 +51,4 @@
 <style lang="less">
   @import 'styles/index.less';
 </style>
+@/utils

@@ -17,7 +17,7 @@ layoutMap.set('IFRAME', iframe);
 export const generateRoutes = (routerMap, parent?): any[] => {
   return routerMap.map((item) => {
     const currentRoute: any = {
-      // 路由地址 动态拼接生成如 /dashboard/workplace
+      // 路由地址 动态拼接生成如 /chat/index
       path: `${(parent && parent.path) ?? ''}/${item.path}`,
       // 路由名称，建议唯一
       name: item.name ?? '',
