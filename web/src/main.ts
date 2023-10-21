@@ -1,18 +1,37 @@
 import './styles/tailwind.css';
 
 import { createApp } from 'vue';
-import { setupNaive } from '@/plugins';
-import { createPinia } from 'pinia';
+import { setupNaive, setupNaiveDiscreteApi } from '@/plugins';
 
 import App from './App.vue';
-import router from './router';
+import router, { setupRouter } from './router';
+import { setupStore } from '@/store';
 
-const app = createApp(App);
+async function bootstrap() {
+  const app = createApp(App);
 
-// 注册全局常用的 naive-ui 组件
-setupNaive(app);
+  // 挂载状态管理
+  setupStore(app);
 
-app.use(createPinia());
-app.use(router);
+  // 注册全局常用的 naive-ui 组件
+  setupNaive(app);
+  // 挂载 naive-ui 脱离上下文的 Api
+  setupNaiveDiscreteApi();
 
-app.mount('#app');
+  // 挂载路由
+  setupRouter(app);
+
+  // 路由准备就绪后挂载 APP 实例
+  // https://router.vuejs.org/api/interfaces/router.html#isready
+  await router.isReady();
+
+  // 解决naive 样式被tailwind 覆盖问题
+  // https://www.naiveui.com/en-US/os-theme/docs/style-conflict#About-Tailwind's-Preflight-Style-Override
+  const meta = document.createElement('meta');
+  meta.name = 'naive-ui-style';
+  document.head.appendChild(meta);
+
+  app.mount('#app');
+}
+
+void bootstrap();
