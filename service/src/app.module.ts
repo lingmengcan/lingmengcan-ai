@@ -7,6 +7,8 @@ import configuration from './config/configuration';
 import { join } from 'path';
 import { AuthModule } from './modules/auth.module';
 import { DataSource } from 'typeorm';
+import { UserModule } from './modules/user.module';
+import { MenuModule } from './modules/menu.module';
 
 @Module({
   imports: [
@@ -29,6 +31,8 @@ import { DataSource } from 'typeorm';
       inject: [ConfigService],
     }),
     AuthModule,
+    UserModule,
+    MenuModule,
   ],
   controllers: [AppController],
   providers: [AppService],

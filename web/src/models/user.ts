@@ -34,7 +34,7 @@ export interface UserList {
 export interface LoginParams {
   username: string;
   password: string;
-  code: string;
+  captcha: string;
 }
 
 /**
@@ -42,6 +42,5 @@ export interface LoginParams {
  */
 export interface UserRight {
   user: User;
-  roles: string[];
   permissions: string[];
 }

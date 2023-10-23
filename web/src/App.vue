@@ -41,7 +41,7 @@
     <n-dialog-provider>
       <n-notification-provider>
         <n-message-provider>
-          <slot name="default"><RouterView /></slot>
+          <RouterView />
         </n-message-provider>
       </n-notification-provider>
     </n-dialog-provider>

@@ -3,7 +3,7 @@ import { store } from '@/store';
 import { ACCESS_TOKEN, CURRENT_USER, ResultEnum } from '@/constants';
 import DataStorage from '@/utils/storage';
 import { getUserInfo, login } from '@/api/system/user';
-import { User } from '@/models/user';
+import { LoginParams, User } from '@/models/user';
 
 export interface UserState {
   token: string;
@@ -55,14 +55,12 @@ export const useUserStore = defineStore({
       this.userInfo = info;
     },
     // 登录
-    async login(params: any) {
+    async login(params: LoginParams) {
       const res = await login(params);
 
       if (res && res.code === ResultEnum.SUCCESS) {
         DataStorage.set(ACCESS_TOKEN, res.data);
-        // DataStorage.set(CURRENT_USER, res.data);
         this.setToken(res.data);
-        // this.setUserInfo(res.data);
       }
       return res;
     },
@@ -72,10 +70,13 @@ export const useUserStore = defineStore({
       const res = await getUserInfo();
       if (res && res.code === 0) {
         const { user, permissions } = res.data;
+
         this.setPermissions(permissions);
         this.setUserInfo(user);
         this.setAvatar(user.avatar as string);
       }
+
+      return this.userInfo;
     },
 
     // 登出

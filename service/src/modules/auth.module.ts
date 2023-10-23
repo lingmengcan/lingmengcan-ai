@@ -1,10 +1,10 @@
 import { JWT_SECRET } from '@/constants';
 import { AuthService } from '@/services/auth.service';
 import { JwtStrategy } from '@/services/jwt.strategy';
-import { UserService } from '@/services/user.service';
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
+import { UserModule } from './user.module';
 
 @Module({
   imports: [
@@ -13,8 +13,9 @@ import { PassportModule } from '@nestjs/passport';
       secret: JWT_SECRET,
       signOptions: { expiresIn: '24h' },
     }),
+    UserModule,
   ],
-  providers: [AuthService, JwtStrategy, UserService],
+  providers: [AuthService, JwtStrategy],
   exports: [AuthService],
 })
 export class AuthModule {}

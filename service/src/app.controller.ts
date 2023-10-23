@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Req, Session } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, Res, Session } from '@nestjs/common';
 import { AppService } from './app.service';
 import { AuthService } from './services/auth.service';
 import { successJson } from './utils/result';
@@ -12,8 +12,8 @@ export class AppController {
   ) {}
 
   @Get()
-  getHello(): string {
-    return this.appService.getHello();
+  index(@Res() res) {
+    res.status(302).redirect('/doc');
   }
 
   /**

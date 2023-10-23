@@ -21,9 +21,9 @@ export class AuthService {
       size: 5,
       fontSize: 40,
       width: 90,
-      height: 35,
+      height: 40,
       noise: 1,
-      background: '#cc9966',
+      background: '#FF9800',
     });
     return captcha;
   }

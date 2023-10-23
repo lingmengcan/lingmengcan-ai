@@ -3,6 +3,19 @@ import http, { Result, httpConfig } from '@/utils/http';
 import { ContentType, Method } from 'axios-mapper';
 
 /**
+ * 获取验证码
+ * @returns
+ */
+export const getCaptche = () =>
+  http.request<Result<UserRight>>(
+    'captcha',
+    Method.GET,
+    undefined,
+    ContentType.json,
+    httpConfig(false),
+  );
+
+/**
  * 登录获取token
  * @param data
  * @returns
@@ -14,4 +27,4 @@ export const login = (data: LoginParams) =>
  * 根据token获取登录用户信息
  * @returns
  */
-export const getUserInfo = () => http.request<Result<UserRight>>('auth/user', Method.GET);
+export const getUserInfo = () => http.request<Result<UserRight>>('/user/info', Method.GET);
