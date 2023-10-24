@@ -1,12 +1,14 @@
 import { constantRouterIcon } from '@/router/icons';
 import { Layout, ParentLayout } from '@/router/basic';
 import type { AppRouteRecordRaw } from '@/router/types';
+import { RouteRecordRaw } from 'vue-router';
+import { getMenus } from '@/api/system/menu';
 
-const iframe = () => import('@/views/iframe.vue');
+const IFrame = () => import('@/views/iframe.vue');
 const layoutMap = new Map<string, () => Promise<typeof import('*.vue')>>();
 
 layoutMap.set('LAYOUT', Layout);
-layoutMap.set('IFRAME', iframe);
+layoutMap.set('IFRAME', IFrame);
 
 /**
  * 格式化 后端 结构信息并递归生成层级路由表
@@ -98,4 +100,16 @@ export const dynamicImport = (
     );
     return;
   }
+};
+
+/**
+ * 动态生成菜单
+ * @returns {Promise<Router>}
+ */
+export const generateDynamicRoutes = async (): Promise<RouteRecordRaw[]> => {
+  const result = await getMenus();
+  console.log(result);
+  const router = generateRoutes(result);
+  asyncImportRoute(router);
+  return router;
 };

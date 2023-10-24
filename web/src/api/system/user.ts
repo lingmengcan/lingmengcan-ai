@@ -27,4 +27,4 @@ export const login = (data: LoginParams) =>
  * 根据token获取登录用户信息
  * @returns
  */
-export const getUserInfo = () => http.request<Result<UserRight>>('/user/info', Method.GET);
+export const getUserInfo = () => http.request<Result<UserRight>>('user/info', Method.GET);

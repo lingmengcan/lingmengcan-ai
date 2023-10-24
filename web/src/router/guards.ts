@@ -11,12 +11,13 @@ const LOGIN_PATH = PageEnum.BASE_LOGIN;
 
 const whitePathList = [LOGIN_PATH]; // no redirect whitelist
 
+// 路由守卫
 export function createRouterGuards(router: Router) {
   const userStore = useUser();
   const asyncRouteStore = useAsyncRoute();
   router.beforeEach(async (to, from, next) => {
-    const Loading = window['$loading'] || null;
-    Loading && Loading.start();
+    const loading = window['$loading'] || null;
+    loading && loading.start();
     if (from.path === LOGIN_PATH && to.name === 'errorPage') {
       next(PageEnum.BASE_HOME);
       return;
@@ -77,7 +78,7 @@ export function createRouterGuards(router: Router) {
     const nextData = to.path === redirect ? { ...to, replace: true } : { path: redirect };
     asyncRouteStore.setDynamicRouteAdded(true);
     next(nextData);
-    Loading && Loading.finish();
+    loading && loading.finish();
   });
 
   router.afterEach((to, _, failure) => {
@@ -100,8 +101,8 @@ export function createRouterGuards(router: Router) {
       }
     }
     asyncRouteStore.setKeepAliveComponents(keepAliveComponents);
-    const Loading = window['$loading'] || null;
-    Loading && Loading.finish();
+    const loading = window['$loading'] || null;
+    loading && loading.finish();
   });
 
   router.onError((error) => {

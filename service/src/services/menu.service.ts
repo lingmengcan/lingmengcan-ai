@@ -1,3 +1,4 @@
+import { MenuListDto } from '@/dtos/menu.dto';
 import { Menu } from '@/entities/menu.entity';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -35,5 +36,28 @@ export class MenuService {
     });
 
     return res;
+  }
+
+  findAll(dto: MenuListDto): Promise<Menu[]> {
+    const { menuName, status } = dto;
+
+    let qb = this.repository
+      .createQueryBuilder('Menu')
+      .andWhere('Menu.status != -1');
+
+    if (menuName) {
+      qb = qb.andWhere('Menu.menuName like :name', {
+        name: '%' + menuName + '%',
+      });
+    }
+
+    if (status) {
+      qb = qb.andWhere('Menu.status = :value', {
+        value: status,
+      });
+    }
+
+    qb.orderBy('Menu.sort', 'ASC');
+    return qb.getMany();
   }
 }

@@ -22,7 +22,6 @@ routeModuleList.sort(sortRoute);
 
 //需要验证权限
 export const asyncRoutes = [...routeModuleList];
-console.log(asyncRoutes);
 
 //普通路由 无需验证权限
 export const defaultRoutes: RouteRecordRaw[] = [LoginRoute, RootRoute, RedirectRoute];

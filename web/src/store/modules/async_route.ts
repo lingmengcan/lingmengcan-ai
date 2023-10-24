@@ -2,21 +2,22 @@ import { toRaw } from 'vue';
 import { defineStore } from 'pinia';
 import { RouteRecordRaw } from 'vue-router';
 import { store } from '@/store';
-import { asyncRoutes, defaultRoutes } from '@/router';
+import { defaultRoutes } from '@/router/index';
+import { generateDynamicRoutes } from '@/router/generator';
 
-interface TreeHelperConfig {
-  id: string;
-  children: string;
-  pid: string;
-}
+// interface TreeHelperConfig {
+//   id: string;
+//   children: string;
+//   pid: string;
+// }
 
-const DEFAULT_CONFIG: TreeHelperConfig = {
-  id: 'id',
-  children: 'children',
-  pid: 'pid',
-};
+// const DEFAULT_CONFIG: TreeHelperConfig = {
+//   id: 'id',
+//   children: 'children',
+//   pid: 'pid',
+// };
 
-const getConfig = (config: Partial<TreeHelperConfig>) => Object.assign({}, DEFAULT_CONFIG, config);
+// const getConfig = (config: Partial<TreeHelperConfig>) => Object.assign({}, DEFAULT_CONFIG, config);
 
 export interface AsyncRouteState {
   menus: RouteRecordRaw[];
@@ -26,25 +27,25 @@ export interface AsyncRouteState {
   isDynamicRouteAdded: boolean;
 }
 
-function filter<T = any>(
-  tree: T[],
-  func: (n: T) => boolean,
-  config: Partial<TreeHelperConfig> = {},
-): T[] {
-  config = getConfig(config);
-  const children = config.children as string;
+// function filter<T = any>(
+//   tree: T[],
+//   func: (n: T) => boolean,
+//   config: Partial<TreeHelperConfig> = {},
+// ): T[] {
+//   config = getConfig(config);
+//   const children = config.children as string;
 
-  function listFilter(list: T[]) {
-    return list
-      .map((node: any) => ({ ...node }))
-      .filter((node) => {
-        node[children] = node[children] && listFilter(node[children]);
-        return func(node) || (node[children] && node[children].length);
-      });
-  }
+//   function listFilter(list: T[]) {
+//     return list
+//       .map((node: any) => ({ ...node }))
+//       .filter((node) => {
+//         node[children] = node[children] && listFilter(node[children]);
+//         return func(node) || (node[children] && node[children].length);
+//       });
+//   }
 
-  return listFilter(tree);
-}
+//   return listFilter(tree);
+// }
 
 export const useAsyncRouteStore = defineStore({
   id: 'app-async-route',
@@ -94,12 +95,10 @@ export const useAsyncRouteStore = defineStore({
         return permissionsList.some((item) => permissions.includes(item.value));
       };
 
-      try {
-        //过滤账户是否拥有某一个权限，并将菜单从加载列表移除
-        accessedRouters = filter(asyncRoutes, routeFilter);
-      } catch (error) {
-        console.log(error);
-      }
+      accessedRouters = await generateDynamicRoutes();
+
+      //如果是写死的路由，过滤账户是否拥有某一个权限，并将菜单从加载列表移除
+      //accessedRouters = filter(asyncRoutes, routeFilter);
 
       accessedRouters = accessedRouters.filter(routeFilter);
       this.setRouters(accessedRouters);

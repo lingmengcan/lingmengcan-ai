@@ -45,8 +45,7 @@
     refreshCaptcha();
   });
 
-  const handleSubmit = (e: { preventDefault: () => void }) => {
-    e.preventDefault();
+  const handleSubmit = () => {
     formRef.value.validate(async (errors: any) => {
       if (!errors) {
         const { username, password, captcha } = formInline;
