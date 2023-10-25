@@ -86,7 +86,7 @@ export const useAsyncRouteStore = defineStore({
       this.keepAliveComponents = compNames;
     },
     async generateRoutes(data) {
-      let accessedRouters;
+      let accessedRouters: RouteRecordRaw[];
       const permissionsList = data.permissions ?? [];
       const routeFilter = (route) => {
         const { meta } = route;
@@ -99,6 +99,7 @@ export const useAsyncRouteStore = defineStore({
 
       //如果是写死的路由，过滤账户是否拥有某一个权限，并将菜单从加载列表移除
       //accessedRouters = filter(asyncRoutes, routeFilter);
+      console.log(accessedRouters);
 
       accessedRouters = accessedRouters.filter(routeFilter);
       this.setRouters(accessedRouters);

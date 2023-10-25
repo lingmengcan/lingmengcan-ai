@@ -2,7 +2,8 @@ import { constantRouterIcon } from '@/router/icons';
 import { Layout, ParentLayout } from '@/router/basic';
 import type { AppRouteRecordRaw } from '@/router/types';
 import { RouteRecordRaw } from 'vue-router';
-import { getMenus } from '@/api/system/menu';
+import { getMenuRoutes } from '@/api/system/menu';
+import { MenuRoute } from '@/models/menu';
 
 const IFrame = () => import('@/views/iframe.vue');
 const layoutMap = new Map<string, () => Promise<typeof import('*.vue')>>();
@@ -16,7 +17,7 @@ layoutMap.set('IFRAME', IFrame);
  * @param parent
  * @returns {*}
  */
-export const generateRoutes = (routerMap, parent?): any[] => {
+export const generateRoutes = (routerMap: MenuRoute[], parent?: MenuRoute): any[] => {
   return routerMap.map((item) => {
     const currentRoute: any = {
       // 路由地址 动态拼接生成如 /chat/index
@@ -107,9 +108,9 @@ export const dynamicImport = (
  * @returns {Promise<Router>}
  */
 export const generateDynamicRoutes = async (): Promise<RouteRecordRaw[]> => {
-  const result = await getMenus();
-  console.log(result);
-  const router = generateRoutes(result);
+  const result = await getMenuRoutes();
+
+  const router = generateRoutes(result?.data || []);
   asyncImportRoute(router);
   return router;
 };
