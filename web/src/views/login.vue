@@ -85,7 +85,7 @@
     <div class="view-account-container">
       <div class="view-account-top">
         <div class="view-account-top-logo">
-          <img src="@/assets/images/account-logo.png" alt="" />
+          <img src="@/assets/images/full-logo.png" alt="" />
         </div>
         <div class="view-account-top-desc">你好，lingmengcan ai解决方案, 欢迎使用</div>
       </div>

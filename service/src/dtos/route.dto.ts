@@ -68,4 +68,9 @@ export class Meta {
    * 是否隐藏路由，当设置 true 的时候该路由不会再侧边栏出现
    */
   hidden: boolean;
+
+  /**
+   * 权限字段
+   */
+  permissions: string;
 }

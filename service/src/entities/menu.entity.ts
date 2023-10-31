@@ -22,8 +22,8 @@ export class Menu {
   @Column('varchar', { name: 'path', length: 256 })
   path: string;
 
-  @Column('varchar', { name: 'permission', length: 256 })
-  permission: string;
+  @Column('varchar', { name: 'permissions', length: 256 })
+  permissions: string;
 
   @Column('varchar', { name: 'query', length: 128 })
   query: string;

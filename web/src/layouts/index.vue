@@ -1,3 +1,9 @@
+<script setup lang="ts">
+  import MainView from './components/main.vue';
+  import Logo from './components/logo.vue';
+  import Menu from './components/menu.vue';
+</script>
+
 <template>
   <n-layout class="layout" has-sider>
     <n-layout-sider
@@ -9,16 +15,11 @@
       class="layout-sider"
     >
       <Logo />
-      <AsideMenu />
+      <Menu />
     </n-layout-sider>
     <MainView />
   </n-layout>
 </template>
-
-<script setup lang="ts">
-  import MainView from './components/main.vue';
-  import Logo from './components/logo.vue';
-</script>
 
 <style lang="less" scoped>
   .layout {

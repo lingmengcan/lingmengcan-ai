@@ -76,7 +76,7 @@ export const useUserStore = defineStore({
         this.setAvatar(user.avatar as string);
       }
 
-      return this.userInfo;
+      return res?.data;
     },
 
     // 登出

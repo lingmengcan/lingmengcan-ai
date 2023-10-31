@@ -88,11 +88,15 @@ export const useAsyncRouteStore = defineStore({
     async generateRoutes(data) {
       let accessedRouters: RouteRecordRaw[];
       const permissionsList = data.permissions ?? [];
+
       const routeFilter = (route) => {
         const { meta } = route;
         const { permissions } = meta || {};
         if (!permissions) return true;
-        return permissionsList.some((item) => permissions.includes(item.value));
+
+        const requiredPermissions = permissions.split(',');
+        console.log('permissions', permissionsList);
+        return permissionsList.some((item) => requiredPermissions.includes(item.value));
       };
 
       accessedRouters = await generateDynamicRoutes();

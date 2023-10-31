@@ -8,8 +8,8 @@ import { MenuRoute } from '@/models/menu';
 const IFrame = () => import('@/views/iframe.vue');
 const layoutMap = new Map<string, () => Promise<typeof import('*.vue')>>();
 
-layoutMap.set('LAYOUT', Layout);
-layoutMap.set('IFRAME', IFrame);
+layoutMap.set('layout', Layout);
+layoutMap.set('iframe', IFrame);
 
 /**
  * 格式化 后端 结构信息并递归生成层级路由表
@@ -58,8 +58,9 @@ export const asyncImportRoute = (routes: AppRouteRecordRaw[] | undefined): void 
   viewsModules = viewsModules || import.meta.glob('../views/**/*.{vue,tsx}');
   if (!routes) return;
   routes.forEach((item) => {
+    // iframe 这里后续要改
     if (!item.component && item.meta?.frameSrc) {
-      item.component = 'IFRAME';
+      item.component = 'iframe';
     }
     const { component, name } = item;
     const { children } = item;
@@ -85,12 +86,15 @@ export const dynamicImport = (
   component: string,
 ) => {
   const keys = Object.keys(viewsModules);
+
   const matchKeys = keys.filter((key) => {
     let k = key.replace('../views', '');
     const lastIndex = k.lastIndexOf('.');
     k = k.substring(0, lastIndex);
+
     return k === component;
   });
+
   if (matchKeys?.length === 1) {
     const matchKey = matchKeys[0];
     return viewsModules[matchKey];

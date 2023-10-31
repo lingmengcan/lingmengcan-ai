@@ -1,15 +1,12 @@
 import { NIcon } from 'naive-ui';
-import { h } from 'vue';
+import { Component, h } from 'vue';
 
 /**
  * render 图标
  * */
-export function renderIcon(icon) {
+export function renderIcon(icon: Component) {
   return () => h(NIcon, null, { default: () => h(icon) });
 }
-// export function renderIcon(icon: typeof NIcon): () => VNode {
-//   return (): VNode => h(NIcon, null, { default: () => h(icon) });
-// }
 
 /**
  * Sums the passed percentage to the R, G or B of a HEX color

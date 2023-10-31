@@ -20,7 +20,7 @@ export class MenuService {
   async findPermissionsByUserId(userId: string): Promise<string[]> {
     const permissions = await this.repository
       .createQueryBuilder('Menu')
-      .select('Menu.permission')
+      .select('Menu.permissions')
       .innerJoin('Menu.roleMenus', 'RoleMenu')
       .innerJoin('RoleMenu.role', 'Role')
       .innerJoin('Role.roleUsers', 'RoleUser')
@@ -32,7 +32,7 @@ export class MenuService {
     const res: string[] = [];
     permissions.forEach((item) => {
       if (item) {
-        res.push(item.permission);
+        res.push(item.permissions);
       }
     });
 
@@ -88,7 +88,7 @@ export class MenuService {
    * @param menus 菜单列表
    * @return 路由列表
    */
-  buildRoutes(menus: Menu[], menuId = '0', parentPath = ''): Route[] {
+  buildRoutes(menus: Menu[], menuId = '0'): Route[] {
     const routes: Route[] = [];
     menus.forEach((menu) => {
       // 如果是目录和菜单，递归找子路由
@@ -97,8 +97,9 @@ export class MenuService {
         (menu.menuType === 'contents' || menu.menuType === 'menu')
       ) {
         const route = new Route();
-        route.name = 'Menu' + menu.menuId;
-        route.path = this.getRoutePath(menu, parentPath);
+        route.name = menu.menuCode || 'Menu' + menu.menuId;
+        // route.path = this.getRoutePath(menu, parentPath); // 留给前端处理
+        route.path = menu.path;
         route.component = menu.component;
         route.query = menu.query;
         route.redirect = menu.redirect;
@@ -109,8 +110,9 @@ export class MenuService {
         meta.title = menu.menuName;
         meta.query = menu.query;
         meta.hidden = menu.hidden === 1;
+        meta.permissions = menu.permissions;
         route.meta = meta;
-        const children = this.buildRoutes(menus, menu.menuId, route.path);
+        const children = this.buildRoutes(menus, menu.menuId);
 
         // 如果存在子菜单
         if (children.length > 0) {

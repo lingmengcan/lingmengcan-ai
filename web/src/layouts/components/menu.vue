@@ -14,9 +14,7 @@
   const matched = currentRoute.matched;
   const getOpenKeys = matched && matched.length ? matched.map((item) => item.name) : [];
 
-  const state = reactive({
-    openKeys: getOpenKeys,
-  });
+  let openKeys = reactive(getOpenKeys);
 
   const getSelectedKeys = computed(() => unref(selectedKeys));
   // 跟随页面路由变化，切换菜单选中状态
@@ -36,7 +34,7 @@
 
   function updateSelectedKeys() {
     const matched = currentRoute.matched;
-    state.openKeys = matched.map((item) => item.name);
+    openKeys = matched.map((item) => item.name);
     const activeMenu: string = (currentRoute.meta?.activeMenu as string) || '';
     selectedKeys.value = activeMenu ? (activeMenu as string) : (currentRoute.name as string);
   }
@@ -50,10 +48,12 @@
   <NMenu
     :options="menus"
     mode="vertical"
+    :inverted="true"
     :collapsed="true"
     :collapsed-width="64"
     :collapsed-icon-size="20"
     :indent="24"
+    :expanded-keys="openKeys"
     :value="getSelectedKeys"
   />
 </template>

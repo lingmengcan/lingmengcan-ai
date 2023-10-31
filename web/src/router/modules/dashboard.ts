@@ -12,7 +12,7 @@ const routeName = 'dashboard';
  * @param meta.disabled 禁用整个菜单
  * @param meta.title 菜单名称
  * @param meta.icon 菜单图标
- * @param meta.keepAlive 缓存该路由
+ * @param meta.cached 缓存该路由
  * @param meta.sort 排序越小越排前
  * */
 const routes: Array<RouteRecordRaw> = [
