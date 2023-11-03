@@ -1,8 +1,16 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+  defineProps({
+    collapsed: {
+      type: Boolean,
+      required: true,
+    },
+  });
+</script>
 
 <template>
   <div class="logo">
     <img src="@/assets/images/logo.png" alt="" class="mr-2" />
+    <h2 v-show="!collapsed" class="title">lingmengcan</h2>
   </div>
 </template>
 
@@ -18,7 +26,7 @@
 
     img {
       width: auto;
-      height: 32px;
+      height: 28px;
     }
   }
 </style>

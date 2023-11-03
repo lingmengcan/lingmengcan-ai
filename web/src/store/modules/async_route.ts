@@ -95,15 +95,14 @@ export const useAsyncRouteStore = defineStore({
         if (!permissions) return true;
 
         const requiredPermissions = permissions.split(',');
-        console.log('permissions', permissionsList);
-        return permissionsList.some((item) => requiredPermissions.includes(item.value));
+
+        return permissionsList.some((item: string) => requiredPermissions.includes(item));
       };
 
       accessedRouters = await generateDynamicRoutes();
 
       //如果是写死的路由，过滤账户是否拥有某一个权限，并将菜单从加载列表移除
       //accessedRouters = filter(asyncRoutes, routeFilter);
-      console.log(accessedRouters);
 
       accessedRouters = accessedRouters.filter(routeFilter);
       this.setRouters(accessedRouters);

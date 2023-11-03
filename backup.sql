@@ -153,23 +153,25 @@ LOCK TABLES `menu` WRITE;
 /*!40000 ALTER TABLE `menu` DISABLE KEYS */;
 INSERT INTO `menu` VALUES
 (1,0,'权限管理','system','layout','right','',NULL,'','contents',0,0,'layers',3,0,'系统管理目录','admin','admin','2021-09-26 14:42:01','2022-08-15 11:12:57'),
-(2,0,'数据门户','space','layout','space','','/space/list','','contents',0,0,'folder-add',2,0,'创作空间目录','admin','admin','2021-09-26 14:46:28','2022-09-06 10:41:04'),
-(3,0,'系统监控',NULL,'layout','monitor',NULL,NULL,'','contents',0,0,'logo-windows',4,0,'系统工具','admin','admin','2022-05-19 11:11:06','2022-08-15 11:13:19'),
-(4,0,'系统工具',NULL,' ','https://abc',NULL,NULL,'','contents',0,0,'tools',5,0,'4','admin','admin','2022-05-19 11:16:45','2022-08-15 11:13:23'),
-(5,0,'仪表盘',NULL,'layout','dashboard','','/dashboard/list','','contents',0,0,'dashboard',1,0,'','admin','admin','2022-08-15 11:06:50','2022-08-25 15:26:24'),
-(6,0,'可视化',NULL,'canvas','visual','','','','contents',1,0,'add-circle',2,0,'','admin','admin','2022-08-25 17:16:46','2022-08-25 17:16:46'),
-(101,1,'用户管理','user','right/user/index','user','',NULL,'right:user:list','menu',0,0,'user',1,0,'用户管理菜单','admin','admin','2021-10-21 10:34:32','2022-05-23 14:57:59'),
+(2,0,'AI Draw','draw','layout','draw','','/draw/generate','draw_generate','contents',0,0,'BrushOutline',2,0,'AI Draw','admin','admin','2021-09-26 14:46:28','2022-09-06 10:41:04'),
+(3,0,'LLM Chat','llm','layout','llm',NULL,'/llm/chat','llm_chat','contents',0,0,'ChatboxOutline',1,0,'LLM Chat','admin','admin','2022-06-08 16:46:18','2022-06-08 16:46:18'),
+(4,0,'系统监控','monitor','layout','monitor',NULL,NULL,'','contents',0,0,'logo-windows',4,0,'系统工具','admin','admin','2022-05-19 11:11:06','2022-08-15 11:13:19'),
+(5,0,'仪表盘','dashboard','layout','dashboard','','/dashboard/list','dashboard_list','contents',0,0,'DashboardOutlined',5,0,'','admin','admin','2022-08-15 11:06:50','2022-08-25 15:26:24'),
+(6,0,'可视化','visual','canvas','visual','','','','contents',1,0,'add-circle',2,0,'','admin','admin','2022-08-25 17:16:46','2022-08-25 17:16:46'),
+(7,0,'lingmengcan','https://lingmengcan.tech','layout','lingmengcan',NULL,NULL,'','contents',0,0,'SketchOutlined',6,0,'lingmengcan.tech','admin','admin','2022-05-19 11:16:45','2022-08-15 11:13:23'),
+(101,1,'用户管理','user','/right/user/index','user','',NULL,'right:user:list','menu',0,0,'user',1,0,'用户管理菜单','admin','admin','2021-10-21 10:34:32','2022-05-23 14:57:59'),
 (102,1,'角色管理','role','parents','role','','/right/role/list','right:role:list','contents',0,0,'usergroup',2,0,'角色管理菜单','admin','admin','2021-10-21 10:36:49','2022-06-29 17:23:55'),
-(103,1,'菜单管理','menu','right/menu/index','menu','',NULL,'right:menu:list','menu',0,0,'view-list',3,0,'菜单管理菜单','admin','admin','2021-10-21 10:38:03','2022-07-04 16:40:00'),
-(104,1,'组织架构',NULL,'right/dept/index','dept',NULL,NULL,'right:dept:list','menu',0,0,'fork',4,0,'组织架构','admin','admin','2022-05-20 11:09:04','2022-06-09 11:21:33'),
-(201,2,'数据门户',NULL,'space/index','list','','','space:list','menu',1,0,'creditcard',1,0,'数据门户列表','admin','admin','2022-08-15 17:01:20','2022-09-06 10:51:55'),
-(301,3,'日志管理',NULL,'monitor/log/index','log',NULL,NULL,'monitor:log:index','menu',0,0,'browse',1,0,'301','admin','admin','2022-05-19 11:18:49','2022-07-12 15:07:32'),
-(302,3,'服务运行',NULL,'monitor/server/index','server','','','monitor:server:index','menu',0,0,'desktop',1,0,'','admin','admin','2022-07-04 14:09:38','2022-07-12 17:14:00'),
-(501,5,'仪表盘列表',NULL,'dashboard/index','list','','','dashboard:list','menu',1,0,'dashboard',1,0,'','admin','admin','2022-08-15 16:52:15','2022-08-15 17:15:24'),
-(601,6,' 查看门户',NULL,'visual/preview/index','preview/:spaceId','','','visual:preview','menu',1,0,'view-module',2,0,'','admin','admin','2022-08-19 14:53:20','2022-09-06 14:40:02'),
-(602,6,'数据源管理',NULL,'visual/data/index','data/:spaceId','','','visual:data:list','menu',1,0,'view-list',3,0,'','admin','admin','2022-08-19 14:57:14','2022-08-30 11:05:44'),
-(603,6,'页面设计',NULL,'visual/page/index','page/:spaceId','','','visual:page','menu',1,0,'edit-1',4,0,'报表设计','admin','admin','2022-08-19 15:12:01','2022-08-30 11:18:40'),
-(604,6,'权限管理',NULL,'visual/permission/index','permission/:spaceId','','','visual:permission','menu',1,0,'logo-codepen',5,0,'','admin','admin','2022-08-19 15:14:12','2022-08-30 11:18:35'),
+(103,1,'菜单管理','menu','/right/menu/index','menu','',NULL,'right:menu:list','menu',0,0,'view-list',3,0,'菜单管理菜单','admin','admin','2021-10-21 10:38:03','2022-07-04 16:40:00'),
+(104,1,'组织架构',NULL,'/right/dept/index','dept',NULL,NULL,'right:dept:list','menu',0,0,'fork',4,0,'组织架构','admin','admin','2022-05-20 11:09:04','2022-06-09 11:21:33'),
+(201,2,'生成',NULL,'/draw/generate','generate','','','draw_generate','menu',0,0,'',1,0,'数据门户列表','admin','admin','2022-08-15 17:01:20','2022-09-06 10:51:55'),
+(301,3,'对话','chat','/llm/chat','chat',NULL,NULL,'llm_chat','menu',0,0,'enu',1,0,'chat','admin','admin','2022-08-25 17:16:46','2022-08-25 17:16:46'),
+(401,4,'日志管理',NULL,'/monitor/log/index','log',NULL,NULL,'monitor:log:index','menu',0,0,'browse',1,0,'301','admin','admin','2022-05-19 11:18:49','2022-07-12 15:07:32'),
+(402,4,'服务运行',NULL,'/monitor/server/index','server','','','monitor:server:index','menu',0,0,'desktop',1,0,'','admin','admin','2022-07-04 14:09:38','2022-07-12 17:14:00'),
+(501,5,'仪表盘列表',NULL,'/dashboard/index','list','','','dashboard_list','menu',0,0,'dashboard',1,0,'','admin','admin','2022-08-15 16:52:15','2022-08-15 17:15:24'),
+(601,6,' 查看门户',NULL,'/visual/preview/index','preview/:spaceId','','','visual:preview','menu',1,0,'view-module',2,0,'','admin','admin','2022-08-19 14:53:20','2022-09-06 14:40:02'),
+(602,6,'数据源管理',NULL,'/visual/data/index','data/:spaceId','','','visual:data:list','menu',1,0,'view-list',3,0,'','admin','admin','2022-08-19 14:57:14','2022-08-30 11:05:44'),
+(603,6,'页面设计',NULL,'/visual/page/index','page/:spaceId','','','visual:page','menu',1,0,'edit-1',4,0,'报表设计','admin','admin','2022-08-19 15:12:01','2022-08-30 11:18:40'),
+(604,6,'权限管理',NULL,'/visual/permission/index','permission/:spaceId','','','visual:permission','menu',1,0,'logo-codepen',5,0,'','admin','admin','2022-08-19 15:14:12','2022-08-30 11:18:35'),
 (10101,101,'用户查询',NULL,'','',NULL,NULL,'right:user:query','button',0,0,'',1,0,'','admin','admin','2022-05-23 14:25:32','2022-05-23 14:58:40'),
 (10102,101,'用户新增',NULL,'','',NULL,NULL,'right:user:add','button',0,0,'',2,0,'','admin','admin','2022-05-23 14:28:27','2022-05-23 14:58:53'),
 (10103,101,'用户修改',NULL,'','',NULL,NULL,'right:user:edit','button',0,0,'',3,0,'','admin','admin','2022-05-23 14:28:45','2022-05-23 14:59:03'),
@@ -419,4 +421,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-10-26 11:09:14
+-- Dump completed on 2023-11-03  9:41:38

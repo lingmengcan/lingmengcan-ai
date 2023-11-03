@@ -1,7 +1,13 @@
 <script setup lang="ts">
-  import MainView from './components/main.vue';
+  import MainContent from './components/main.vue';
   import Logo from './components/logo.vue';
   import Menu from './components/menu.vue';
+  import Header from './components/header.vue';
+  import { ref } from 'vue';
+
+  const collapsed = ref<boolean>(false);
+
+  const inverted = ref(true);
 </script>
 
 <template>
@@ -10,14 +16,31 @@
       show-trigger="bar"
       collapse-mode="width"
       :collapsed-width="64"
+      :collapsed="collapsed"
+      :inverted="inverted"
       :width="200"
       :native-scrollbar="false"
       class="layout-sider"
+      @collapse="collapsed = true"
+      @expand="collapsed = false"
     >
-      <Logo />
-      <Menu />
+      <Logo :collapsed="collapsed" />
+      <Menu :inverted="inverted" :collapsed="collapsed" />
     </n-layout-sider>
-    <MainView />
+    <n-layout :inverted="false">
+      <n-layout-header :inverted="false">
+        <Header v-model:collapsed="collapsed" :inverted="inverted" />
+      </n-layout-header>
+
+      <n-layout-content class="layout-content">
+        <div class="layout-content-main">
+          <div class="main-view">
+            <MainContent />
+          </div>
+        </div>
+      </n-layout-content>
+      <n-back-top :right="100" />
+    </n-layout>
   </n-layout>
 </template>
 
