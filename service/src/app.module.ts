@@ -9,6 +9,7 @@ import { AuthModule } from './modules/auth.module';
 import { DataSource } from 'typeorm';
 import { UserModule } from './modules/user.module';
 import { MenuModule } from './modules/menu.module';
+import { RoleModule } from './modules/role.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { MenuModule } from './modules/menu.module';
     AuthModule,
     UserModule,
     MenuModule,
+    RoleModule,
   ],
   controllers: [AppController],
   providers: [AppService],

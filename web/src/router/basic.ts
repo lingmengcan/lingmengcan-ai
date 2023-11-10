@@ -5,6 +5,7 @@ export const RedirectName = 'Redirect';
 export const ErrorPage = () => import('@/views/error/404.vue');
 
 export const Layout = () => import('@/layouts/index.vue');
+export const AdminLayout = () => import('@/layouts/admin.vue');
 export const ParentLayout = () => import('@/layouts/parent.vue');
 
 export const RootRoute: RouteRecordRaw = {

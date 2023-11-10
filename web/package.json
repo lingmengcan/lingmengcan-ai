@@ -12,13 +12,14 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "@types/qs": "^6.9.9",
     "@vicons/antd": "^0.12.0",
     "@vicons/ionicons5": "^0.12.0",
     "axios": "^1.5.1",
-    "axios-mapper": "^0.5.9",
     "js-cookie": "^3.0.5",
     "naive-ui": "^2.35.0",
     "pinia": "^2.1.6",
+    "qs": "^6.11.2",
     "vue": "^3.3.4",
     "vue-router": "^4.2.4"
   },

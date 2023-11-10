@@ -1,5 +1,5 @@
 import { constantRouterIcon } from '@/router/icons';
-import { Layout, ParentLayout } from '@/router/basic';
+import { AdminLayout, Layout, ParentLayout } from '@/router/basic';
 import type { AppRouteRecordRaw } from '@/router/types';
 import { RouteRecordRaw } from 'vue-router';
 import { getMenuRoutes } from '@/api/system/menu';
@@ -9,6 +9,7 @@ const IFrame = () => import('@/views/iframe.vue');
 const layoutMap = new Map<string, () => Promise<typeof import('*.vue')>>();
 
 layoutMap.set('layout', Layout);
+layoutMap.set('admin', AdminLayout);
 layoutMap.set('iframe', IFrame);
 
 /**

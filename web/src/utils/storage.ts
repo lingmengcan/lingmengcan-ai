@@ -1,5 +1,5 @@
-// 默认缓存期限为7天
-const DEFAULT_CACHE_TIME = 60 * 60 * 24 * 7;
+// 默认缓存期限为1天
+const DEFAULT_CACHE_TIME = 60 * 60 * 24;
 
 /**
  * 创建本地缓存对象
@@ -40,9 +40,11 @@ export class DataStorage {
    */
   get(key: string, def: any = null) {
     const item = this.storage.getItem(this.getKey(key));
+
     if (item) {
       try {
         const data = JSON.parse(item);
+
         const { value, expire } = data;
         // 在有效期内直接返回
         if (expire === null || expire >= Date.now()) {

@@ -34,3 +34,39 @@ export function lighten(color: string, amount: number): string {
     amount,
   )}${addLight(color.substring(4, 6), amount)}`;
 }
+
+export function deepMerge<T = any>(src: any = {}, target: any = {}): T {
+  let key: string;
+  for (key in target) {
+    src[key] = isObject(src[key]) ? deepMerge(src[key], target[key]) : (src[key] = target[key]);
+  }
+  return src;
+}
+
+/**
+ * @description: 判断值是否未某个类型
+ */
+export function is(val: unknown, type: string) {
+  return toString.call(val) === `[object ${type}]`;
+}
+
+/**
+ * @description: 是否为对象
+ */
+export const isObject = (val: any): val is Record<any, any> => {
+  return val !== null && is(val, 'Object');
+};
+
+/**
+ *  找到所有节点
+ * */
+const treeAll: any[] = [];
+export function getTreeAll(data: any[]): any[] {
+  data.map((item) => {
+    treeAll.push(item.key);
+    if (item.children && item.children.length) {
+      getTreeAll(item.children);
+    }
+  });
+  return treeAll;
+}

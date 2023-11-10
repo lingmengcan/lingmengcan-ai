@@ -4,6 +4,7 @@ import { createApp } from 'vue';
 import { setupNaive, setupNaiveDiscreteApi } from '@/plugins';
 
 import App from './App.vue';
+
 import router, { setupRouter } from './router';
 import { setupStore } from '@/store';
 

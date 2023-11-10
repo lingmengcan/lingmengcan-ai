@@ -60,6 +60,7 @@ export const useUserStore = defineStore({
 
       if (res && res.code === ResultEnum.SUCCESS) {
         DataStorage.set(ACCESS_TOKEN, res.data);
+        console.log('token', DataStorage.get(ACCESS_TOKEN));
         this.setToken(res.data);
       }
       return res;
@@ -68,6 +69,7 @@ export const useUserStore = defineStore({
     // 获取用户信息
     async getInfo() {
       const res = await getUserInfo();
+
       if (res && res.code === 0) {
         const { user, permissions } = res.data;
 

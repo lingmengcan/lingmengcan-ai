@@ -28,18 +28,13 @@
       <Menu :inverted="inverted" :collapsed="collapsed" />
     </n-layout-sider>
     <n-layout :inverted="false">
-      <n-layout-header :inverted="false">
+      <n-layout-header :inverted="false" position="absolute">
         <Header v-model:collapsed="collapsed" :inverted="inverted" />
       </n-layout-header>
 
-      <n-layout-content class="layout-content">
-        <div class="layout-content-main">
-          <div
-            class="main-view"
-            :class="{
-              'mt-3': true,
-            }"
-          >
+      <n-layout-content class="layout-content layout-default-background">
+        <div class="layout-content-main layout-content-main-fix">
+          <div class="mt-3 main-view">
             <MainContent />
           </div>
         </div>
@@ -49,6 +44,19 @@
   </n-layout>
 </template>
 
+<style lang="less">
+  .layout-side-drawer {
+    background-color: rgb(0, 20, 40);
+
+    .layout-sider {
+      min-height: 100vh;
+      box-shadow: 2px 0 8px 0 rgb(29 35 41 / 5%);
+      position: relative;
+      z-index: 13;
+      transition: all 0.2s ease-in-out;
+    }
+  }
+</style>
 <style lang="less" scoped>
   .layout {
     display: flex;
@@ -96,5 +104,27 @@
     .n-layout-footer {
       background: none;
     }
+  }
+
+  .layout-content-main {
+    margin: 0 10px 10px;
+    position: relative;
+    padding-top: 64px;
+  }
+
+  .layout-content-main-fix {
+    padding-top: 64px;
+  }
+
+  .fluid-header {
+    padding-top: 0;
+  }
+
+  .main-view-fix {
+    padding-top: 44px;
+  }
+
+  .noMultiTabs {
+    padding-top: 0;
   }
 </style>

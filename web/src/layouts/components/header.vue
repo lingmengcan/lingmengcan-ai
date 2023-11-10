@@ -135,10 +135,10 @@
   ];
 
   //头像下拉菜单
-  const avatarSelect = (key) => {
+  const avatarSelect = (key: number) => {
     switch (key) {
       case 1:
-        router.push({ name: 'Setting' });
+        router.push({ name: 'setting' });
         break;
       case 2:
         doLogout();

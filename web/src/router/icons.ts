@@ -1,6 +1,6 @@
 import { renderIcon } from '@/utils';
-import { DashboardOutlined, SketchOutlined } from '@vicons/antd';
-import { BrushOutline, ChatboxOutline } from '@vicons/ionicons5';
+import { DashboardOutlined, SketchOutlined, MonitorOutlined } from '@vicons/antd';
+import { BrushOutline, ChatboxOutline, OptionsSharp } from '@vicons/ionicons5';
 
 //前端路由图标映射表
 export const constantRouterIcon = {
@@ -8,4 +8,6 @@ export const constantRouterIcon = {
   SketchOutlined: renderIcon(SketchOutlined),
   BrushOutline: renderIcon(BrushOutline),
   ChatboxOutline: renderIcon(ChatboxOutline),
+  OptionsSharp: renderIcon(OptionsSharp),
+  MonitorOutlined: renderIcon(MonitorOutlined),
 };
