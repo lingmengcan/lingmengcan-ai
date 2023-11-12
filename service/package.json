@@ -32,6 +32,7 @@
     "bcrypt": "^5.1.1",
     "class-validator": "^0.14.0",
     "express-session": "^1.17.3",
+    "js-yaml": "^4.1.0",
     "langchain": "^0.0.170",
     "mysql2": "^3.6.2",
     "passport": "^0.6.0",
