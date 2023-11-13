@@ -1,4 +1,4 @@
-import { Menu, MenuList, MenuQueryParams, MenuRoute } from '@/models/menu';
+import { Menu, MenuQueryParams, MenuRoute } from '@/models/menu';
 import { Method } from '@/utils/axios/types';
 import http, { Result } from '@/utils/http';
 
@@ -6,7 +6,7 @@ import http, { Result } from '@/utils/http';
  * @description: 根据用户id获取用户菜单
  */
 export const getMenus = () => {
-  return http.request<Result<MenuList>>('menu/list', Method.GET);
+  return http.request<Result<Menu[]>>('menu/list', Method.GET);
 };
 
 export const getMenuRoutes = () => {

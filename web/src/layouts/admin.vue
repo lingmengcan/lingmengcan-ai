@@ -56,6 +56,48 @@
       transition: all 0.2s ease-in-out;
     }
   }
+
+  .table-toolbar {
+    display: flex;
+    justify-content: space-between;
+    padding: 0 0 16px 0;
+
+    &-left {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      flex: 1;
+
+      &-title {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        font-size: 16px;
+        font-weight: 600;
+      }
+    }
+
+    &-right {
+      display: flex;
+      justify-content: flex-end;
+      flex: 1;
+
+      &-icon {
+        margin-left: 12px;
+        font-size: 16px;
+        cursor: pointer;
+        color: var(--text-color);
+
+        :hover {
+          color: #1890ff;
+        }
+      }
+    }
+  }
+
+  .table-toolbar-inner-popover-title {
+    padding: 2px 0;
+  }
 </style>
 <style lang="less" scoped>
   .layout {

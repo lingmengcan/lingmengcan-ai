@@ -10,8 +10,6 @@ export interface Role {
   updatedUser?: string;
   createdAt?: string;
   updatedAt?: string;
-  // 角色有权限的菜单
-  menuIds?: string[];
 }
 
 // 列表对象
@@ -28,7 +26,7 @@ export interface RoleList {
 export interface RoleParams {
   roleName: string;
   roleCode: string;
-  status: string;
+  status: string | undefined;
   page: number;
   pageSize: number;
 }
@@ -57,4 +55,12 @@ export interface RoleUserQueryParams {
 export interface RoleUsers {
   roleId: string;
   userIds: string[];
+}
+
+/**
+ * 授权菜单
+ */
+export interface RoleMenus {
+  roleId: string;
+  menuIds: string[];
 }

@@ -1,5 +1,6 @@
 import { NIcon } from 'naive-ui';
 import { Component, h } from 'vue';
+import dayjs from 'dayjs';
 
 /**
  * render 图标
@@ -69,4 +70,14 @@ export function getTreeAll(data: any[]): any[] {
     }
   });
   return treeAll;
+}
+
+/**
+ * @desc  格式化时间
+ * @param {(Object|string|number)} time
+ * @param {string} format
+ * @returns {string | null}
+ */
+export function formatDateTime(time = undefined, format = 'YYYY-MM-DD HH:mm:ss') {
+  return dayjs(time).format(format);
 }

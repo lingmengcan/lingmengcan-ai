@@ -152,17 +152,17 @@ CREATE TABLE `menu` (
 LOCK TABLES `menu` WRITE;
 /*!40000 ALTER TABLE `menu` DISABLE KEYS */;
 INSERT INTO `menu` VALUES
-(1,0,'权限管理','system','layout','right','',NULL,'','contents',0,0,'layers',3,0,'系统管理目录','admin','admin','2021-09-26 14:42:01','2022-08-15 11:12:57'),
+(1,0,'系统设置','system','admin','right','',NULL,'','contents',0,0,'OptionsSharp',3,0,'系统管理目录','admin','admin','2021-09-26 14:42:01','2022-08-15 11:12:57'),
 (2,0,'AI Draw','draw','layout','draw','','/draw/generate','draw_generate','contents',0,0,'BrushOutline',2,0,'AI Draw','admin','admin','2021-09-26 14:46:28','2022-09-06 10:41:04'),
 (3,0,'LLM Chat','llm','layout','llm',NULL,'/llm/chat','llm_chat','contents',0,0,'ChatboxOutline',1,0,'LLM Chat','admin','admin','2022-06-08 16:46:18','2022-06-08 16:46:18'),
-(4,0,'系统监控','monitor','layout','monitor',NULL,NULL,'','contents',0,0,'logo-windows',4,0,'系统工具','admin','admin','2022-05-19 11:11:06','2022-08-15 11:13:19'),
+(4,0,'系统监控','monitor','layout','monitor',NULL,NULL,'','contents',0,0,'MonitorOutlined',4,0,'系统工具','admin','admin','2022-05-19 11:11:06','2022-08-15 11:13:19'),
 (5,0,'仪表盘','dashboard','layout','dashboard','','/dashboard/list','dashboard_list','contents',0,0,'DashboardOutlined',5,0,'','admin','admin','2022-08-15 11:06:50','2022-08-25 15:26:24'),
 (6,0,'可视化','visual','canvas','visual','','','','contents',1,0,'add-circle',2,0,'','admin','admin','2022-08-25 17:16:46','2022-08-25 17:16:46'),
 (7,0,'lingmengcan','https://lingmengcan.tech','layout','lingmengcan',NULL,NULL,'','contents',0,0,'SketchOutlined',6,0,'lingmengcan.tech','admin','admin','2022-05-19 11:16:45','2022-08-15 11:13:23'),
-(101,1,'用户管理','user','/right/user/index','user','',NULL,'right:user:list','menu',0,0,'user',1,0,'用户管理菜单','admin','admin','2021-10-21 10:34:32','2022-05-23 14:57:59'),
-(102,1,'角色管理','role','parents','role','','/right/role/list','right:role:list','contents',0,0,'usergroup',2,0,'角色管理菜单','admin','admin','2021-10-21 10:36:49','2022-06-29 17:23:55'),
-(103,1,'菜单管理','menu','/right/menu/index','menu','',NULL,'right:menu:list','menu',0,0,'view-list',3,0,'菜单管理菜单','admin','admin','2021-10-21 10:38:03','2022-07-04 16:40:00'),
-(104,1,'组织架构',NULL,'/right/dept/index','dept',NULL,NULL,'right:dept:list','menu',0,0,'fork',4,0,'组织架构','admin','admin','2022-05-20 11:09:04','2022-06-09 11:21:33'),
+(101,1,'用户管理','user','/system/user/index','user','',NULL,'right:user:list','menu',0,0,'user',1,0,'用户管理菜单','admin','admin','2021-10-21 10:34:32','2022-05-23 14:57:59'),
+(102,1,'角色管理','role','/system/role/index','role','','','right:role:list','menu',0,0,'usergroup',2,0,'角色管理菜单','admin','admin','2021-10-21 10:36:49','2022-06-29 17:23:55'),
+(103,1,'菜单管理','menu','/system/menu/index','menu','',NULL,'right:menu:list','menu',0,0,'view-list',3,0,'菜单管理菜单','admin','admin','2021-10-21 10:38:03','2022-07-04 16:40:00'),
+(104,1,'组织架构','dept','/system/dept/index','dept',NULL,NULL,'right:dept:list','menu',0,0,'fork',4,0,'组织架构','admin','admin','2022-05-20 11:09:04','2022-06-09 11:21:33'),
 (201,2,'生成',NULL,'/draw/generate','generate','','','draw_generate','menu',0,0,'',1,0,'数据门户列表','admin','admin','2022-08-15 17:01:20','2022-09-06 10:51:55'),
 (301,3,'对话','chat','/llm/chat','chat',NULL,NULL,'llm_chat','menu',0,0,'enu',1,0,'chat','admin','admin','2022-08-25 17:16:46','2022-08-25 17:16:46'),
 (401,4,'日志管理',NULL,'/monitor/log/index','log',NULL,NULL,'monitor:log:index','menu',0,0,'browse',1,0,'301','admin','admin','2022-05-19 11:18:49','2022-07-12 15:07:32'),
@@ -180,8 +180,8 @@ INSERT INTO `menu` VALUES
 (10202,102,'角色新增',NULL,'','',NULL,NULL,'right:role:add','button',0,0,'',4,0,'','admin','admin','2022-06-08 16:45:27','2022-06-30 11:01:26'),
 (10203,102,'角色修改',NULL,'','',NULL,NULL,'right:role:edit','button',0,0,'',5,0,'','admin','admin','2022-06-08 16:45:53','2022-06-30 11:01:34'),
 (10204,102,'角色删除',NULL,'','',NULL,NULL,'right:role:delete','button',0,0,'',6,0,'','admin','admin','2022-06-08 16:46:18','2022-06-30 11:01:44'),
-(10205,102,'分配用户',NULL,'right/role/role-user','user',NULL,NULL,'right:role:user','menu',1,0,'add',2,0,'','admin','admin','2022-06-08 16:48:01','2022-06-30 11:01:18'),
-(10206,102,'角色管理',NULL,'right/role/index','list','',NULL,'right:role:list','menu',1,0,'add-circle',1,0,'','admin','admin','2022-06-29 16:19:21','2022-07-11 20:13:29');
+(10205,102,'分配用户',NULL,'right/role/role-user','user',NULL,NULL,'right:role:user','button',1,0,'add',2,0,'','admin','admin','2022-06-08 16:48:01','2022-06-30 11:01:18'),
+(10206,102,'角色管理',NULL,'right/role/index','list','',NULL,'right:role:list','button',1,0,'add-circle',1,0,'','admin','admin','2022-06-29 16:19:21','2022-07-11 20:13:29');
 /*!40000 ALTER TABLE `menu` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -216,7 +216,7 @@ LOCK TABLES `role` WRITE;
 INSERT INTO `role` VALUES
 (1,'管理员','admin',1,0,'超级管理员','admin','admin','2021-11-02 10:37:56','2022-08-31 15:24:50'),
 (2,'客人','guest',2,0,'客人','admin','admin','2021-11-02 10:38:34','2022-07-29 16:17:25'),
-(3,'test2','test',3,0,'test','admin','admin','2021-11-02 17:17:12','2022-07-14 10:45:14');
+(3,'test2','test',3,0,'test','admin','admin','2021-11-02 17:17:12','2023-11-13 15:39:20');
 /*!40000 ALTER TABLE `role` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -421,4 +421,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-11-03  9:41:38
+-- Dump completed on 2023-11-13 19:25:28

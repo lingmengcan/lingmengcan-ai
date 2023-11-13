@@ -22,10 +22,6 @@ export interface Menu {
   children?: Menu[];
 }
 
-export interface MenuList {
-  menus: Menu[];
-}
-
 /**
  * 查询对象
  */

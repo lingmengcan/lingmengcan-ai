@@ -44,3 +44,52 @@ export function filterRouter(routerMap: Array<any>) {
     );
   });
 }
+
+/**
+ * 构造tree组件的树型结构数据
+ */
+export const handleTree = <T>(
+  data: T[],
+  idField = 'id',
+  parentIdField = 'parentId',
+  childrenField = 'children',
+): T[] => {
+  const childrenListMap: T[][] = [];
+  // 按父节点排序节点以得到第一层node
+  const nodeIds: T[] = [];
+  const tree: T[] = [];
+
+  data.forEach((d) => {
+    const parentId = d[parentIdField];
+    if (childrenListMap[parentId] == null) {
+      childrenListMap[parentId] = [];
+    }
+    nodeIds[d[idField]] = d;
+    childrenListMap[parentId].push(d);
+  });
+
+  data.forEach((item) => {
+    // 确定树的第一层
+    const parentId = item[parentIdField];
+    if (nodeIds[parentId] == null) {
+      tree.push(item);
+    }
+  });
+
+  tree.forEach((item) => {
+    adaptToChildrenList(item);
+  });
+
+  function adaptToChildrenList<T>(o: T) {
+    if (childrenListMap[o[idField]] !== null) {
+      o[childrenField] = childrenListMap[o[idField]];
+    }
+    if (o[childrenField]) {
+      o[childrenField].forEach((item: T) => {
+        adaptToChildrenList(item);
+      });
+    }
+  }
+
+  return tree;
+};
