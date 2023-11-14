@@ -12,7 +12,10 @@
           <n-select v-model:value="queryFormData.status" :options="statusOptions" />
         </n-form-item-gi>
         <n-form-item-gi :span="6">
-          <n-button type="primary" @click="handleQuery"> 查询 </n-button>
+          <n-space>
+            <n-button @click="clearQuery"> 重置 </n-button>
+            <n-button type="primary" @click="handleQuery"> 查询 </n-button>
+          </n-space>
         </n-form-item-gi>
       </n-grid>
     </n-form>
@@ -21,7 +24,7 @@
     <div class="table-toolbar">
       <!--顶部左侧区域-->
       <div class="flex items-center table-toolbar-left">
-        <n-button type="primary">
+        <n-button type="primary" @click="handleAdd">
           <template #icon>
             <n-icon>
               <PlusOutlined />
@@ -46,7 +49,51 @@
     </div>
   </n-card>
 
-  //菜单权限管理
+  <!-- 新增修改角色 -->
+  <n-drawer v-model:show="showDrawer" :width="399">
+    <n-drawer-content :title="drawerTitle" closable>
+      <n-form
+        ref="drawerFormRef"
+        label-placement="left"
+        label-width="auto"
+        :model="drawerFormData"
+        :rules="drawerRules"
+      >
+        <n-form-item label="角色名称" path="roleName">
+          <n-input v-model:value="drawerFormData.roleName" placeholder="输入姓名" />
+        </n-form-item>
+        <n-form-item label="角色编码" path="roleCode">
+          <n-input v-model:value="drawerFormData.roleCode" placeholder="输入年龄" />
+        </n-form-item>
+        <n-form-item label="排序" path="sort">
+          <n-input-number v-model:value="drawerFormData.sort" :min="0" />
+        </n-form-item>
+        <n-form-item label="状态" name="status">
+          <n-radio-group v-model:value="drawerFormData.status">
+            <n-space>
+              <n-radio v-for="item in statusOptions" :key="item.value" :value="item.value">
+                {{ item.label }}
+              </n-radio>
+            </n-space>
+          </n-radio-group>
+        </n-form-item>
+        <n-form-item label="描述" name="description">
+          <n-input
+            v-model:value="drawerFormData.description"
+            type="textarea"
+            placeholder="请输入角色描述"
+          />
+        </n-form-item>
+      </n-form>
+      <template #footer>
+        <n-space>
+          <n-button type="primary" attr-type="button" @click="handleAddandEdit">确定</n-button>
+        </n-space>
+      </template>
+    </n-drawer-content>
+  </n-drawer>
+
+  <!-- 菜单权限管理 -->
   <n-modal v-model:show="showMenuModal" :show-icon="false" preset="dialog" :title="editRoleTitle">
     <div class="py-3 menu-list">
       <n-tree
@@ -80,11 +127,17 @@
 </template>
 
 <script lang="ts" setup>
-  import { changeRoleStatus, getRoleList, getRoleMenuIds } from '@/api/system/role';
-  import { Role, RoleParams } from '@/models/role';
+  import {
+    addRole,
+    changeRoleMenus,
+    changeRoleStatus,
+    editRole,
+    getRoleList,
+    getRoleMenuIds,
+  } from '@/api/system/role';
+  import { Role, RoleMenus, RoleParams } from '@/models/role';
   import { formatDateTime, getTreeAll, renderIcon } from '@/utils';
   import { DataTableRowKey, FormInst, NButton, NSwitch, useDialog, useMessage } from 'naive-ui';
-  import { RowData } from 'naive-ui/es/data-table/src/interface';
   import { h, onMounted, ref } from 'vue';
   import { useRouter } from 'vue-router';
   import {
@@ -97,10 +150,14 @@
   import { getMenus } from '@/api/system/menu';
   import { handleTree } from '@/utils/menu';
   import { Menu } from '@/models/menu';
+  import { RowData } from 'naive-ui/es/data-table/src/interface';
 
   const message = useMessage();
   const dialog = useDialog();
   const router = useRouter();
+
+  const showDrawer = ref(false);
+  const drawerTitle = ref('');
 
   const showMenuModal = ref(false);
   const formBtnLoading = ref(false);
@@ -109,18 +166,40 @@
   const treeData = ref<Menu[]>([]);
   const expandedKeys = ref(['']);
   const checkedKeys = ref<string[]>([]);
+  const roleId = ref('');
 
   const formRef = ref<FormInst | null>(null);
+  const drawerFormRef = ref<FormInst | null>(null);
+
+  // 新增/修改弹窗数据初始化
+
+  // 新增/修改弹窗数据初始化
+  const roleInitData = {
+    roleId: '',
+    roleName: '',
+    roleCode: '',
+    status: 0,
+    sort: 0,
+    description: '',
+  };
+  const drawerFormData = ref(roleInitData);
+
+  const drawerRules = {
+    roleName: { required: true, message: '角色名称必填', trigger: 'blur' },
+    roleCode: { required: true, message: '角色编码必填', trigger: 'blur' },
+    status: { required: true, message: '状态必填', trigger: 'blur' },
+    sort: { type: 'number', required: true, message: '排序必填', trigger: 'blur' },
+  };
 
   // 状态select options
   const statusOptions = ref([
-    { label: '正常', value: '0' },
-    { label: '停用', value: '1' },
+    { label: '正常', value: 0 },
+    { label: '停用', value: 1 },
   ]);
   const queryFormData = ref({
     roleName: '',
     roleCode: '',
-    status: undefined,
+    status: null,
   });
 
   const columns = [
@@ -195,7 +274,7 @@
               size: 'small',
               type: 'info',
               tertiary: true,
-              style: 'margin-left: 15px;',
+              style: 'margin-left: 10px;',
               onClick: () => handleUser(row),
             },
             { default: () => '分配用户', icon: renderIcon(UserSwitchOutlined) },
@@ -205,7 +284,7 @@
             {
               size: 'small',
               type: 'primary',
-              style: 'margin-left: 15px;',
+              style: 'margin-left: 10px;',
               onClick: () => handleEdit(row),
             },
             {
@@ -219,7 +298,7 @@
             {
               size: 'small',
               type: 'error',
-              style: 'margin-left: 15px;',
+              style: 'margin-left: 10px;',
               onClick: () => handleDelete(row),
             },
             {
@@ -293,6 +372,15 @@
     query(pagination.value.page, pagination.value.pageSize);
   };
 
+  const clearQuery = () => {
+    queryFormData.value = {
+      roleName: '',
+      roleCode: '',
+      status: null,
+    };
+    query(1, pagination.value.pageSize);
+  };
+
   const handlePageChange = (currentPage: number) => {
     query(currentPage, pagination.value.pageSize);
   };
@@ -342,6 +430,13 @@
     });
   };
 
+  // 新增角色
+  const handleAdd = async () => {
+    drawerTitle.value = '新增角色';
+    showDrawer.value = true;
+    drawerFormData.value = roleInitData;
+  };
+
   // 删除角色 statu = -1
   const handleDelete = async (row: RowData) => {
     row.status = -1;
@@ -350,19 +445,56 @@
 
   // 修改角色
   const handleEdit = async (row: RowData) => {
-    // dialogTitle.value = '修改角色';
-    // dialogVisible.value = true;
-    // dialogFormData.value = { ...row };
-    // const res = await getRoleMenuIds(dialogFormData.value.roleId);
-    // if (res?.code === 0 && res?.data) {
-    //   menusChecked.value = res?.data;
-    // }
+    drawerTitle.value = '修改角色';
+    showDrawer.value = true;
+    drawerFormData.value = {
+      roleId: row.roleId,
+      roleCode: row.roleCode,
+      roleName: row.roleName,
+      status: row.status,
+      sort: row.sort,
+      description: row.description,
+    };
+  };
+
+  const handleAddandEdit = (e: MouseEvent) => {
+    e.preventDefault();
+    const messageReactive = message.loading('处理中', {
+      duration: 0,
+    });
+    drawerFormRef.value?.validate(async (errors) => {
+      if (!errors) {
+        const requestData: Role = {
+          ...drawerFormData.value,
+          createdUser: '',
+          updatedUser: '',
+          createdAt: '',
+          updatedAt: '',
+        };
+
+        const res = drawerFormData.value.roleId
+          ? await editRole(requestData)
+          : await addRole(requestData);
+
+        if (res?.code === 0) {
+          showDrawer.value = false;
+          drawerFormData.value = roleInitData;
+          query(pagination.value.page, pagination.value.pageSize);
+        }
+      } else {
+        console.log(errors);
+        message.error('验证不通过');
+      }
+
+      messageReactive.destroy();
+    });
   };
 
   // 分配菜单
   const handleMenu = async (row: RowData) => {
     editRoleTitle.value = `分配 ${row.roleName} 的菜单权限`;
 
+    roleId.value = row.roleId;
     const res = await getRoleMenuIds(row.roleId);
     if (res?.code === 0 && res?.data) {
       checkedKeys.value = res?.data;
@@ -370,8 +502,8 @@
     showMenuModal.value = true;
   };
 
-  function checkedTree(keys) {
-    checkedKeys.value = [checkedKeys.value, ...keys];
+  function checkedTree(keys: string[]) {
+    checkedKeys.value = keys;
   }
 
   function onExpandedKeys(keys) {
@@ -382,7 +514,7 @@
     if (expandedKeys.value.length) {
       expandedKeys.value = [];
     } else {
-      expandedKeys.value = treeData.value.map((item: any) => item.key) as [];
+      expandedKeys.value = treeData.value.map((item) => item.menuId) as [];
     }
   }
 
@@ -396,15 +528,20 @@
     }
   }
 
-  function confirmMenuForm() {
+  const confirmMenuForm = async () => {
     formBtnLoading.value = true;
-    setTimeout(() => {
-      showMenuModal.value = false;
-      message.success('提交成功');
-      query(pagination.value.page, pagination.value.pageSize);
-      formBtnLoading.value = false;
-    }, 200);
-  }
+
+    showMenuModal.value = false;
+    const requestData: RoleMenus = {
+      roleId: roleId.value,
+      menuIds: checkedKeys.value,
+    };
+
+    await changeRoleMenus(requestData);
+    message.success('保存成功');
+    query(pagination.value.page, pagination.value.pageSize);
+    formBtnLoading.value = false;
+  };
 
   // 分配用户
   const handleUser = async (row: RowData) => {

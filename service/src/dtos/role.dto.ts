@@ -16,3 +16,12 @@ export class RoleListDto {
   @IsNotEmpty()
   pageSize: number;
 }
+
+/**
+ * 角色菜单
+ */
+export class RoleMenusDto {
+  roleId: string;
+
+  menuIds: string[];
+}

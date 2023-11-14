@@ -116,10 +116,11 @@ export class RoleService {
   /**
    * 修改角色权限
    *
-   * @param role 角色信息
+   * @param roleId 角色信息
+   * @param menuIds 菜单
    * @return 结果
    */
-  async updateRoleMenu(roleId: string, menuIds: string[]) {
+  async updateRoleMenus(roleId: string, menuIds: string[]) {
     // Transactions 启动
     /// create a new query runner
     const queryRunner = this.dataSource.createQueryRunner();
@@ -152,6 +153,91 @@ export class RoleService {
         .into(RoleMenu)
         .values(roleMenus)
         .execute();
+
+      // commit transaction now:
+      await queryRunner.commitTransaction();
+    } catch (err) {
+      // since we have errors let's rollback changes we made
+      await queryRunner.rollbackTransaction();
+    } finally {
+      // you need to release query runner which is manually created:
+      await queryRunner.release();
+    }
+  }
+
+  /**
+   * 修改角色
+   *
+   * @param role 角色信息
+   * @return 结果
+   */
+  async updateRole(role: Role) {
+    const entity = await this.findOne(role.roleId);
+    entity.roleName = role.roleName;
+    entity.roleCode = role.roleCode;
+    entity.description = role.description;
+    entity.sort = role.sort;
+    entity.status = role.status;
+    entity.updatedUser = role.updatedUser;
+    entity.updatedAt = new Date();
+    // return this.repository.save(entity);
+
+    // Transactions 启动
+    /// create a new query runner
+    const queryRunner = this.dataSource.createQueryRunner();
+
+    // establish real database connection using our new query runner
+    await queryRunner.connect();
+
+    // lets now open a new transaction:
+    await queryRunner.startTransaction();
+
+    try {
+      // execute some operations on this transaction:
+      await queryRunner.manager.save(entity);
+
+      // commit transaction now:
+      await queryRunner.commitTransaction();
+    } catch (err) {
+      // since we have errors let's rollback changes we made
+      await queryRunner.rollbackTransaction();
+    } finally {
+      // you need to release query runner which is manually created:
+      await queryRunner.release();
+    }
+  }
+
+  /**
+   * 修改角色状态
+   *
+   * @param role 角色信息
+   * @return 结果
+   */
+  async addRole(role: Role) {
+    const entity = new Role();
+    entity.roleCode = role.roleCode;
+    entity.roleName = role.roleName;
+    entity.sort = role.sort;
+    entity.status = role.status;
+    entity.description = role.description;
+    entity.createdUser = role.createdUser;
+    entity.updatedUser = role.updatedUser;
+    entity.createdAt = new Date();
+    entity.updatedAt = new Date();
+
+    // Transactions 启动
+    /// create a new query runner
+    const queryRunner = this.dataSource.createQueryRunner();
+
+    // establish real database connection using our new query runner
+    await queryRunner.connect();
+
+    // lets now open a new transaction:
+    await queryRunner.startTransaction();
+
+    try {
+      // execute some operations on this transaction:
+      await queryRunner.manager.save(entity);
 
       // commit transaction now:
       await queryRunner.commitTransaction();

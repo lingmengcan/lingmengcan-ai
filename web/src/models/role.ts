@@ -26,7 +26,7 @@ export interface RoleList {
 export interface RoleParams {
   roleName: string;
   roleCode: string;
-  status: string | undefined;
+  status: string | null;
   page: number;
   pageSize: number;
 }

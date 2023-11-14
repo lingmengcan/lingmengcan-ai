@@ -1,4 +1,4 @@
-import { Role, RoleList, RoleParams } from '@/models/role';
+import { Role, RoleList, RoleMenus, RoleParams } from '@/models/role';
 import { Method } from '@/utils/axios/types';
 import http, { Result } from '@/utils/http';
 
@@ -13,3 +13,13 @@ export const changeRoleStatus = (data: Role) =>
 // 获取角色菜单列表
 export const getRoleMenuIds = (roleId: string) =>
   http.request<Result<string[]>>('role/menus', Method.POST, { roleId });
+
+// 改变状态
+export const changeRoleMenus = (data: RoleMenus) =>
+  http.request<Result<Role>>('role/change-menus', Method.POST, data);
+
+// 新增
+export const addRole = (data: Role) => http.request<Result<Role>>('role/add', Method.POST, data);
+
+// 修改
+export const editRole = (data: Role) => http.request<Result<Role>>('role/edit', Method.POST, data);

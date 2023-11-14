@@ -1,4 +1,4 @@
-import { RoleListDto } from '@/dtos/role.dto';
+import { RoleListDto, RoleMenusDto } from '@/dtos/role.dto';
 import { Role } from '@/entities/role.entity';
 import { RoleService } from '@/services/role.service';
 import { successJson } from '@/utils/result';
@@ -40,7 +40,7 @@ export class RoleController {
   }
 
   /**
-   * 查找所有角色次菜单id
+   * 查找所有角色关联的菜单id
    *
    * @param roleId
    * @returns
@@ -49,5 +49,50 @@ export class RoleController {
   @Post('menus')
   async getMenus(@Body('roleId') roleId: string) {
     return successJson(await this.roleService.findMenuIdsByRoleId(roleId));
+  }
+
+  /**s
+   * 查找所有角色次菜单id
+   *
+   * @param roleId
+   * @returns
+   */
+  @UseGuards(AuthGuard('jwt'))
+  @Post('change-menus')
+  async updateRoleMenus(@Body() dto: RoleMenusDto) {
+    return successJson(
+      await this.roleService.updateRoleMenus(dto.roleId, dto.menuIds),
+    );
+  }
+
+  /**
+   * 添加
+   *
+   * @param role
+   * @param req
+   * @returns
+   */
+  @UseGuards(AuthGuard('jwt'))
+  @Post('/add')
+  async add(@Body() role: Role, @Request() req: any) {
+    const userName = req.user.userName;
+    role.updatedUser = userName;
+    role.createdUser = userName;
+    return successJson(await this.roleService.addRole(role));
+  }
+
+  /**
+   * 编辑
+   *
+   * @param role
+   * @param req
+   * @returns
+   */
+  @UseGuards(AuthGuard('jwt'))
+  @Post('edit')
+  async edit(@Body() role: Role, @Request() req: any) {
+    const userName = req.user.userName;
+    role.updatedUser = userName;
+    return successJson(await this.roleService.updateRole(role));
   }
 }
