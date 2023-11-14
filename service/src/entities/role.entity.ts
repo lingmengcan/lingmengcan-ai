@@ -1,8 +1,8 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { IsNotEmpty } from 'class-validator';
-import { RoleDept } from './role_dept.entity';
-import { RoleMenu } from './role_menu.entity';
-import { RoleUser } from './role_user.entity';
+import { RoleDept } from './role-dept.entity';
+import { RoleMenu } from './role-menu.entity';
+import { RoleUser } from './role-user.entity';
 
 @Entity('role')
 export class Role {

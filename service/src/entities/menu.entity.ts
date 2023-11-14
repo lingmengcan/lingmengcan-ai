@@ -1,6 +1,6 @@
 import { IsNotEmpty } from 'class-validator';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { RoleMenu } from './role_menu.entity';
+import { RoleMenu } from './role-menu.entity';
 
 @Entity('menu')
 export class Menu {

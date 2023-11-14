@@ -8,7 +8,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-import { RoleUser } from './role_user.entity';
+import { RoleUser } from './role-user.entity';
 import { Dept } from './dept.entity';
 
 @Entity('user')

@@ -1,6 +1,6 @@
 import { RoleListDto } from '@/dtos/role.dto';
 import { Role } from '@/entities/role.entity';
-import { RoleMenu } from '@/entities/role_menu.entity';
+import { RoleMenu } from '@/entities/role-menu.entity';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';

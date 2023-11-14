@@ -95,3 +95,4 @@
     @update:expanded-keys="menuExpanded"
   />
 </template>
+@/store/modules/async-route

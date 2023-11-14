@@ -1,5 +1,5 @@
 import { PageEnum } from '@/constants/page';
-import { useAsyncRoute } from '@/store/modules/async_route';
+import { useAsyncRoute } from '@/store/modules/async-route';
 import type { RouteRecordRaw } from 'vue-router';
 import { isNavigationFailure, Router } from 'vue-router';
 import DataStorage from '@/utils/storage';

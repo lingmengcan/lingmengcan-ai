@@ -1,6 +1,6 @@
 import { IsNotEmpty } from 'class-validator';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { RoleDept } from './role_dept.entity';
+import { RoleDept } from './role-dept.entity';
 import { User } from './user.entity';
 
 @Entity('dept')
