@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import { computed, onMounted, ref, unref, watch } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
-  import { useAsyncRouteStore } from '@/store/modules/async_route';
+  import { useAsyncRouteStore } from '@/store/modules/async-route';
   import { generatorMenu } from '@/utils/menu';
 
   defineProps({
@@ -95,4 +95,3 @@
     @update:expanded-keys="menuExpanded"
   />
 </template>
-@/store/modules/async-route
