@@ -8,6 +8,7 @@ export interface Menu {
   query?: string;
   redirect?: string;
   params?: string;
+  permissions?: string;
   menuType?: string;
   hidden?: number;
   cached?: number;
@@ -25,9 +26,9 @@ export interface Menu {
 /**
  * 查询对象
  */
-export interface MenuQueryParams {
+export interface MenuParams {
   menuName: string;
-  status: string;
+  status: string | null;
 }
 
 export interface Meta {

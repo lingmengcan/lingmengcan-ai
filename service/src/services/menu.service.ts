@@ -138,4 +138,27 @@ export class MenuService {
     }
     return menu.path;
   }
+
+  // 获取子菜单
+  async getChildren(parentId: string): Promise<Menu[]> {
+    // 获取所有子菜单以计算menuid
+    const children = await this.repository.find({
+      where: { parentId: parentId },
+      order: { menuId: 'DESC' },
+    });
+    return children;
+  }
+
+  /**
+   * 菜单，假删除，状态改为-1
+   *
+   * @param menuId
+   * @return 结果
+   */
+  async delStatus(menuId: string, userName: string) {
+    return await this.repository.update(
+      { menuId: menuId },
+      { status: -1, updatedUser: userName },
+    );
+  }
 }

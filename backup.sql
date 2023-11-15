@@ -204,7 +204,7 @@ CREATE TABLE `role` (
   `created_at` datetime NOT NULL,
   `updated_at` datetime NOT NULL,
   PRIMARY KEY (`role_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -214,9 +214,11 @@ CREATE TABLE `role` (
 LOCK TABLES `role` WRITE;
 /*!40000 ALTER TABLE `role` DISABLE KEYS */;
 INSERT INTO `role` VALUES
-(1,'管理员','admin',1,0,'超级管理员','admin','admin','2021-11-02 10:37:56','2022-08-31 15:24:50'),
-(2,'客人','guest',2,0,'客人','admin','admin','2021-11-02 10:38:34','2022-07-29 16:17:25'),
-(3,'test2','test',3,0,'test','admin','admin','2021-11-02 17:17:12','2023-11-13 15:39:20');
+(1,'管理员','admin',1,0,'超级管理员','admin','admin','2021-11-02 10:37:56','2023-11-14 17:15:19'),
+(2,'客人','guest',2,0,'客人','admin','admin','2021-11-02 10:38:34','2023-11-14 17:15:29'),
+(3,'test2','test',3,0,'test','admin','admin','2021-11-02 17:17:12','2023-11-13 15:39:20'),
+(16,'test','test2',4,0,'test2','admin','admin','2023-11-14 17:15:44','2023-11-14 17:15:44'),
+(17,'0','0',0,-1,'','admin','admin','2023-11-14 17:18:43','2023-11-14 20:02:41');
 /*!40000 ALTER TABLE `role` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -270,6 +272,7 @@ INSERT INTO `role_menu` VALUES
 (1,4),
 (1,5),
 (1,6),
+(1,7),
 (1,101),
 (1,102),
 (1,103),
@@ -277,6 +280,8 @@ INSERT INTO `role_menu` VALUES
 (1,201),
 (1,301),
 (1,302),
+(1,401),
+(1,402),
 (1,501),
 (1,601),
 (1,602),
@@ -295,6 +300,9 @@ INSERT INTO `role_menu` VALUES
 (2,103),
 (2,10202),
 (3,2),
+(3,7),
+(3,201),
+(3,401),
 (14,10101),
 (14,10102);
 /*!40000 ALTER TABLE `role_menu` ENABLE KEYS */;
@@ -421,4 +429,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-11-13 19:25:28
+-- Dump completed on 2023-11-15 17:32:55

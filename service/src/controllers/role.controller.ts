@@ -20,7 +20,6 @@ export class RoleController {
   @UseGuards(AuthGuard('jwt'))
   @Post('list')
   async findAll(@Body() dto: RoleListDto) {
-    // console.log(roleDto);
     return successJson(await this.roleService.findAll(dto));
   }
 

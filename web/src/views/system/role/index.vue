@@ -39,8 +39,8 @@
         ref="table"
         remote
         :columns="columns"
-        :data="data"
-        :loading="loading"
+        :data="tableData"
+        :loading="tableLoading"
         :pagination="pagination"
         :row-key="rowKey"
         @update:checked-row-keys="handleCheck"
@@ -120,7 +120,9 @@
         <n-button type="info" ghost icon-placement="left" @click="checkedAllHandle">
           全部{{ checkedAll ? '取消' : '选择' }}
         </n-button>
-        <n-button type="primary" :loading="formBtnLoading" @click="confirmMenuForm">提交</n-button>
+        <n-button type="primary" :table-loading="formBtnLoading" @click="confirmMenuForm"
+          >提交</n-button
+        >
       </n-space>
     </template>
   </n-modal>
@@ -237,7 +239,7 @@
           size: 'small',
           rubberBand: false,
           value: row['status'] === 0,
-          loading: !!row.changing,
+          tableLoading: !!row.changing,
           onUpdateValue: () => handleChangeStatus(row),
         });
       },
@@ -311,15 +313,15 @@
     },
   ];
 
-  const loading = ref(true);
+  const tableLoading = ref(true);
   const rowKey = (rowData: RowData) => {
     return rowData.roleId;
   };
   const checkedRowKeysRef = ref<DataTableRowKey[]>([]);
-  const data = ref<Role[]>([]);
+  const tableData = ref<Role[]>([]);
   const pagination = ref({
     page: 1,
-    pageSize: 5,
+    pageSize: 10,
     pageCount: 1,
     showSizePicker: true,
     showQuickJumper: true,
@@ -340,7 +342,7 @@
   // 绑定表格数据
   const query = async (page: number, pageSize = 10) => {
     try {
-      loading.value = true;
+      tableLoading.value = true;
       const requestData: RoleParams = {
         ...queryFormData.value,
         page: page,
@@ -349,15 +351,15 @@
 
       const res = await getRoleList(requestData);
       if (res?.code === 0) {
-        data.value = res.data?.list;
+        tableData.value = res.data?.list;
         pagination.value.page = page;
         pagination.value.pageSize = pageSize;
         pagination.value.itemCount = res.data.count;
       }
     } catch (err) {
-      data.value = [];
+      tableData.value = [];
     }
-    loading.value = false;
+    tableLoading.value = false;
   };
 
   // 查询菜单下拉树结构
