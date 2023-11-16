@@ -64,7 +64,15 @@
               key-field="menuId"
             />
           </n-form-item-gi>
-          <n-form-item-gi :span="24" label="菜单类型" path="menuType"> </n-form-item-gi>
+          <n-form-item-gi :span="24" label="菜单类型" path="menuType">
+            <n-radio-group v-model:value="drawerFormData.menuType">
+              <n-space>
+                <n-radio v-for="item in typeOptions" :key="item.value" :value="item.value">
+                  {{ item.label }}
+                </n-radio>
+              </n-space>
+            </n-radio-group>
+          </n-form-item-gi>
           <n-form-item-gi :span="24" label="菜单图标" path="icon"> </n-form-item-gi>
           <n-form-item-gi :span="24" label="菜单名称" path="menuName">
             <n-input v-model:value="drawerFormData.menuName" placeholder="请输入菜单名称" />
@@ -109,8 +117,12 @@
           >
             <n-input v-model:value="drawerFormData.permissions" placeholder="请输入权限标识" />
           </n-form-item-gi>
-          <n-form-item-gi :span="12" label="是否缓存" path="cached"> </n-form-item-gi>
-          <n-form-item-gi :span="12" label="是否隐藏" path="hidden"> </n-form-item-gi>
+          <n-form-item-gi :span="12" label="是否缓存" path="cached">
+            <n-switch v-model:value="drawerFormData.cached" />
+          </n-form-item-gi>
+          <n-form-item-gi :span="12" label="是否隐藏" path="hidden">
+            <n-switch v-model:value="drawerFormData.hidden" />
+          </n-form-item-gi>
           <n-form-item-gi :span="12" label="排序" path="sort">
             <n-input-number v-model:value="drawerFormData.sort" :min="0" />
           </n-form-item-gi>
@@ -304,6 +316,13 @@
     sort: { type: 'number', required: true, message: '排序必填', trigger: 'blur' },
   };
 
+  // 状态 type options
+  const typeOptions = ref([
+    { label: '目录', value: 'contents' },
+    { label: '菜单', value: 'menu' },
+    { label: '动作', value: 'action' },
+  ]);
+
   const treeMenus = ref<Menu[]>([]);
 
   // 查询菜单下拉树结构
@@ -353,20 +372,21 @@
 
   // 新增菜单
   const handleAdd = async () => {
+    getTreeselect();
+
     drawerTitle.value = '新增菜单';
     showDrawer.value = true;
     drawerFormData.value = menuInitData;
-
-    getTreeselect();
   };
 
   // 新增菜单
   const handleSubAdd = async (menuId: string) => {
+    getTreeselect();
+
     drawerTitle.value = '新增菜单';
     showDrawer.value = true;
     drawerFormData.value = menuInitData;
-
-    getTreeselect();
+    drawerFormData.value.parentId = menuId;
   };
 
   // 删除菜单 statu = -1
@@ -394,6 +414,8 @@
 
   // 修改菜单
   const handleEdit = async (row: RowData) => {
+    getTreeselect();
+
     drawerTitle.value = '修改菜单';
     showDrawer.value = true;
     drawerFormData.value = {
@@ -413,8 +435,6 @@
       sort: row.sort,
       description: row.description,
     };
-
-    getTreeselect();
   };
 
   const handleAddandEdit = (e: MouseEvent) => {
