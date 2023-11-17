@@ -138,7 +138,7 @@
     getRoleMenuIds,
   } from '@/api/system/role';
   import { Role, RoleMenus, RoleParams } from '@/models/role';
-  import { formatDateTime, getTreeAll, renderIcon } from '@/utils';
+  import { formatDateTime, getTreeAll } from '@/utils';
   import { DataTableRowKey, FormInst, NButton, NSwitch, useDialog, useMessage } from 'naive-ui';
   import { h, onMounted, ref } from 'vue';
   import { useRouter } from 'vue-router';
@@ -153,6 +153,7 @@
   import { handleTree } from '@/utils/menu';
   import { Menu } from '@/models/menu';
   import { RowData } from 'naive-ui/es/data-table/src/interface';
+  import { renderIcon } from '@/utils/icons';
 
   const message = useMessage();
   const dialog = useDialog();

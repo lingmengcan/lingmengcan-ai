@@ -1,13 +1,4 @@
-import { NIcon } from 'naive-ui';
-import { Component, h } from 'vue';
 import dayjs from 'dayjs';
-
-/**
- * render 图标
- * */
-export function renderIcon(icon: Component) {
-  return () => h(NIcon, null, { default: () => h(icon) });
-}
 
 /**
  * Sums the passed percentage to the R, G or B of a HEX color

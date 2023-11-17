@@ -73,7 +73,9 @@
               </n-space>
             </n-radio-group>
           </n-form-item-gi>
-          <n-form-item-gi :span="24" label="菜单图标" path="icon"> </n-form-item-gi>
+          <n-form-item-gi :span="24" label="菜单图标" path="icon">
+            <SelectIcon :select-icon="drawerFormData.icon" />
+          </n-form-item-gi>
           <n-form-item-gi :span="24" label="菜单名称" path="menuName">
             <n-input v-model:value="drawerFormData.menuName" placeholder="请输入菜单名称" />
           </n-form-item-gi>
@@ -150,13 +152,15 @@
 <script lang="ts" setup>
   import { h, onMounted, ref } from 'vue';
   import SelectStatus from '@/components/select/select-status.vue';
-  import { DataTableRowKey, NButton, NTag, useDialog, useMessage } from 'naive-ui';
+  import SelectIcon from '@/components/select/select-icon.vue';
+  import { DataTableRowKey, NButton, NIcon, NTag, useDialog, useMessage } from 'naive-ui';
   import { RowData } from 'naive-ui/es/data-table/src/interface';
   import { DeleteOutlined, EditOutlined, FolderAddOutlined, PlusOutlined } from '@vicons/antd';
-  import { formatDateTime, renderIcon } from '@/utils';
+  import { formatDateTime } from '@/utils';
   import { Menu, MenuParams } from '@/models/menu';
   import { deleteMenu, getMenuList, getMenus } from '@/api/system/menu';
   import { handleTree } from '@/utils/menu';
+  import { renderIcon } from '@/utils/icons';
 
   const message = useMessage();
   const dialog = useDialog();

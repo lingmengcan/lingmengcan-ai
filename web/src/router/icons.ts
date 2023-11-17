@@ -1,4 +1,4 @@
-import { renderIcon } from '@/utils';
+import { renderIcon } from '@/utils/icons';
 import { DashboardOutlined, SketchOutlined, MonitorOutlined } from '@vicons/antd';
 import { BrushOutline, ChatboxOutline, OptionsSharp } from '@vicons/ionicons5';
 
