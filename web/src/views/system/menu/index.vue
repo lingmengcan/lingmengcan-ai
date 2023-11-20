@@ -160,7 +160,7 @@
   import { Menu, MenuParams } from '@/models/menu';
   import { deleteMenu, getMenuList, getMenus } from '@/api/system/menu';
   import { handleTree } from '@/utils/menu';
-  import { renderIcon } from '@/utils/icons';
+  import { renderIcon, renderIonicons5 } from '@/utils/icons';
 
   const message = useMessage();
   const dialog = useDialog();
@@ -187,6 +187,9 @@
       key: 'icon',
       title: '图标',
       width: 50,
+      render(row: RowData) {
+        return row.icon ? h(renderIonicons5(row.icon, 20)) : null;
+      },
     },
     {
       key: 'sort',

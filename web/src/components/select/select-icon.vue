@@ -3,9 +3,7 @@
     <template #trigger>
       <n-button>
         <template v-if="defaultIcon" #icon>
-          <n-icon size="20" color="#0e7a0d">
-            <component :is="AntdIcons[selectItem.name]" />
-          </n-icon>
+          <component :is="vicons[selectItem.name]" />
         </template>
         {{ selectItem.name }}
       </n-button>
@@ -17,7 +15,7 @@
           @click="onIconClick(item)"
         >
           <n-icon size="30" color="#0e7a0d">
-            <component :is="AntdIcons[item]" />
+            <component :is="vicons[item]" />
           </n-icon>
           <n-ellipsis :line-clamp="1" style="font-size: 12px">{{ item }}</n-ellipsis>
         </div>
@@ -37,11 +35,11 @@
 
 <script setup lang="ts">
   import { computed, ref, shallowReactive } from 'vue';
-  import * as AntdIcons from '@vicons/antd';
+  import * as vicons from '@vicons/ionicons5';
   import { PopoverInst } from 'naive-ui';
 
   // const antdIcons = import('@vicons/antd');
-  const iconNames = Object.keys(AntdIcons);
+  const iconNames = Object.keys(vicons);
 
   const props = defineProps({
     selectIcon: {

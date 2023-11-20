@@ -1,23 +1,19 @@
 <template>
-  <n-icon size="40" :depth="1">
-    <component :is="iconComponent" />
-  </n-icon>
+  <div> <component :is="iconComponent" v-if="iconComponent" /> </div>
 </template>
 
 <script lang="ts" setup>
-  import { renderIconName } from '@/utils/icons';
-  import { markRaw, ref } from 'vue';
+  import { renderIonicons5 } from '@/utils/icons';
+  import { DefineComponent, onMounted, shallowRef } from 'vue';
 
   // 从数据库获取的图标名称
   const iconNameFromDatabase = 'PlusOutlined';
 
   // 用于存储图标组件的响应式引用
-  const iconComponent = ref(renderIconName(iconNameFromDatabase));
+  const iconComponent = shallowRef<DefineComponent | null | String>(null);
 
-  // iconComponent.value = renderIconName(iconNameFromDatabase);
-
-  // 按需导入图标组件
-  // import(`@vicons/antd`).then((module) => {
-  //   iconComponent.value = module[iconNameFromDatabase];
-  // });
+  onMounted(() => {
+    // 初始化时调用 renderIconName 函数
+    iconComponent.value = renderIonicons5(iconNameFromDatabase);
+  });
 </script>
