@@ -6,7 +6,7 @@
           <n-input v-model:value="queryFormData.menuName" placeholder="请输入菜单名称" />
         </n-form-item-gi>
         <n-form-item-gi :span="6" label="状态" path="status">
-          <SelectStatus v-model:modelValue="queryFormData.status" />
+          <SelectStatus v-model:status="queryFormData.status" />
         </n-form-item-gi>
         <n-form-item-gi :span="6">
           <n-space>
@@ -74,10 +74,19 @@
             </n-radio-group>
           </n-form-item-gi>
           <n-form-item-gi :span="24" label="菜单图标" path="icon">
-            <SelectIcon :select-icon="drawerFormData.icon" />
+            <SelectIcon v-model:value="drawerFormData.icon" @selected="onSelectedIcon" />
           </n-form-item-gi>
-          <n-form-item-gi :span="24" label="菜单名称" path="menuName">
+          <n-form-item-gi :span="12" label="菜单名称" path="menuName">
             <n-input v-model:value="drawerFormData.menuName" placeholder="请输入菜单名称" />
+          </n-form-item-gi>
+          <n-form-item-gi :span="12" label="菜单代码" path="menuCode">
+            <n-input v-model:value="drawerFormData.menuCode" placeholder="请输入菜单代码" />
+          </n-form-item-gi>
+          <n-form-item-gi :span="12" label="排序" path="sort">
+            <n-input-number v-model:value="drawerFormData.sort" :min="0" />
+          </n-form-item-gi>
+          <n-form-item-gi :span="12" label="状态" path="status">
+            <SelectStatus v-model:status="drawerFormData.status" />
           </n-form-item-gi>
           <n-form-item-gi
             v-if="drawerFormData.menuType !== 'action'"
@@ -125,12 +134,7 @@
           <n-form-item-gi :span="12" label="是否隐藏" path="hidden">
             <n-switch v-model:value="drawerFormData.hidden" />
           </n-form-item-gi>
-          <n-form-item-gi :span="12" label="排序" path="sort">
-            <n-input-number v-model:value="drawerFormData.sort" :min="0" />
-          </n-form-item-gi>
-          <n-form-item-gi :span="12" label="状态" path="status">
-            <SelectStatus v-model:modelValue="drawerFormData.status" />
-          </n-form-item-gi>
+
           <n-form-item-gi label="描述" :span="24">
             <n-input
               v-model:value="drawerFormData.description"
@@ -153,12 +157,12 @@
   import { h, onMounted, ref } from 'vue';
   import SelectStatus from '@/components/select/select-status.vue';
   import SelectIcon from '@/components/select/select-icon.vue';
-  import { DataTableRowKey, NButton, NIcon, NTag, useDialog, useMessage } from 'naive-ui';
+  import { DataTableRowKey, FormInst, NButton, NIcon, NTag, useDialog, useMessage } from 'naive-ui';
   import { RowData } from 'naive-ui/es/data-table/src/interface';
   import { DeleteOutlined, EditOutlined, FolderAddOutlined, PlusOutlined } from '@vicons/antd';
   import { formatDateTime } from '@/utils';
   import { Menu, MenuParams } from '@/models/menu';
-  import { deleteMenu, getMenuList, getMenus } from '@/api/system/menu';
+  import { addMenu, deleteMenu, editMenu, getMenuList, getMenus } from '@/api/system/menu';
   import { handleTree } from '@/utils/menu';
   import { renderIcon, renderIonicons5 } from '@/utils/icons';
 
@@ -167,6 +171,9 @@
 
   const showDrawer = ref(false);
   const drawerTitle = ref('');
+
+  const formRef = ref<FormInst | null>(null);
+  const drawerFormRef = ref<FormInst | null>(null);
 
   const queryFormData = ref({
     menuName: '',
@@ -303,10 +310,11 @@
     parentId: '',
     menuType: 'contents',
     menuName: '',
+    menuCode: '',
     icon: '',
     status: 0,
-    hidden: 0,
-    cached: 0,
+    hidden: false,
+    cached: false,
     sort: 0,
     permissions: '',
     path: '',
@@ -319,7 +327,6 @@
   const drawerFormData = ref(menuInitData);
   const drawerRules = {
     menuName: { required: true, message: '菜单名称必填', trigger: 'blur' },
-    status: { required: true, message: '状态必填', trigger: 'blur' },
     sort: { type: 'number', required: true, message: '排序必填', trigger: 'blur' },
   };
 
@@ -341,6 +348,10 @@
       treeMenus.value.push(menu);
     });
   };
+
+  function onSelectedIcon(item: string) {
+    drawerFormData.value.icon = item;
+  }
 
   // 绑定表格数据
   const query = async () => {
@@ -430,9 +441,10 @@
       parentId: row.parentId,
       menuType: row.menuType,
       menuName: row.menuName,
+      menuCode: row.menuCode,
       icon: row.icon,
-      hidden: row.hidden,
-      cached: row.cached,
+      hidden: row.hidden === 1,
+      cached: row.cached === 1,
       permissions: row.permissions,
       path: row.path,
       query: row.query,
@@ -446,35 +458,32 @@
 
   const handleAddandEdit = (e: MouseEvent) => {
     e.preventDefault();
-    // const messageReactive = message.loading('处理中', {
-    //   duration: 0,
-    // });
-    // drawerFormRef.value?.validate(async (errors) => {
-    //   if (!errors) {
-    //     const requestData: Menu = {
-    //       ...drawerFormData.value,
-    //       createdUser: '',
-    //       updatedUser: '',
-    //       createdAt: '',
-    //       updatedAt: '',
-    //     };
+    const messageReactive = message.loading('处理中', {
+      duration: 0,
+    });
 
-    //     const res = drawerFormData.value.menuId
-    //       ? await editMenu(requestData)
-    //       : await addMenu(requestData);
+    drawerFormRef.value?.validate(async (errors) => {
+      if (!errors) {
+        const requestData: Menu = {
+          ...drawerFormData.value,
+        };
 
-    //     if (res?.code === 0) {
-    //       showDrawer.value = false;
-    //       drawerFormData.value = menuInitData;
-    //       query(pagination.value.page, pagination.value.pageSize);
-    //     }
-    //   } else {
-    //     console.log(errors);
-    //     message.error('验证不通过');
-    //   }
+        const res = drawerFormData.value.menuId
+          ? await editMenu(requestData)
+          : await addMenu(requestData);
 
-    //   messageReactive.destroy();
-    // });
+        if (res?.code === 0) {
+          showDrawer.value = false;
+          drawerFormData.value = menuInitData;
+          query();
+        }
+      } else {
+        console.log(errors);
+        message.error('验证不通过');
+      }
+
+      messageReactive.destroy();
+    });
   };
 
   onMounted(async () => {

@@ -2,10 +2,10 @@
   <n-popover ref="popoverRef" trigger="click" placement="bottom-start" width="500">
     <template #trigger>
       <n-button>
-        <template v-if="defaultIcon" #icon>
-          <component :is="vicons[selectItem.name]" />
+        <template v-if="selectItem" #icon>
+          <component :is="vicons[selectItem]" />
         </template>
-        {{ selectItem.name }}
+        {{ selectItem }}
       </n-button>
     </template>
     <n-grid :cols="4" x-gap="1">
@@ -42,20 +42,24 @@
   const iconNames = Object.keys(vicons);
 
   const props = defineProps({
-    selectIcon: {
+    value: {
       type: String,
       required: true,
     },
   });
-  const emit = defineEmits(['selected']);
+  const emit = defineEmits(['updated:value', 'selected']);
 
   const popoverRef = ref<PopoverInst | null>(null);
-  const defaultIcon = ref(props.selectIcon);
   const pageSize = 20;
   const icons = shallowReactive(iconNames.slice(0, 20));
   const currentPage = ref(1);
   const itemCount = computed(() => iconNames.length);
-  const selectItem = ref({ name: defaultIcon.value || '选择图标' });
+  const selectItem = ref(props.value || '选择图标');
+
+  //监控父组件变化
+  // watchEffect(() => {
+  //   selectItem.value = props.value || '选择图标';
+  // });
 
   function onUpdatePage(page: number) {
     currentPage.value = page;
@@ -64,10 +68,10 @@
     icons.push(...iconNames.slice(start, start + pageSize));
   }
 
-  function onIconClick(item: any) {
-    selectItem.value.name = item;
-    defaultIcon.value = item;
+  function onIconClick(item: string) {
+    selectItem.value = item;
 
+    emit('updated:value', item);
     emit('selected', item);
     popoverRef.value?.setShow(false);
   }

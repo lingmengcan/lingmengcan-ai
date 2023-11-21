@@ -17,6 +17,12 @@ export const getMenuRoutes = () => {
 export const getMenuList = (data: MenuParams) =>
   http.request<Result<Menu[]>>('menu/list', Method.POST, data);
 
+// 新增
+export const addMenu = (data: Menu) => http.request<Result<Menu>>('menu/add', Method.POST, data);
+
+// 修改
+export const editMenu = (data: Menu) => http.request<Result<Menu>>('menu/edit', Method.POST, data);
+
 // 删除
 export const deleteMenu = (menuId: string) =>
   http.request<Result<Menu>>('menu/del', Method.POST, { menuId });

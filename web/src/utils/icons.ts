@@ -19,6 +19,6 @@ export function renderIonicons5(icon: string, size = 20) {
     return renderIcon(Icons[icon], size);
   } else {
     console.error(`Icon "${icon}" not found in @vicons/ionicons5`);
-    return null;
+    return '';
   }
 }

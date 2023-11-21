@@ -1,4 +1,5 @@
 import { MenuListDto } from '@/dtos/menu.dto';
+import { Menu } from '@/entities/menu.entity';
 import { MenuService } from '@/services/menu.service';
 import { errorJson, successJson } from '@/utils/result';
 import {
@@ -34,6 +35,23 @@ export class MenuController {
   @Post('/list')
   async findAll(@Body() dto: MenuListDto) {
     return successJson(await this.menuService.findAll(dto));
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Post('/add')
+  async add(@Body() menu: Menu, @Request() req: any) {
+    const userName = req.user.userName;
+    menu.updatedUser = userName;
+    menu.createdUser = userName;
+    return successJson(await this.menuService.addMenu(menu));
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Post('/edit')
+  async edit(@Body() menu: Menu, @Request() req: any) {
+    const userName = req.user.userName;
+    menu.updatedUser = userName;
+    return successJson(await this.menuService.updateMenu(menu));
   }
 
   @UseGuards(AuthGuard('jwt'))

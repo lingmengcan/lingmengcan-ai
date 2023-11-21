@@ -98,31 +98,29 @@
     <div class="py-3 menu-list">
       <n-tree
         block-line
-        cascade
         checkable
         :virtual-scroll="true"
         :data="treeData"
         key-field="menuId"
         label-field="menuName"
-        :expanded-keys="expandedKeys"
+        :default-expand-all="expandAll"
         :checked-keys="checkedKeys"
         style="max-height: 950px; overflow: hidden"
         @update:checked-keys="checkedTree"
-        @update:expanded-keys="onExpandedKeys"
       />
     </div>
     <template #action>
       <n-space>
-        <n-button type="info" ghost icon-placement="left" @click="packHandle">
-          全部{{ expandedKeys.length ? '收起' : '展开' }}
+        <n-button type="info" ghost icon-placement="left" @click="expandHandle">
+          全部{{ expandAll ? '收起' : '展开' }}
         </n-button>
 
         <n-button type="info" ghost icon-placement="left" @click="checkedAllHandle">
           全部{{ checkedAll ? '取消' : '选择' }}
         </n-button>
-        <n-button type="primary" :table-loading="formBtnLoading" @click="confirmMenuForm"
-          >提交</n-button
-        >
+        <n-button type="primary" :table-loading="formBtnLoading" @click="confirmMenuForm">
+          提交
+        </n-button>
       </n-space>
     </template>
   </n-modal>
@@ -138,7 +136,7 @@
     getRoleMenuIds,
   } from '@/api/system/role';
   import { Role, RoleMenus, RoleParams } from '@/models/role';
-  import { formatDateTime, getTreeAll } from '@/utils';
+  import { formatDateTime } from '@/utils';
   import { DataTableRowKey, FormInst, NButton, NSwitch, useDialog, useMessage } from 'naive-ui';
   import { h, onMounted, ref } from 'vue';
   import { useRouter } from 'vue-router';
@@ -167,8 +165,9 @@
   const checkedAll = ref(false);
   const editRoleTitle = ref('');
   const treeData = ref<Menu[]>([]);
-  const expandedKeys = ref(['']);
   const checkedKeys = ref<string[]>([]);
+  const expandAll = ref(false);
+  const allMenuKeys = ref<string[]>([]);
   const roleId = ref('');
 
   const formRef = ref<FormInst | null>(null);
@@ -367,6 +366,7 @@
   const getMenuTree = () => {
     getMenus().then((response) => {
       const menus = handleTree<Menu>(response.data, 'menuId');
+      allMenuKeys.value = response.data.map((item) => item.menuId);
       treeData.value = menus;
     });
   };
@@ -506,24 +506,18 @@
   };
 
   function checkedTree(keys: string[]) {
+    console.log(keys);
     checkedKeys.value = keys;
   }
 
-  function onExpandedKeys(keys) {
-    expandedKeys.value = keys;
-  }
-
-  function packHandle() {
-    if (expandedKeys.value.length) {
-      expandedKeys.value = [];
-    } else {
-      expandedKeys.value = treeData.value.map((item) => item.menuId) as [];
-    }
+  function expandHandle() {
+    expandAll.value = !expandAll.value;
   }
 
   function checkedAllHandle() {
     if (!checkedAll.value) {
-      checkedKeys.value = getTreeAll(treeData.value);
+      checkedKeys.value = allMenuKeys.value;
+      console.log(checkedKeys.value);
       checkedAll.value = true;
     } else {
       checkedKeys.value = [];

@@ -31,7 +31,7 @@ export const generateRoutes = (routerMap: MenuRoute[], parent?: MenuRoute): any[
       meta: {
         ...item.meta,
         label: item.meta.title,
-        icon: renderIonicons5(item.meta.icon) || null,
+        icon: item.meta.icon ? renderIonicons5(item.meta.icon) : null,
         permissions: item.meta.permissions || null,
       },
     };

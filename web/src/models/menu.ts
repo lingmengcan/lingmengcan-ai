@@ -10,8 +10,8 @@ export interface Menu {
   params?: string;
   permissions?: string;
   menuType?: string;
-  hidden?: number;
-  cached?: number;
+  hidden?: boolean;
+  cached?: boolean;
   icon?: string;
   sort?: number;
   status?: number;

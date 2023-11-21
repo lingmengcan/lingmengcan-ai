@@ -2,15 +2,15 @@
   import { PropType, ref, watchEffect } from 'vue';
 
   const props = defineProps({
-    modelValue: {
+    status: {
       type: [Number, String, null] as PropType<number | string | null>,
       default: null,
     },
   });
 
-  const selectValue = ref(props.modelValue);
+  const selectValue = ref(props.status);
 
-  const emit = defineEmits(['update:modelValue']);
+  const emit = defineEmits(['update:status']);
 
   // 状态select options
   const statusOptions = ref([
@@ -20,11 +20,11 @@
 
   //监控父组件变化
   watchEffect(() => {
-    selectValue.value = props.modelValue;
+    selectValue.value = props.status;
   });
 
   const handleSelect = () => {
-    emit('update:modelValue', selectValue.value);
+    emit('update:status', selectValue.value);
   };
 </script>
 

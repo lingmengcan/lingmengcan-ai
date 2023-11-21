@@ -150,6 +150,90 @@ export class MenuService {
   }
 
   /**
+   * 修改
+   *
+   * @param menu 信息
+   * @return 结果
+   */
+  async updateMenu(menu: Menu) {
+    const entity = await this.repository.findOneBy({ menuId: menu.menuId });
+    entity.parentId = menu.parentId;
+    entity.menuName = menu.menuName;
+    entity.menuCode = menu.menuCode;
+    entity.component = menu.component;
+    entity.path = menu.path;
+    entity.permissions = menu.permissions;
+    entity.redirect = menu.redirect;
+    entity.query = menu.query;
+    entity.menuType = menu.menuType;
+    entity.hidden = menu.hidden;
+    entity.cached = menu.cached;
+    entity.icon = menu.icon;
+    entity.description = menu.description;
+    entity.sort = menu.sort;
+    entity.status = menu.status;
+    entity.updatedUser = menu.updatedUser;
+    entity.updatedAt = new Date();
+    return this.repository.save(entity);
+  }
+
+  /**
+   * 新增
+   *
+   * @param menu 信息
+   * @return 结果
+   */
+  async addMenu(menu: Menu) {
+    // const menuId = await this.generateMenuId(menu.parentId);
+
+    const entity = new Menu();
+    // entity.menuId = menuId;
+    entity.parentId = menu.parentId;
+    entity.menuName = menu.menuName;
+    entity.menuCode = menu.menuCode;
+    entity.component = menu.component;
+    entity.path = menu.path;
+    entity.permissions = menu.permissions;
+    entity.redirect = menu.redirect;
+    entity.query = menu.query;
+    entity.menuType = menu.menuType;
+    entity.hidden = menu.hidden;
+    entity.cached = menu.cached;
+    entity.icon = menu.icon;
+    entity.description = menu.description;
+    entity.sort = menu.sort;
+    entity.status = menu.status;
+    entity.createdUser = menu.createdUser;
+    entity.updatedUser = menu.updatedUser;
+    entity.createdAt = new Date();
+    entity.updatedAt = new Date();
+    return this.repository.save(entity);
+  }
+
+  // 生成最新的menuid
+  // async generateMenuId(parentId: string): Promise<string> {
+  //   let menuId = '';
+  //   // 获取所有子菜单以计算menuid
+  //   const children = await this.repository.find({
+  //     where: { parentId: parentId },
+  //     order: { menuId: 'DESC' },
+  //   });
+
+  //   // 每个菜单的子菜单，最多99个。不然id会冲突
+  //   if (children.length === 0) {
+  //     menuId = parentId + '01';
+  //   } else {
+  //     menuId = String(Number(children.at(0).menuId) + 1);
+  //   }
+
+  //   if (!menuId) {
+  //     throw new ServiceUnavailableException('50001', '生成新的menuid出错！');
+  //   }
+
+  //   return menuId;
+  // }
+
+  /**
    * 菜单，假删除，状态改为-1
    *
    * @param menuId
