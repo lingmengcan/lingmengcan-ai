@@ -1,7 +1,7 @@
 import './styles/tailwind.css';
 
 import { createApp } from 'vue';
-import { setupNaive, setupNaiveDiscreteApi } from '@/plugins';
+import { setupDirectives, setupNaive, setupNaiveDiscreteApi } from '@/plugins';
 
 import App from './App.vue';
 
@@ -18,6 +18,9 @@ async function bootstrap() {
   setupNaive(app);
   // 挂载 naive-ui 脱离上下文的 Api
   setupNaiveDiscreteApi();
+
+  // 注册全局自定义指令，如：v-permission权限指令
+  setupDirectives(app);
 
   // 挂载路由
   setupRouter(app);

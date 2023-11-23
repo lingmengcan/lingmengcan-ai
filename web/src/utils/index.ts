@@ -50,21 +50,6 @@ export const isObject = (val: any): val is Record<any, any> => {
 };
 
 /**
- *  找到所有节点
- * */
-const treeAll: any[] = [];
-export function getTreeAll(data: any[], key = 'key'): any[] {
-  data.map((item) => {
-    treeAll.push(item[key]);
-    if (item.children && item.children.length) {
-      getTreeAll(item.children);
-    }
-  });
-
-  return treeAll;
-}
-
-/**
  * @desc  格式化时间
  * @param {(Object|string|number)} time
  * @param {string} format

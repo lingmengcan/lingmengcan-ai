@@ -11,7 +11,9 @@
         <n-form-item-gi :span="6">
           <n-space>
             <n-button @click="clearQuery"> 重置 </n-button>
-            <n-button type="primary" @click="handleQuery"> 查询 </n-button>
+            <n-button v-permission="['system_menu_query']" type="primary" @click="handleQuery">
+              查询
+            </n-button>
           </n-space>
         </n-form-item-gi>
       </n-grid>
@@ -22,7 +24,7 @@
     <div class="table-toolbar">
       <!--顶部左侧区域-->
       <div class="flex items-center table-toolbar-left">
-        <n-button type="primary" @click="handleAdd">
+        <n-button v-permission="['system_menu_add']" type="primary" @click="handleAdd">
           <template #icon>
             <n-icon>
               <PlusOutlined />
@@ -165,6 +167,7 @@
   import { addMenu, deleteMenu, editMenu, getMenuList, getMenus } from '@/api/system/menu';
   import { handleTree } from '@/utils/menu';
   import { renderIcon, renderIonicons5 } from '@/utils/icons';
+  import { hasPermission } from '@/utils/permission';
 
   const message = useMessage();
   const dialog = useDialog();
@@ -261,6 +264,7 @@
               type: 'info',
               tertiary: true,
               style: 'margin-left: 10px;',
+              disabled: !hasPermission('system_menu_add'),
               onClick: () => handleSubAdd(row.menuId),
             },
             { default: () => '新增子菜单', icon: renderIcon(FolderAddOutlined) },
@@ -271,6 +275,7 @@
               size: 'small',
               type: 'primary',
               style: 'margin-left: 10px;',
+              disabled: !hasPermission('system_menu_edit'),
               onClick: () => handleEdit(row),
             },
             {
@@ -285,6 +290,7 @@
               size: 'small',
               type: 'error',
               style: 'margin-left: 10px;',
+              disabled: !hasPermission('system_menu_delete'),
               onClick: () => handleDelete(row),
             },
             {

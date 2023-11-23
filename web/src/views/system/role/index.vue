@@ -14,7 +14,9 @@
         <n-form-item-gi :span="6">
           <n-space>
             <n-button @click="clearQuery"> 重置 </n-button>
-            <n-button type="primary" @click="handleQuery"> 查询 </n-button>
+            <n-button v-permission="['system_role_query']" type="primary" @click="handleQuery">
+              查询
+            </n-button>
           </n-space>
         </n-form-item-gi>
       </n-grid>
@@ -24,7 +26,7 @@
     <div class="table-toolbar">
       <!--顶部左侧区域-->
       <div class="flex items-center table-toolbar-left">
-        <n-button type="primary" @click="handleAdd">
+        <n-button v-permission="['system_role_add']" type="primary" @click="handleAdd">
           <template #icon>
             <n-icon>
               <PlusOutlined />
@@ -152,6 +154,7 @@
   import { Menu } from '@/models/menu';
   import { RowData } from 'naive-ui/es/data-table/src/interface';
   import { renderIcon } from '@/utils/icons';
+  import { hasPermission } from '@/utils/permission';
 
   const message = useMessage();
   const dialog = useDialog();
@@ -239,6 +242,7 @@
           size: 'small',
           rubberBand: false,
           value: row['status'] === 0,
+          disabled: !hasPermission('system_role_edit'),
           tableLoading: !!row.changing,
           onUpdateValue: () => handleChangeStatus(row),
         });
@@ -266,6 +270,7 @@
               size: 'small',
               type: 'primary',
               secondary: true,
+              disabled: !hasPermission('system_role_edit'),
               onClick: () => handleMenu(row),
             },
             { default: () => '菜单权限', icon: renderIcon(MenuOutlined) },
@@ -277,6 +282,7 @@
               type: 'info',
               tertiary: true,
               style: 'margin-left: 10px;',
+              disabled: !hasPermission('system_role_edit'),
               onClick: () => handleUser(row),
             },
             { default: () => '分配用户', icon: renderIcon(UserSwitchOutlined) },
@@ -287,6 +293,7 @@
               size: 'small',
               type: 'primary',
               style: 'margin-left: 10px;',
+              disabled: !hasPermission('system_role_edit'),
               onClick: () => handleEdit(row),
             },
             {
@@ -301,6 +308,7 @@
               size: 'small',
               type: 'error',
               style: 'margin-left: 10px;',
+              disabled: !hasPermission('system_role_delete'),
               onClick: () => handleDelete(row),
             },
             {
