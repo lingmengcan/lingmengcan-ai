@@ -13,6 +13,6 @@
   "proseWrap": "never",
   "requirePragma": false,
   "insertPragma": false,
-  "htmlWhitespaceSensitivity": "strict",
+  "htmlWhitespaceSensitivity": "ignore",
   "endOfLine": "auto"
 }

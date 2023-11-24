@@ -10,6 +10,7 @@ const layoutMap = new Map<string, () => Promise<typeof import('*.vue')>>();
 
 layoutMap.set('layout', Layout);
 layoutMap.set('admin', AdminLayout);
+layoutMap.set('parent', ParentLayout);
 layoutMap.set('iframe', IFrame);
 
 /**
