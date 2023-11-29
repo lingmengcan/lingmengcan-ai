@@ -2,10 +2,9 @@
   <n-button class="custom-button">Click me</n-button>
 </template>
 
-<script>
-  export default {
-    name: 'App',
-  };
+<script lang="ts" setup>
+  import { useChat } from '@/store/modules/chat';
+  const chatStore = useChat();
 </script>
 
 <style scoped>
