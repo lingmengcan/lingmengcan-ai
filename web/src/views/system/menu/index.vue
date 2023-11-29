@@ -10,7 +10,7 @@
         </n-form-item-gi>
         <n-form-item-gi :span="6">
           <n-space>
-            <n-button @click="clearQuery"> 重置 </n-button>
+            <n-button @click="clearQuery">重置</n-button>
             <n-button v-permission="['system_menu_query']" type="primary" @click="handleQuery">
               查询
             </n-button>
