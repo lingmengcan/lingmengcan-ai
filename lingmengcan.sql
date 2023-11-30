@@ -11,7 +11,7 @@
  Target Server Version : 80200 (8.2.0)
  File Encoding         : 65001
 
- Date: 29/11/2023 18:54:55
+ Date: 30/11/2023 14:19:37
 */
 
 SET NAMES utf8mb4;
@@ -120,7 +120,7 @@ CREATE TABLE `menu`  (
 -- ----------------------------
 INSERT INTO `menu` VALUES (1, 0, '系统设置', 'system', 'admin', 'system', '', 'user', '', 'contents', 0, 0, 'SettingsOutline', 3, 0, '系统管理目录', 'admin', 'admin', '2021-09-26 14:42:01', '2023-11-29 15:39:46');
 INSERT INTO `menu` VALUES (2, 0, 'AI Draw', 'draw', 'layout', 'draw', '', '/draw/generate', 'draw_generate', 'contents', 0, 0, 'BrushOutline', 2, 0, 'AI Draw', 'admin', 'admin', '2021-09-26 14:46:28', '2022-09-06 10:41:04');
-INSERT INTO `menu` VALUES (3, 0, 'LLM Chat', 'llm', 'layout', 'chat', NULL, 'index', 'chat_index', 'contents', 0, 0, 'ChatboxOutline', 1, 0, 'LLM Chat', 'admin', 'admin', '2022-06-08 16:46:18', '2023-11-29 15:40:15');
+INSERT INTO `menu` VALUES (3, 0, 'LLM Chat', 'llm', 'layout', 'chat/', NULL, 'index', 'chat_index', 'contents', 0, 0, 'ChatboxOutline', 1, 0, 'LLM Chat', 'admin', 'admin', '2022-06-08 16:46:18', '2023-11-30 09:59:43');
 INSERT INTO `menu` VALUES (4, 0, '系统监控', 'monitor', 'layout', 'monitor', NULL, NULL, '', 'contents', 0, 0, 'TvOutline', 4, 0, '系统工具', 'admin', 'admin', '2022-05-19 11:11:06', '2022-08-15 11:13:19');
 INSERT INTO `menu` VALUES (5, 0, '仪表盘', 'dashboard', 'layout', 'dashboard', '', '/dashboard/list', 'dashboard_list', 'contents', 0, 0, 'StatsChartOutline', 5, 0, '', 'admin', 'admin', '2022-08-15 11:06:50', '2023-11-24 19:30:15');
 INSERT INTO `menu` VALUES (6, 0, '可视化', 'visual', 'canvas', 'visual', '', '', '', 'contents', 0, 1, 'AccessibilityOutline', 7, 1, 'a', 'admin', 'admin', '2022-08-25 17:16:46', '2023-11-21 16:24:42');
@@ -130,12 +130,12 @@ INSERT INTO `menu` VALUES (9, 1, '角色管理', 'role', '/system/role/index', '
 INSERT INTO `menu` VALUES (10, 1, '菜单管理', 'menu', '/system/menu/index', 'menu', '', NULL, 'system_menu_index', 'menu', 0, 0, '', 3, 0, '菜单管理菜单', 'admin', 'admin', '2021-10-21 10:38:03', '2023-11-23 11:12:12');
 INSERT INTO `menu` VALUES (11, 1, '字典管理', 'param', '/system/param/index', 'param', NULL, NULL, 'system_param_index', 'menu', 0, 0, '', 4, 0, '字典管理', 'admin', 'admin', '2022-05-20 11:09:04', '2023-11-22 10:10:02');
 INSERT INTO `menu` VALUES (12, 2, '生成', NULL, '/draw/generate', 'generate', '', '', 'draw_generate', 'menu', 0, 0, '', 1, 0, '数据门户列表', 'admin', 'admin', '2022-08-15 17:01:20', '2022-09-06 10:51:55');
-INSERT INTO `menu` VALUES (13, 3, '对话', 'chat', '/chat/index', 'index', NULL, NULL, 'chat_index', 'menu', 0, 0, '', 1, 0, 'chat', 'admin', 'admin', '2022-08-25 17:16:46', '2023-11-29 15:41:00');
+INSERT INTO `menu` VALUES (13, 3, '对话', 'chat', '/chat/index', ':uuid?', NULL, NULL, 'chat_index', 'menu', 0, 0, '', 2, 0, 'chat', 'admin', 'admin', '2022-08-25 17:16:46', '2023-11-30 09:54:18');
 INSERT INTO `menu` VALUES (14, 4, '日志管理', NULL, '/monitor/log/index', 'log', NULL, NULL, 'monitor:log:index', 'menu', 0, 0, '', 1, 0, '301', 'admin', 'admin', '2022-05-19 11:18:49', '2022-07-12 15:07:32');
 INSERT INTO `menu` VALUES (15, 4, '服务运行', NULL, '/monitor/server/index', 'server', '', '', 'monitor:server:index', 'menu', 0, 0, '', 1, 0, '', 'admin', 'admin', '2022-07-04 14:09:38', '2022-07-12 17:14:00');
 INSERT INTO `menu` VALUES (16, 5, '仪表盘列表', NULL, '/dashboard/index', 'list', '', '', 'dashboard_list', 'menu', 0, 0, '', 1, 0, '', 'admin', 'admin', '2022-08-15 16:52:15', '2022-08-15 17:15:24');
 INSERT INTO `menu` VALUES (17, 6, ' 查看门户', NULL, '/visual/preview/index', 'preview/:spaceId', '', '', 'visual:preview', 'menu', 1, 0, '', 2, 0, '', 'admin', 'admin', '2022-08-19 14:53:20', '2023-11-21 16:28:58');
-INSERT INTO `menu` VALUES (18, 3, 'test', 'test', 'test', 'test', '', '', 'llm_test', 'menu', 1, 1, 'AirplaneOutline', 2, 0, 'test', 'admin', 'admin', '2023-11-21 15:38:20', '2023-11-21 15:38:20');
+INSERT INTO `menu` VALUES (18, 3, 'chat_index', 'chat_noid', '/chat/index', 'noid', '', '', 'llm_test', 'menu', 1, 1, 'AirplaneOutline', 1, 0, 'test', 'admin', 'admin', '2023-11-21 15:38:20', '2023-11-30 10:01:23');
 INSERT INTO `menu` VALUES (19, 6, '页面设计', NULL, '/visual/page/index', 'page/:spaceId', '', '', 'visual:page', 'menu', 1, 0, '', 4, 0, '报表设计', 'admin', 'admin', '2022-08-19 15:12:01', '2022-08-30 11:18:40');
 INSERT INTO `menu` VALUES (20, 6, '权限管理', NULL, '/visual/permission/index', 'permission/:spaceId', '', '', 'visual:permission', 'menu', 1, 0, '', 5, 0, '', 'admin', 'admin', '2022-08-19 15:14:12', '2022-08-30 11:18:35');
 INSERT INTO `menu` VALUES (21, 8, '用户查询', NULL, '', '', NULL, NULL, 'right:user:query', 'button', 0, 0, '', 1, 0, '', 'admin', 'admin', '2022-05-23 14:25:32', '2022-05-23 14:58:40');
