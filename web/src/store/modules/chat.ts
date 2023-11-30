@@ -1,3 +1,4 @@
+import { Chat, ChatHistory, ChatState } from '@/models/chat';
 import router from '@/router';
 import storage from '@/utils/storage';
 import { defineStore } from 'pinia';
@@ -33,7 +34,7 @@ export const useChatStore = defineStore('chat-store', {
       this.reloadRoute(history.uuid);
     },
 
-    updateHistory(uuid: number, edit: Partial<History>) {
+    updateHistory(uuid: number, edit: Partial<ChatHistory>) {
       const index = this.history.findIndex((item) => item.uuid === uuid);
       if (index !== -1) {
         this.history[index] = { ...this.history[index], ...edit };
@@ -177,7 +178,8 @@ export const useChatStore = defineStore('chat-store', {
 
     async reloadRoute(uuid?: number) {
       this.recordState();
-      await router.push({ name: 'Chat', params: { uuid } });
+      console.log('reloadRoute', uuid);
+      await router.push({ name: 'chat', params: { uuid } });
     },
 
     recordState() {

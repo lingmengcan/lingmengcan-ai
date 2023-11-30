@@ -71,6 +71,7 @@ import {
   NCascader,
   NEllipsis,
   NScrollbar,
+  NPopconfirm,
 } from 'naive-ui';
 
 // https://www.naiveui.com/en-US/os-theme/docs/import-on-demand
@@ -146,6 +147,7 @@ const naive = create({
     NSkeleton,
     NCascader,
     NScrollbar,
+    NPopconfirm,
   ],
 });
 

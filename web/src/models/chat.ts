@@ -1,4 +1,4 @@
-interface Chat {
+export interface Chat {
   dateTime: string;
   text: string;
   inversion?: boolean;
@@ -8,25 +8,25 @@ interface Chat {
   requestOptions: { prompt: string; options?: ConversationRequest | null };
 }
 
-interface ChatHistory {
+export interface ChatHistory {
   title: string;
   isEdit: boolean;
   uuid: number;
 }
 
-interface ChatState {
+export interface ChatState {
   active: number | null;
   usingContext: boolean;
   history: ChatHistory[];
   chat: { uuid: number; data: Chat[] }[];
 }
 
-interface ConversationRequest {
+export interface ConversationRequest {
   conversationId?: string;
   parentMessageId?: string;
 }
 
-interface ConversationResponse {
+export interface ConversationResponse {
   conversationId: string;
   detail: {
     choices: { finish_reason: string; index: number; logprobs: any; text: string }[];

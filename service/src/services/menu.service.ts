@@ -42,9 +42,7 @@ export class MenuService {
   findAll(dto: MenuListDto): Promise<Menu[]> {
     const { menuName, status } = dto;
 
-    let qb = this.repository
-      .createQueryBuilder('Menu')
-      .andWhere('Menu.status != -1');
+    let qb = this.repository.createQueryBuilder('Menu').andWhere('Menu.status != -1');
 
     if (menuName) {
       qb = qb.andWhere('Menu.menuName like :name', {
@@ -92,10 +90,7 @@ export class MenuService {
     const routes: Route[] = [];
     menus.forEach((menu) => {
       // 如果是目录和菜单，递归找子路由
-      if (
-        menu.parentId === menuId &&
-        (menu.menuType === 'contents' || menu.menuType === 'menu')
-      ) {
+      if (menu.parentId === menuId && (menu.menuType === 'contents' || menu.menuType === 'menu')) {
         const route = new Route();
         route.name = menu.menuCode || 'Menu' + menu.menuId;
         // route.path = this.getRoutePath(menu, parentPath); // 留给前端处理
@@ -240,9 +235,6 @@ export class MenuService {
    * @return 结果
    */
   async delStatus(menuId: string, userName: string) {
-    return await this.repository.update(
-      { menuId: menuId },
-      { status: -1, updatedUser: userName },
-    );
+    return await this.repository.update({ menuId: menuId }, { status: -1, updatedUser: userName });
   }
 }

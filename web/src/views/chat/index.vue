@@ -10,10 +10,17 @@
     CloudUploadOutline,
   } from '@vicons/ionicons5';
   import { MenuFoldOutlined } from '@vicons/antd';
-  import { ref } from 'vue';
+  import { computed, ref } from 'vue';
   import List from './components/list.vue';
+  import { useChatStore } from '@/store/modules/chat';
+  import { useRoute } from 'vue-router';
 
+  const route = useRoute();
+  const chatStore = useChatStore();
   const chatListVisable = ref(true);
+
+  const { uuid } = route.params as { uuid: string };
+  const dataSources = computed(() => chatStore.getChatByUuid(+uuid));
 
   const selectedLlm = ref('ChatGLM3');
 
@@ -27,6 +34,10 @@
       value: 'GPT-3.5',
     },
   ];
+
+  function handleAdd() {
+    chatStore.addHistory({ title: '新的对话', uuid: Date.now(), isEdit: false });
+  }
 </script>
 <template>
   <div class="flex w-full h-full overflow-hidden rounded-md">
@@ -55,7 +66,7 @@
           </n-button>
         </div>
         <div class="mt-4">
-          <n-button dashed class="new-chat-button">
+          <n-button dashed class="new-chat-button" @click="handleAdd">
             <template #icon>
               <n-icon>
                 <AddCircleOutline />
