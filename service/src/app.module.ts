@@ -10,6 +10,7 @@ import { DataSource } from 'typeorm';
 import { UserModule } from './modules/user.module';
 import { MenuModule } from './modules/menu.module';
 import { RoleModule } from './modules/role.module';
+import { ChatModule } from './modules/chat.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { RoleModule } from './modules/role.module';
     UserModule,
     MenuModule,
     RoleModule,
+    ChatModule,
   ],
   controllers: [AppController],
   providers: [AppService],

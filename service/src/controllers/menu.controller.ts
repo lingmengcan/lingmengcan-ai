@@ -2,14 +2,7 @@ import { MenuListDto } from '@/dtos/menu.dto';
 import { Menu } from '@/entities/menu.entity';
 import { MenuService } from '@/services/menu.service';
 import { errorJson, successJson } from '@/utils/result';
-import {
-  Body,
-  Controller,
-  Get,
-  Post,
-  Request,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Get, Post, Request, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiTags } from '@nestjs/swagger';
 
@@ -60,9 +53,7 @@ export class MenuController {
     const userName = req.user.userName;
     const children = await this.menuService.getChildren(menu.menuId);
     if (children.length === 0) {
-      return successJson(
-        await this.menuService.delStatus(menu.menuId, userName),
-      );
+      return successJson(await this.menuService.delStatus(menu.menuId, userName));
     } else {
       return errorJson(50002, '存在子菜单，不能被停用或者删除');
     }
