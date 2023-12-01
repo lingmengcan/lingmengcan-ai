@@ -4,11 +4,11 @@ import { AIMessage, BaseMessage, ChatResult } from 'langchain/schema';
 
 export class ChatGlm6BLLM extends BaseChatModel {
   modelName: 'chatglm';
-  // prompt: string;
   temperature: number;
   max_length: number;
   top_p: number;
   history: [][];
+
   constructor(fields?) {
     super(fields ?? {});
 

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-  import { PropType, computed, ref } from 'vue';
+  import { PropType, Ref, computed, onMounted, ref } from 'vue';
   import { useUsingContext } from '../hooks/useUsingContext';
   import { useRoute } from 'vue-router';
   import { useChatStore } from '@/store/modules/chat';
@@ -28,6 +28,7 @@
 
   const emit = defineEmits(['update:chatListVisable']);
 
+  const inputRef = ref<Ref | null>(null);
   const dialog = useDialog();
   const route = useRoute();
   const chatStore = useChatStore();
@@ -36,8 +37,11 @@
   const promptStore = usePromptStore();
 
   const { uuid } = route.params as { uuid: string };
-  const dataSources = computed(() => chatStore.getChatByUuid(+uuid));
+
+  const dataSources = computed(() => (uuid ? chatStore.getChatByUuid(+uuid) : []));
+
   console.log(dataSources.value);
+
   const conversationList = computed(() =>
     dataSources.value.filter((item) => !item.inversion && !!item.conversationOptions),
   );
@@ -46,7 +50,7 @@
 
   const { usingContext } = useUsingContext();
   const { addChat, updateChat, updateChatSome, getChatByUuidAndIndex } = useChat();
-  const { scrollToBottom, scrollToBottomIfAtBottom } = useScroll();
+  const { scrollRef, scrollToBottom, scrollToBottomIfAtBottom } = useScroll();
 
   // 历史记录相关
   const history: any = ref([]);
@@ -239,6 +243,11 @@
       loading.value = false;
     }
   }
+
+  onMounted(() => {
+    scrollToBottom();
+    if (inputRef.value) inputRef.value?.focus();
+  });
 </script>
 
 <template>
@@ -288,8 +297,8 @@
         </n-button>
       </div>
     </div>
-    <div class="flex flex-col justify-center flex-auto overflow-y-auto">
-      <div class="max-h-full overflow-x-hidden">
+    <div class="flex flex-col justify-center flex-auto overflow-hidden">
+      <div id="scrollRef" ref="scrollRef" class="max-h-full overflow-x-hidden">
         <template v-if="!dataSources.length">
           <div class="mx-auto space-y-4 max-w-[600px]">
             <div class="text-4xl font-semibold text-center text-gray-800">
@@ -301,25 +310,23 @@
           </div>
         </template>
         <template v-else>
-          <div>
-            <Message
-              v-for="(item, index) of dataSources"
-              :key="index"
-              :date-time="item.dateTime"
-              :text="item.text"
-              :inversion="item.inversion"
-              :error="item.error"
-              :loading="item.loading"
-              @delete="handleDelete(index)"
-            />
-            <div class="sticky bottom-0 left-0 flex justify-center">
-              <n-button v-if="loading" type="warning" @click="handleStop">
-                <template #icon>
-                  <StopCircleOutline />
-                </template>
-                停止生成
-              </n-button>
-            </div>
+          <Message
+            v-for="(item, index) of dataSources"
+            :key="index"
+            :date-time="item.dateTime"
+            :text="item.text"
+            :inversion="item.inversion"
+            :error="item.error"
+            :loading="item.loading"
+            @delete="handleDelete(index)"
+          />
+          <div class="sticky bottom-0 left-0 flex justify-center">
+            <n-button v-if="loading" type="warning" @click="handleStop">
+              <template #icon>
+                <StopCircleOutline />
+              </template>
+              停止生成
+            </n-button>
           </div>
         </template>
       </div>
@@ -336,6 +343,7 @@
           >
             <template #default="{ handleInput, handleBlur, handleFocus }">
               <n-input
+                ref="inputRef"
                 v-model:value="prompt"
                 type="textarea"
                 rows="1"

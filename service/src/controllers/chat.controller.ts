@@ -20,8 +20,7 @@ export class ChatController {
     type: ChatGlmDto,
   })
   async chat(@Body() dto: any) {
-    console.log(dto);
-    return await this.chatService.chat(dto);
+    return successJson(await this.chatService.chat(dto));
   }
 
   @UseGuards(AuthGuard('jwt'))

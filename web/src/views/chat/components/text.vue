@@ -34,18 +34,18 @@
   mdi.use(mila, { attrs: { target: '_blank', rel: 'noopener' } });
   mdi.use(mdKatex, { blockClass: 'katexmath-block rounded-md p-[10px]', errorColor: ' #cc0000' });
 
-  const wrapClass = computed(() => {
-    return [
-      'text-wrap',
-      'min-w-[20px]',
-      'rounded-md',
-      'px-3 py-2',
-      props.inversion ? 'bg-[#d2f9d1]' : 'bg-[#f4f6f8]',
-      props.inversion ? 'dark:bg-[#a1dc95]' : 'dark:bg-[#1e1e20]',
-      props.inversion ? 'message-request' : 'message-reply',
-      { 'text-red-500': props.error },
-    ];
-  });
+  // const wrapClass = computed(() => {
+  //   return [
+  //     'text-wrap',
+  //     'min-w-[20px]',
+  //     'rounded-md',
+  //     'px-3 py-2',
+  //     props.inversion ? 'bg-[#d2f9d1]' : 'bg-[#f4f6f8]',
+  //     props.inversion ? 'dark:bg-[#a1dc95]' : 'dark:bg-[#1e1e20]',
+  //     props.inversion ? 'message-request' : 'message-reply',
+  //     { 'text-red-500': props.error },
+  //   ];
+  // });
 
   const text = computed(() => {
     const value = props.text ?? '';
@@ -101,17 +101,15 @@
 </script>
 
 <template>
-  <div class="text-black" :class="wrapClass">
-    <div ref="textRef" class="leading-relaxed break-words">
-      <div v-if="!inversion">
-        <div v-if="!asRawText" class="markdown-body" v-html="text" />
-        <div v-else class="whitespace-pre-wrap" v-text="text" />
-      </div>
-      <div v-else class="whitespace-pre-wrap" v-text="text" />
-      <template v-if="loading">
-        <span class="dark:text-white w-[4px] h-[20px] block animate-blink" />
-      </template>
+  <div ref="textRef" class="flex-1 w-full max-w-full text-sm prose dark:prose-invert md:text-base">
+    <div v-if="inversion" v-text="text"></div>
+    <div v-else>
+      <div v-if="!asRawText" v-html="text" />
+      <div v-else v-text="text" />
     </div>
+    <template v-if="loading">
+      <span class="dark:text-white w-[4px] h-[20px] block animate-blink" />
+    </template>
   </div>
 </template>
 

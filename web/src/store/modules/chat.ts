@@ -178,7 +178,7 @@ export const useChatStore = defineStore('chat-store', {
 
     async reloadRoute(uuid?: number) {
       this.recordState();
-      console.log('reloadRoute', uuid);
+
       await router.push({ name: 'chat', params: { uuid } });
     },
 
@@ -193,7 +193,7 @@ function getLocalState(): ChatState {
   const defaultState = {
     active: uuid,
     usingContext: true,
-    history: [{ uuid, title: '新的聊天', isEdit: false }],
+    history: [{ uuid, title: '新的对话', isEdit: false }],
     chat: [{ uuid, data: [] }],
   };
 

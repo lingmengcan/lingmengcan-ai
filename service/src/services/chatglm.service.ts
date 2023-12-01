@@ -1,4 +1,4 @@
-import { ChatGlm6BLLM } from '@/llm/chatglm';
+import { ChatGlm6BLLM } from '@/llm/chatglm2';
 import { LLMChain } from 'langchain/chains';
 import {
   SystemMessagePromptTemplate,
@@ -42,27 +42,21 @@ export class ChatglmService {
   //自由对话
   async chat(body) {
     const { message, history } = body;
-    console.log(message);
+
     const chat = new ChatGlm6BLLM({ temperature: 0.01, history: history });
 
-    console.log('chat', 1);
     const translationPrompt = ChatPromptTemplate.fromMessages([
       HumanMessagePromptTemplate.fromTemplate('{text}'),
     ]);
-
-    console.log('chat', 2);
 
     const chain = new LLMChain({
       prompt: translationPrompt,
       llm: chat,
     });
 
-    console.log('chat', 3);
     const response = await chain.call({
       text: message,
     });
-
-    console.log('chat', 4);
 
     return response;
   }

@@ -1,6 +1,6 @@
 <template>
   <n-layout class="layout" has-sider>
-    <n-layout-content class="content"><RouterView> </RouterView></n-layout-content>
+    <n-layout-content class="content"><RouterView></RouterView></n-layout-content>
   </n-layout>
 </template>
 
