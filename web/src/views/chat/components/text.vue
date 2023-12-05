@@ -34,19 +34,6 @@
   mdi.use(mila, { attrs: { target: '_blank', rel: 'noopener' } });
   mdi.use(mdKatex, { blockClass: 'katexmath-block rounded-md p-[10px]', errorColor: ' #cc0000' });
 
-  // const wrapClass = computed(() => {
-  //   return [
-  //     'text-wrap',
-  //     'min-w-[20px]',
-  //     'rounded-md',
-  //     'px-3 py-2',
-  //     props.inversion ? 'bg-[#d2f9d1]' : 'bg-[#f4f6f8]',
-  //     props.inversion ? 'dark:bg-[#a1dc95]' : 'dark:bg-[#1e1e20]',
-  //     props.inversion ? 'message-request' : 'message-reply',
-  //     { 'text-red-500': props.error },
-  //   ];
-  // });
-
   const text = computed(() => {
     const value = props.text ?? '';
     if (!props.asRawText) return mdi.render(value);
@@ -54,9 +41,7 @@
   });
 
   function highlightBlock(str: string, lang?: string) {
-    return `<pre class="code-block-wrapper"><div class="code-block-header"><span class="code-block-header__lang">${lang}</span><span class="code-block-header__copy">
-      chat.copyCode
-    </span></div><code class="hljs code-block-body ${lang}">${str}</code></pre>`;
+    return `<pre class="p-0 mb-0"><div class="text-[16px]"><div class="flex items-center justify-between py-1.5 px-4"><span class="text-xs text-white lowercase">${lang}</span><button class="code-block-header__copy">复制代码</button></div><pre class="code-block-content"><code class="${lang}">${str}</code></pre></div></pre>`;
   }
 
   function addCopyEvents() {
@@ -102,89 +87,42 @@
 
 <template>
   <div ref="textRef" class="flex-1 w-full max-w-full text-sm prose dark:prose-invert md:text-base">
-    <div v-if="inversion" v-text="text"></div>
-    <div v-else>
-      <div v-if="!asRawText" v-html="text" />
-      <div v-else v-text="text" />
-    </div>
-    <template v-if="loading">
-      <span class="dark:text-white w-[4px] h-[20px] block animate-blink" />
-    </template>
+    <!-- eslint-disable-next-line vue/no-v-html -->
+    <div v-if="!asRawText" v-html="text"></div>
+    <div v-else v-text="text" />
+
+    <span v-if="loading" class="dark:text-white w-[4px] h-[20px] block animate-blink" />
   </div>
 </template>
 
-<style lang="less" scoped>
-  .markdown-body {
-    background-color: transparent;
-    font-size: 14px;
-
-    p {
-      white-space: pre-wrap;
-    }
-
-    ol {
-      list-style-type: decimal;
-    }
-
-    ul {
-      list-style-type: disc;
-    }
-
-    pre code,
-    pre tt {
-      line-height: 1.65;
-    }
-
-    .highlight pre,
-    pre {
-      background-color: #fff;
-    }
-
-    code.hljs {
-      padding: 0;
-    }
-
-    .code-block {
-      &-wrapper {
-        position: relative;
-        padding-top: 24px;
-      }
-
-      &-header {
-        position: absolute;
-        top: 5px;
-        right: 0;
-        width: 100%;
-        padding: 0 1rem;
-        display: flex;
-        justify-content: flex-end;
-        align-items: center;
-        color: #b3b3b3;
-
-        &__copy {
-          cursor: pointer;
-          margin-left: 0.5rem;
-          user-select: none;
-
-          &:hover {
-            color: #65a665;
-          }
-        }
-      }
-    }
+<style lang="less">
+  .code-block-content {
+    background: rgb(40, 44, 52);
+    color: rgb(171, 178, 191);
+    text-shadow: rgba(0, 0, 0, 0.3) 0px 1px;
+    font-family: 'Fira Code', 'Fira Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace;
+    direction: ltr;
+    text-align: left;
+    white-space: pre;
+    word-spacing: normal;
+    word-break: normal;
+    line-height: 1.5;
+    tab-size: 2;
+    hyphens: none;
+    padding: 1em;
+    margin: 0px !important;
+    overflow: auto;
+    border-radius: 0.3em;
   }
 
-  html.dark {
-    .message-reply {
-      .whitespace-pre-wrap {
-        white-space: pre-wrap;
-        color: var(--n-text-color);
-      }
-    }
-
-    .highlight pre,
-    pre {
-      background-color: #282c34;
-    }
+  .code-block-header__copy {
+    @apply flex;
+    @apply gap-1;
+    @apply items-center;
+    @apply rounded;
+    @apply bg-none;
+    @apply p-1;
+    @apply text-xs;
+    @apply text-white;
   }
 </style>

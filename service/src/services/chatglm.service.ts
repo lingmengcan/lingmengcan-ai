@@ -43,7 +43,7 @@ export class ChatglmService {
   async chat(body) {
     const { message, history } = body;
 
-    const chat = new ChatGlm6BLLM({ temperature: 0.01, history: history });
+    const chat = new ChatGlm6BLLM({ temperature: 0.01, history: history, streaming: true });
 
     const translationPrompt = ChatPromptTemplate.fromMessages([
       HumanMessagePromptTemplate.fromTemplate('{text}'),

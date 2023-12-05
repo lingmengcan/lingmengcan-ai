@@ -28,6 +28,7 @@
     "vue-router": "^4.2.4"
   },
   "devDependencies": {
+    "@tailwindcss/typography": "^0.5.10",
     "@tsconfig/node18": "^18.2.2",
     "@types/markdown-it": "^13.0.7",
     "@types/markdown-it-link-attributes": "^3.0.4",

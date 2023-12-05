@@ -7,6 +7,7 @@ export class ChatGlm6BLLM extends BaseChatModel {
   temperature: number;
   max_length: number;
   top_p: number;
+  streaming: boolean;
   history: [][];
 
   constructor(fields?) {
@@ -16,6 +17,7 @@ export class ChatGlm6BLLM extends BaseChatModel {
     this.temperature = fields?.temperature ?? 0.7;
     this.max_length = fields?.max_length ?? 2048;
     this.top_p = fields?.top_p ?? 0.7;
+    this.streaming = fields?.streaming ?? false;
     this.history = fields?.history ?? [];
   }
 
@@ -25,6 +27,7 @@ export class ChatGlm6BLLM extends BaseChatModel {
       temperature: this.temperature,
       top_p: this.top_p,
       max_length: this.max_length,
+      streaming: this.streaming,
       history: this.history,
     };
   }

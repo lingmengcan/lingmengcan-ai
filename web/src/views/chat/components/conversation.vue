@@ -248,6 +248,10 @@
     scrollToBottom();
     if (inputRef.value) inputRef.value?.focus();
   });
+
+  // onUnmounted(() => {
+  //   if (loading.value) controller.abort();
+  // });
 </script>
 
 <template>
