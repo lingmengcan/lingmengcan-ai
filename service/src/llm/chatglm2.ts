@@ -79,8 +79,12 @@ export class ChatGlm6BLLM extends BaseChatModel {
             headers: {
               'Content-Type': 'application/json',
             },
+            responseType: this.streaming ? 'stream' : 'json',
           },
         );
+        if (this.streaming) {
+          res.data = await axiosStreaming(res);
+        }
         return res;
       } catch (error) {
         console.error('Error in completion request:', error);
