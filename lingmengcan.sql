@@ -11,7 +11,7 @@
  Target Server Version : 80200 (8.2.0)
  File Encoding         : 65001
 
- Date: 30/11/2023 14:19:37
+ Date: 05/12/2023 17:08:53
 */
 
 SET NAMES utf8mb4;
@@ -319,7 +319,7 @@ CREATE TABLE `user`  (
 -- ----------------------------
 -- Records of user
 -- ----------------------------
-INSERT INTO `user` VALUES (1, 1, 'admin', '超级管理员', 'admin@lmc.com', '12345678901', '1', 'admin', '$2b$10$bgJ1x5CdyFAbt13v4.efFOT51F2Gxeg/C7xdfrdciDkgeayZPzl2K', '', '127.0.0.1', '2021-10-22 09:54:19', 0, '超级管理员', 'admin', 'admin', '2021-10-22 09:54:19', '2022-05-30 16:06:27');
+INSERT INTO `user` VALUES (1, 1, 'admin', '超级管理员', 'admin@lmc.com', '12345678901', '1', '', '$2b$10$bgJ1x5CdyFAbt13v4.efFOT51F2Gxeg/C7xdfrdciDkgeayZPzl2K', '', '127.0.0.1', '2021-10-22 09:54:19', 0, '超级管理员', 'admin', 'admin', '2021-10-22 09:54:19', '2022-05-30 16:06:27');
 INSERT INTO `user` VALUES (2, 2, 'ouyangguoling', '欧阳国灵', 'ouyangguoling@lingmengcan.tech', '18026927766', '1', '', '$2b$10$HSLQgyJdfKYo0EhVpx2PgOU.r0qLtTFeuARlo.3LF6hzhuAM4t4se', NULL, NULL, '2022-05-30 16:10:55', 0, '', 'admin', 'admin', '2022-05-30 16:10:55', '2022-05-30 17:25:29');
 INSERT INTO `user` VALUES (3, 2, 'test', '测试1', 'test@lingmengcan.tech', '12345678902', '0', '', '$2b$10$CJ/2mrG1m/zZCz9xb8lKQ.7hwNLBTT284s4u3cMivFItM95fBJU9y', NULL, NULL, '2022-05-30 17:23:33', 0, '', 'admin', 'admin', '2022-05-30 17:23:33', '2022-07-08 18:32:05');
 

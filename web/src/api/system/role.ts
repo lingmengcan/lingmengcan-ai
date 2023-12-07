@@ -14,7 +14,7 @@ export const changeRoleStatus = (data: Role) =>
 export const getRoleMenuIds = (roleId: string) =>
   http.request<Result<string[]>>('role/menus', Method.POST, { roleId });
 
-// 改变状态
+// 变更角色所有权限
 export const changeRoleMenus = (data: RoleMenus) =>
   http.request<Result<Role>>('role/change-menus', Method.POST, data);
 

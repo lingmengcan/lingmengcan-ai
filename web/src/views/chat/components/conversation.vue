@@ -4,10 +4,9 @@
   import { useRoute } from 'vue-router';
   import { useChatStore } from '@/store/modules/chat';
   import { usePromptStore } from '@/store/modules/prompt';
-  import { useChat } from '../hooks/useChat';
   import { useScroll } from '../hooks/useScroll';
   import { storeToRefs } from 'pinia';
-  import { ConversationRequest } from '@/models/chat';
+  import { ConversationRequest, Message } from '@/models/chat';
   import { chat, chatfile } from '@/api/chat/chat';
   import {
     ChatbubblesOutline,
@@ -17,7 +16,7 @@
     StopCircleOutline,
   } from '@vicons/ionicons5';
   import { useDialog } from 'naive-ui';
-  import Message from './message.vue';
+  import MessageComponent from './message.vue';
 
   defineProps({
     chatListVisable: {
@@ -36,11 +35,9 @@
   // 添加PromptStore
   const promptStore = usePromptStore();
 
-  const { uuid } = route.params as { uuid: string };
+  const { dialogId } = route.params as { dialogId: string };
 
-  const dataSources = computed(() => (uuid ? chatStore.getChatByUuid(+uuid) : []));
-
-  console.log(dataSources.value);
+  const dataSources = computed(() => (dialogId ? chatStore.getChatByDialogId(dialogId) : []));
 
   const conversationList = computed(() =>
     dataSources.value.filter((item) => !item.inversion && !!item.conversationOptions),
@@ -49,7 +46,7 @@
   const loading = ref<boolean>(false);
 
   const { usingContext } = useUsingContext();
-  const { addChat, updateChat, updateChatSome, getChatByUuidAndIndex } = useChat();
+
   const { scrollRef, scrollToBottom, scrollToBottomIfAtBottom } = useScroll();
 
   // 历史记录相关
@@ -106,7 +103,7 @@
     }
   }
 
-  function handleDelete(index: number) {
+  function handleDelete(message: Message) {
     if (loading.value) return;
 
     dialog.warning({
@@ -115,7 +112,7 @@
       positiveText: '确定',
       negativeText: '取消',
       onPositiveClick: () => {
-        chatStore.deleteChatByUuid(+uuid, index);
+        chatStore.deleteChat(message);
       },
     });
   }
@@ -142,21 +139,19 @@
     if (usingContext.value) {
       for (let i = 0; i < dataSources.value.length; i = i + 2)
         history.value.push([
-          `Human:${dataSources.value[i].text}`,
-          `Assistant:${dataSources.value[i + 1].text.split('\n\n数据来源：\n\n')[0]}`,
+          `Human:${dataSources.value[i].messageText}`,
+          `Assistant:${dataSources.value[i + 1].messageText.split('\n\n数据来源：\n\n')[0]}`,
         ]);
     } else {
       history.value.length = 0;
     }
     if (!message || message.trim() === '') return;
 
-    addChat(+uuid, {
-      dateTime: new Date().toLocaleString(),
-      text: message,
-      inversion: true,
-      error: false,
-      conversationOptions: null,
-      requestOptions: { prompt: message, options: null },
+    chatStore.addChatByDialogId({
+      dialogId: dialogId,
+      messageText: message,
+      sender: 'human',
+      status: 0,
     });
     scrollToBottom();
 
@@ -169,14 +164,11 @@
 
     if (lastContext && usingContext.value) options = { ...lastContext };
 
-    addChat(+uuid, {
-      dateTime: new Date().toLocaleString(),
-      text: '',
-      loading: true,
-      inversion: false,
-      error: false,
-      conversationOptions: null,
-      requestOptions: { prompt: message, options: { ...options } },
+    chatStore.addChatByDialogId({
+      dialogId: dialogId,
+      messageText: '',
+      sender: 'ai',
+      status: 0,
     });
     scrollToBottom();
 
@@ -191,7 +183,7 @@
               res.data.url.split('/static/')[1]
             }](http://127.0.0.1:9999${res.data.url})`
           : res.data.text;
-        updateChat(+uuid, dataSources.value.length - 1, {
+        chatStore.updateChatByUuid(+uuid, dataSources.value.length - 1, {
           dateTime: new Date().toLocaleString(),
           text: lastText + (result ?? ''),
           inversion: false,
@@ -203,7 +195,7 @@
         scrollToBottomIfAtBottom();
         loading.value = false;
 
-        updateChatSome(+uuid, dataSources.value.length - 1, { loading: false });
+        chatStore.updateChatSomeByUuid(+uuid, dataSources.value.length - 1, { loading: false });
       };
 
       await fetchChatAPIOnce();
@@ -211,17 +203,17 @@
       const errorMessage = error?.message ?? '好像出错了，请稍后再试。';
 
       if (error.message === 'canceled') {
-        updateChatSome(+uuid, dataSources.value.length - 1, {
+        chatStore.updateChatSomeByUuid(+uuid, dataSources.value.length - 1, {
           loading: false,
         });
         scrollToBottomIfAtBottom();
         return;
       }
 
-      const currentChat = getChatByUuidAndIndex(+uuid, dataSources.value.length - 1);
+      const currentChat = chatStore.getChatByUuidAndIndex(+uuid, dataSources.value.length - 1);
 
       if (currentChat?.text && currentChat.text !== '') {
-        updateChatSome(+uuid, dataSources.value.length - 1, {
+        chatStore.updateChatSomeByUuid(+uuid, dataSources.value.length - 1, {
           text: `${currentChat.text}\n[${errorMessage}]`,
           error: false,
           loading: false,
@@ -229,7 +221,7 @@
         return;
       }
 
-      updateChat(+uuid, dataSources.value.length - 1, {
+      chatStore.updateChatByUuid(+uuid, dataSources.value.length - 1, {
         dateTime: new Date().toLocaleString(),
         text: errorMessage,
         inversion: false,
@@ -314,15 +306,15 @@
           </div>
         </template>
         <template v-else>
-          <Message
+          <MessageComponent
             v-for="(item, index) of dataSources"
             :key="index"
-            :date-time="item.dateTime"
-            :text="item.text"
+            :date-time="item.createdAt"
+            :text="item.messageText"
             :inversion="item.inversion"
             :error="item.error"
             :loading="item.loading"
-            @delete="handleDelete(index)"
+            @delete="handleDelete(item)"
           />
           <div class="sticky bottom-0 left-0 flex justify-center">
             <n-button v-if="loading" type="warning" @click="handleStop">
@@ -338,7 +330,7 @@
         class="w-full pb-2 border-transparent bg-gradient-to-b from-transparent via-white/50 to-white"
       >
         <div
-          class="stretch flex flex-row gap-3 last:mb-3 mx-2 mt-12 md:mx-4 md:mt-[52px] md:last:mb-6 lg:mx-auto lg:max-w-3xl"
+          class="stretch flex flex-row gap-3 last:mb-3 mx-2 mt-6 md:mx-4 md:last:mb-6 lg:mx-auto lg:max-w-3xl"
         >
           <n-auto-complete
             v-model:value="prompt"

@@ -41,7 +41,8 @@
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.8.1",
     "svg-captcha": "^1.4.0",
-    "typeorm": "^0.3.17"
+    "typeorm": "^0.3.17",
+    "uuid": "^9.0.1"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.0.0",
@@ -54,6 +55,7 @@
     "@types/node": "^20.3.1",
     "@types/passport-jwt": "^3.0.11",
     "@types/supertest": "^2.0.12",
+    "@types/uuid": "^9.0.7",
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
     "eslint": "^8.42.0",

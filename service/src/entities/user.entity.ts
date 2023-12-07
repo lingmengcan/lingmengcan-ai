@@ -1,15 +1,7 @@
 import { IsNotEmpty } from 'class-validator';
-import {
-  Column,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  OneToMany,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 import { RoleUser } from './role-user.entity';
-import { Dept } from './dept.entity';
 
 @Entity('user')
 export class User {
@@ -76,11 +68,4 @@ export class User {
 
   @OneToMany(() => RoleUser, (roleUser) => roleUser.user)
   roleUsers: RoleUser[];
-
-  @ManyToOne(() => Dept, (dept) => dept.users, {
-    onDelete: 'CASCADE',
-    onUpdate: 'RESTRICT',
-  })
-  @JoinColumn([{ name: 'dept_id', referencedColumnName: 'deptId' }])
-  dept: Dept;
 }

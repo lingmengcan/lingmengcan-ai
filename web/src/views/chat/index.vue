@@ -16,7 +16,7 @@
   const chatListVisable = ref(true);
 
   function handleAdd() {
-    chatStore.addHistory({ title: '新的对话', uuid: Date.now(), isEdit: false });
+    chatStore.addDialog();
   }
 </script>
 <template>

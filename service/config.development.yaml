@@ -6,7 +6,7 @@ http:
 mariadb:
   host: 'localhost'
   port: 3306
-  database: 'lingmengcan'
+  database: 'lingmengcan-ai'
   username: 'lingmengcan'
   password: 'LMCPassword'
   charset: 'utf8'

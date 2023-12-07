@@ -20,7 +20,7 @@ import { ChatModule } from './modules/chat.module';
     }),
     TypeOrmModule.forRootAsync({
       useFactory: (configService: ConfigService) => ({
-        type: 'mariadb',
+        type: 'mysql',
         host: configService.get<string>('mariadb.host'),
         port: configService.get<number>('mariadb.port'),
         username: configService.get<string>('mariadb.username'),

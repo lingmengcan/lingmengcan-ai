@@ -43,7 +43,7 @@ export class ChatGlm6BLLM extends BaseChatModel {
     return (
       messages
         .map((message) => {
-          const messagePrompt = getAnthropicPromptFromMessage(message._getType());
+          const messagePrompt = message._getType(); //getAnthropicPromptFromMessage(message._getType());
           return `${messagePrompt} ${message.text}`;
         })
         .join('') + '\n\nAssistant:'
@@ -56,7 +56,6 @@ export class ChatGlm6BLLM extends BaseChatModel {
       ...params,
       prompt: this.formatMessagesAsPrompt(messages),
     });
-    console.log('res ', res);
 
     const generations: any = [
       {
@@ -79,12 +78,10 @@ export class ChatGlm6BLLM extends BaseChatModel {
             headers: {
               'Content-Type': 'application/json',
             },
-            responseType: this.streaming ? 'stream' : 'json',
+            // responseType: this.streaming ? 'stream' : 'json',
           },
         );
-        if (this.streaming) {
-          res.data = await axiosStreaming(res);
-        }
+
         return res;
       } catch (error) {
         console.error('Error in completion request:', error);
@@ -121,15 +118,15 @@ export class ChatGlm6BLLM extends BaseChatModel {
   }
 }
 
-function getAnthropicPromptFromMessage(type) {
-  switch (type) {
-    case 'ai':
-      return '\n\nAssistant:';
-    case 'human':
-      return '\n\nHuman:';
-    case 'system':
-      return '';
-    default:
-      throw new Error(`Unknown message type: ${type}`);
-  }
-}
+// function getAnthropicPromptFromMessage(type) {
+//   switch (type) {
+//     case 'ai':
+//       return '\n\nAssistant:';
+//     case 'human':
+//       return '\n\nHuman:';
+//     case 'system':
+//       return '';
+//     default:
+//       throw new Error(`Unknown message type: ${type}`);
+//   }
+// }

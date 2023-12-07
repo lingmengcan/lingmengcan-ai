@@ -36,9 +36,7 @@ export class RoleService {
 
     // 默认20条数据
     const take = pageSize ? pageSize : 20;
-    let qb = this.repository
-      .createQueryBuilder('Role')
-      .andWhere('Role.status != -1');
+    let qb = this.repository.createQueryBuilder('Role').andWhere('Role.status != -1');
 
     if (roleName) {
       qb = qb.andWhere('Role.roleName like :name', {

@@ -8,19 +8,6 @@ export interface Chat {
   requestOptions: { prompt: string; options?: ConversationRequest | null };
 }
 
-export interface ChatHistory {
-  title: string;
-  isEdit: boolean;
-  uuid: number;
-}
-
-export interface ChatState {
-  active: number | null;
-  usingContext: boolean;
-  history: ChatHistory[];
-  chat: { uuid: number; data: Chat[] }[];
-}
-
 export interface ConversationRequest {
   conversationId?: string;
   parentMessageId?: string;
@@ -40,4 +27,28 @@ export interface ConversationResponse {
   parentMessageId: string;
   role: string;
   text: string;
+}
+
+//对话
+export interface Dialog {
+  dialogId?: string;
+  dialogName: string;
+  userName?: string;
+  status: number;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+//消息
+export interface Message {
+  inversion: any;
+  conversationOptions: any;
+  error: any;
+  loading: any;
+  messageId?: string;
+  dialogId: string;
+  messageText: string;
+  status: number;
+  sender: string;
+  createdAt?: string;
 }

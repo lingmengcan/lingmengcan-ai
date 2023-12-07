@@ -86,12 +86,11 @@
 </script>
 
 <template>
-  <div ref="textRef" class="flex-1 w-full max-w-full text-sm prose dark:prose-invert md:text-base">
-    <!-- eslint-disable-next-line vue/no-v-html -->
-    <div v-if="!asRawText" v-html="text"></div>
-    <div v-else v-text="text" />
+  <div ref="textRef" class="flex-1 w-full max-w-full text-sm dark:prose-invert md:text-base">
+    <div v-if="!asRawText" class="prose" v-html="text"></div>
+    <div v-else class="whitespace-pre-wrap" v-text="text" />
 
-    <span v-if="loading" class="dark:text-white w-[4px] h-[20px] block animate-blink" />
+    <span v-if="loading" class="w-[4px] h-[20px] block animate-blink"></span>
   </div>
 </template>
 
