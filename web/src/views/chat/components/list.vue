@@ -23,7 +23,8 @@
 
   function handleEdit(item: Dialog, isEdit: boolean, event?: MouseEvent) {
     event?.stopPropagation();
-    chatStore.updateDialog(item, { isEdit });
+    item.isEdit = isEdit;
+    chatStore.updateDialog(item);
   }
 
   function handleDelete(item: Dialog, event?: MouseEvent) {

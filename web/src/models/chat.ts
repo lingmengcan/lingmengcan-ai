@@ -37,6 +37,7 @@ export interface Dialog {
   status: number;
   createdAt?: string;
   updatedAt?: string;
+  isEdit?: boolean;
 }
 
 //消息
