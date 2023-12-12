@@ -5,43 +5,35 @@
  Source Server Type    : MySQL
  Source Server Version : 80200 (8.2.0)
  Source Host           : localhost:3306
- Source Schema         : lingmengcan
+ Source Schema         : lingmengcan-ai
 
  Target Server Type    : MySQL
  Target Server Version : 80200 (8.2.0)
  File Encoding         : 65001
 
- Date: 05/12/2023 17:08:53
+ Date: 12/12/2023 22:29:59
 */
 
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
 
 -- ----------------------------
--- Table structure for dept
+-- Table structure for conversation
 -- ----------------------------
-DROP TABLE IF EXISTS `dept`;
-CREATE TABLE `dept`  (
-  `dept_id` bigint UNSIGNED NOT NULL AUTO_INCREMENT,
-  `parent_id` bigint NULL DEFAULT NULL,
-  `dept_name` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
-  `leader` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
-  `sort` int NULL DEFAULT NULL,
-  `status` tinyint NULL DEFAULT NULL,
-  `description` varchar(512) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
-  `created_user` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
-  `updated_user` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+DROP TABLE IF EXISTS `conversation`;
+CREATE TABLE `conversation`  (
+  `conversation_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `conversation_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `user_name` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `status` tinyint NOT NULL DEFAULT 0,
   `created_at` datetime NOT NULL,
-  `updated_at` datetime NOT NULL,
-  PRIMARY KEY (`dept_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+  `updated_at` datetime NOT NULL ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`conversation_id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin ROW_FORMAT = Dynamic;
 
 -- ----------------------------
--- Records of dept
+-- Records of conversation
 -- ----------------------------
-INSERT INTO `dept` VALUES (1, 0, 's科技', 'lingmengcan', 1, 0, '灵萌灿科技', 'admin', 'admin', '2022-05-23 17:14:13', '2022-05-23 17:28:54');
-INSERT INTO `dept` VALUES (2, 1, '研发部', 'lingmengcan', 1, 0, '负责研发', 'admin', 'admin', '2022-05-23 17:31:31', '2022-08-15 17:20:53');
-INSERT INTO `dept` VALUES (3, 0, '测试', 'test', 2, 0, '', 'admin', 'admin', '2022-07-11 10:23:51', '2022-07-12 10:32:26');
 
 -- ----------------------------
 -- Table structure for dict
@@ -60,7 +52,7 @@ CREATE TABLE `dict`  (
   `created_at` datetime NOT NULL,
   `updated_at` datetime NOT NULL,
   PRIMARY KEY (`dict_id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of dict
@@ -81,7 +73,7 @@ CREATE TABLE `dict_type`  (
   `created_at` datetime NOT NULL,
   `updated_at` datetime NOT NULL,
   PRIMARY KEY (`dict_type_id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of dict_type
@@ -113,7 +105,7 @@ CREATE TABLE `menu`  (
   `created_at` datetime NOT NULL,
   `updated_at` datetime NOT NULL,
   PRIMARY KEY (`menu_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 34 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 34 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of menu
@@ -130,7 +122,7 @@ INSERT INTO `menu` VALUES (9, 1, '角色管理', 'role', '/system/role/index', '
 INSERT INTO `menu` VALUES (10, 1, '菜单管理', 'menu', '/system/menu/index', 'menu', '', NULL, 'system_menu_index', 'menu', 0, 0, '', 3, 0, '菜单管理菜单', 'admin', 'admin', '2021-10-21 10:38:03', '2023-11-23 11:12:12');
 INSERT INTO `menu` VALUES (11, 1, '字典管理', 'param', '/system/param/index', 'param', NULL, NULL, 'system_param_index', 'menu', 0, 0, '', 4, 0, '字典管理', 'admin', 'admin', '2022-05-20 11:09:04', '2023-11-22 10:10:02');
 INSERT INTO `menu` VALUES (12, 2, '生成', NULL, '/draw/generate', 'generate', '', '', 'draw_generate', 'menu', 0, 0, '', 1, 0, '数据门户列表', 'admin', 'admin', '2022-08-15 17:01:20', '2022-09-06 10:51:55');
-INSERT INTO `menu` VALUES (13, 3, '对话', 'chat', '/chat/index', ':uuid?', NULL, NULL, 'chat_index', 'menu', 0, 0, '', 2, 0, 'chat', 'admin', 'admin', '2022-08-25 17:16:46', '2023-11-30 09:54:18');
+INSERT INTO `menu` VALUES (13, 3, '对话', 'chat', '/chat/index', ':conversationId?', NULL, NULL, 'chat_index', 'menu', 0, 0, '', 2, 0, 'chat', 'admin', 'admin', '2022-08-25 17:16:46', '2023-11-30 09:54:18');
 INSERT INTO `menu` VALUES (14, 4, '日志管理', NULL, '/monitor/log/index', 'log', NULL, NULL, 'monitor:log:index', 'menu', 0, 0, '', 1, 0, '301', 'admin', 'admin', '2022-05-19 11:18:49', '2022-07-12 15:07:32');
 INSERT INTO `menu` VALUES (15, 4, '服务运行', NULL, '/monitor/server/index', 'server', '', '', 'monitor:server:index', 'menu', 0, 0, '', 1, 0, '', 'admin', 'admin', '2022-07-04 14:09:38', '2022-07-12 17:14:00');
 INSERT INTO `menu` VALUES (16, 5, '仪表盘列表', NULL, '/dashboard/index', 'list', '', '', 'dashboard_list', 'menu', 0, 0, '', 1, 0, '', 'admin', 'admin', '2022-08-15 16:52:15', '2022-08-15 17:15:24');
@@ -153,6 +145,24 @@ INSERT INTO `menu` VALUES (32, 10, '菜单编辑', '', '', '', '', '', 'system_m
 INSERT INTO `menu` VALUES (33, 10, '菜单查询', '', '', '', '', '', 'system_menu_query', 'action', 0, 0, '', 4, 0, '', 'admin', 'admin', '2023-11-23 11:33:03', '2023-11-23 11:34:02');
 
 -- ----------------------------
+-- Table structure for message
+-- ----------------------------
+DROP TABLE IF EXISTS `message`;
+CREATE TABLE `message`  (
+  `message_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `dialog_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `message_text` text CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `sender` enum('human','ai') CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `status` tinyint NOT NULL DEFAULT 0,
+  `created_at` datetime NOT NULL ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`message_id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of message
+-- ----------------------------
+
+-- ----------------------------
 -- Table structure for role
 -- ----------------------------
 DROP TABLE IF EXISTS `role`;
@@ -168,7 +178,7 @@ CREATE TABLE `role`  (
   `created_at` datetime NOT NULL,
   `updated_at` datetime NOT NULL,
   PRIMARY KEY (`role_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 18 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 18 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of role
@@ -180,20 +190,6 @@ INSERT INTO `role` VALUES (16, 'test', 'test2', 4, 0, 'test2', 'admin', 'admin',
 INSERT INTO `role` VALUES (17, '0', '0', 0, -1, '', 'admin', 'admin', '2023-11-14 17:18:43', '2023-11-14 20:02:41');
 
 -- ----------------------------
--- Table structure for role_dept
--- ----------------------------
-DROP TABLE IF EXISTS `role_dept`;
-CREATE TABLE `role_dept`  (
-  `role_id` bigint UNSIGNED NOT NULL,
-  `dept_id` bigint UNSIGNED NOT NULL,
-  PRIMARY KEY (`dept_id`, `role_id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
-
--- ----------------------------
--- Records of role_dept
--- ----------------------------
-
--- ----------------------------
 -- Table structure for role_menu
 -- ----------------------------
 DROP TABLE IF EXISTS `role_menu`;
@@ -201,7 +197,7 @@ CREATE TABLE `role_menu`  (
   `role_id` bigint UNSIGNED NOT NULL,
   `menu_id` bigint UNSIGNED NOT NULL,
   PRIMARY KEY (`role_id`, `menu_id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of role_menu
@@ -249,7 +245,7 @@ CREATE TABLE `role_user`  (
   `role_id` bigint UNSIGNED NOT NULL,
   `user_id` bigint UNSIGNED NOT NULL,
   PRIMARY KEY (`role_id`, `user_id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of role_user
@@ -258,37 +254,6 @@ INSERT INTO `role_user` VALUES (1, 1);
 INSERT INTO `role_user` VALUES (2, 1);
 INSERT INTO `role_user` VALUES (3, 2);
 INSERT INTO `role_user` VALUES (3, 3);
-
--- ----------------------------
--- Table structure for space
--- ----------------------------
-DROP TABLE IF EXISTS `space`;
-CREATE TABLE `space`  (
-  `space_id` bigint NOT NULL AUTO_INCREMENT,
-  `space_name` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `status` tinyint NOT NULL,
-  `description` varchar(512) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
-  `created_user` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
-  `updated_user` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
-  `created_at` datetime NOT NULL,
-  `updated_at` datetime NOT NULL,
-  PRIMARY KEY (`space_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 12 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '可视化工作空间' ROW_FORMAT = Dynamic;
-
--- ----------------------------
--- Records of space
--- ----------------------------
-INSERT INTO `space` VALUES (1, 'a', 0, 'a', 'admin', 'admin', '2022-08-16 18:39:11', '2022-08-16 18:39:11');
-INSERT INTO `space` VALUES (2, 'b', -1, '2', 'admin', 'admin', '2022-08-17 10:36:56', '2022-08-17 15:01:30');
-INSERT INTO `space` VALUES (3, 'c', -1, 'c', 'admin', 'admin', '2022-08-17 10:40:37', '2022-08-17 15:02:04');
-INSERT INTO `space` VALUES (4, 'd', 1, 'd', 'admin', 'admin', '2022-08-17 10:41:00', '2022-08-17 15:55:59');
-INSERT INTO `space` VALUES (5, 'e', 0, 'e', 'admin', 'admin', '2022-08-17 10:44:59', '2022-08-17 10:44:59');
-INSERT INTO `space` VALUES (6, 'f', 0, 'f', 'admin', 'admin', '2022-08-17 10:45:49', '2022-08-17 10:45:49');
-INSERT INTO `space` VALUES (7, 'g', 0, 'g', 'admin', 'admin', '2022-08-17 10:47:05', '2022-08-17 10:47:05');
-INSERT INTO `space` VALUES (8, 'h', 0, 'h', 'admin', 'admin', '2022-08-17 10:48:20', '2022-08-17 10:48:20');
-INSERT INTO `space` VALUES (9, 'i', 0, 'i', 'admin', 'admin', '2022-08-17 10:48:53', '2022-08-17 10:48:53');
-INSERT INTO `space` VALUES (10, 'j', 0, 'j', 'admin', 'admin', '2022-08-17 10:52:26', '2022-08-17 10:52:26');
-INSERT INTO `space` VALUES (11, 'k', 0, 'k', 'admin', 'admin', '2022-08-17 10:53:18', '2022-08-17 10:53:18');
 
 -- ----------------------------
 -- Table structure for user
@@ -312,9 +277,9 @@ CREATE TABLE `user`  (
   `created_user` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `updated_user` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `created_at` datetime NOT NULL,
-  `updated_at` datetime NOT NULL,
+  `updated_at` datetime NOT NULL ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`user_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of user
