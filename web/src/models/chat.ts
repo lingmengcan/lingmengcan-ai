@@ -1,18 +1,3 @@
-export interface Chat {
-  dateTime: string;
-  text: string;
-  inversion?: boolean;
-  error?: boolean;
-  loading?: boolean;
-  conversationOptions?: ConversationRequest | null;
-  requestOptions: { prompt: string; options?: ConversationRequest | null };
-}
-
-export interface ConversationRequest {
-  conversationId?: string;
-  parentMessageId?: string;
-}
-
 export interface ConversationResponse {
   conversationId: string;
   detail: {
@@ -30,9 +15,9 @@ export interface ConversationResponse {
 }
 
 //对话
-export interface Dialog {
-  dialogId?: string;
-  dialogName: string;
+export interface Conversation {
+  conversationId?: string;
+  conversationName: string;
   userName?: string;
   status: number;
   createdAt?: string;
@@ -42,14 +27,11 @@ export interface Dialog {
 
 //消息
 export interface Message {
-  inversion: any;
-  conversationOptions: any;
-  error: any;
-  loading: any;
   messageId?: string;
-  dialogId: string;
+  conversationId: string;
   messageText: string;
   status: number;
   sender: string;
   createdAt?: string;
+  loading?: boolean;
 }

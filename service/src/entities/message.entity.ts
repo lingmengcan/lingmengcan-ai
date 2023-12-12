@@ -1,15 +1,15 @@
 import { Column, Entity, Index, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
-import { Dialog } from './dialog.entity';
+import { Conversation } from './conversation.entity';
 import { IsNotEmpty } from 'class-validator';
 
-@Index('message_dialog_id_foreign', ['dialogId'], {})
+@Index('message_conversation_id_foreign', ['conversationId'], {})
 @Entity('message', { schema: 'lmc' })
 export class Message {
   @PrimaryColumn({ type: 'varchar', name: 'message_id', length: 36 })
   messageId: string;
 
-  @Column({ type: 'varchar', name: 'dialog_id', length: 36 })
-  dialogId: string;
+  @Column({ type: 'varchar', name: 'conversation_id', length: 36 })
+  conversationId: string;
 
   @Column({ type: 'text', name: 'message_text' })
   messageText: string;
@@ -33,10 +33,10 @@ export class Message {
   })
   createdAt: Date;
 
-  @ManyToOne(() => Dialog, (dialog) => dialog.dialogMessages, {
+  @ManyToOne(() => Conversation, (conversation) => conversation.conversationMessages, {
     onDelete: 'CASCADE',
     onUpdate: 'RESTRICT',
   })
-  @JoinColumn([{ name: 'dialog_id', referencedColumnName: 'dialogId' }])
-  dialog: Dialog;
+  @JoinColumn([{ name: 'conversation_id', referencedColumnName: 'conversationId' }])
+  conversation: Conversation;
 }

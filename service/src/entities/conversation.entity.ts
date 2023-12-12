@@ -2,13 +2,13 @@ import { IsNotEmpty } from 'class-validator';
 import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
 import { Message } from './message.entity';
 
-@Entity('dialog')
-export class Dialog {
-  @PrimaryColumn({ type: 'varchar', name: 'dialog_id', length: 36 })
-  dialogId: string;
+@Entity('conversation')
+export class Conversation {
+  @PrimaryColumn({ type: 'varchar', name: 'conversation_id', length: 36 })
+  conversationId: string;
 
-  @Column('varchar', { name: 'dialog_name', length: 255 })
-  dialogName: string;
+  @Column('varchar', { name: 'conversation_name', length: 255 })
+  conversationName: string;
 
   @Column('varchar', { name: 'user_name', length: 32 })
   userName: string;
@@ -32,6 +32,6 @@ export class Dialog {
   })
   updatedAt: Date;
 
-  @OneToMany(() => Message, (message) => message.dialog)
-  dialogMessages: Message[];
+  @OneToMany(() => Message, (message) => message.conversation)
+  conversationMessages: Message[];
 }

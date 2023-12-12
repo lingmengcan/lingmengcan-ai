@@ -1,7 +1,7 @@
 import { ChatGlmDto } from '@/dtos/chat.dto';
-import { Dialog } from '@/entities/dialog.entity';
+import { Conversation } from '@/entities/conversation.entity';
 import { ChatService } from '@/services/chat.service';
-import { DialogService } from '@/services/dialog.service';
+import { ConversationService } from '@/services/conversation.service';
 import { successJson } from '@/utils/result';
 import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
@@ -12,7 +12,7 @@ import { ApiBody, ApiTags } from '@nestjs/swagger';
 export class ChatController {
   constructor(
     private readonly chatService: ChatService,
-    private readonly dialogService: DialogService,
+    private readonly conversationService: ConversationService,
   ) {}
 
   /**
@@ -42,8 +42,8 @@ export class ChatController {
    * 新增对话
    */
   @UseGuards(AuthGuard('jwt'))
-  @Post('/add-dialog')
-  async add(@Body() dialog: Dialog) {
-    return successJson(await this.dialogService.addDialog(dialog));
+  @Post('/add-conversation')
+  async add(@Body() conversation: Conversation) {
+    return successJson(await this.conversationService.addConversation(conversation));
   }
 }

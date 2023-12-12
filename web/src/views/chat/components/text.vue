@@ -8,7 +8,6 @@
 
   interface Props {
     inversion?: boolean;
-    error?: boolean;
     text?: string;
     loading?: boolean;
     asRawText?: boolean;

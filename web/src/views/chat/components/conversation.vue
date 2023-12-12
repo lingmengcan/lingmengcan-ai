@@ -6,7 +6,7 @@
   import { usePromptStore } from '@/store/modules/prompt';
   import { useScroll } from '../hooks/useScroll';
   import { storeToRefs } from 'pinia';
-  import { ConversationRequest, Message } from '@/models/chat';
+  import { Message } from '@/models/chat';
   import { chat, chatfile } from '@/api/chat/chat';
   import {
     ChatbubblesOutline,
@@ -35,13 +35,14 @@
   // 添加PromptStore
   const promptStore = usePromptStore();
 
-  const { dialogId } = route.params as { dialogId: string };
+  const { conversationId } = route.params as { conversationId: string };
 
-  const dataSources = computed(() => (dialogId ? chatStore.getChatByDialogId(dialogId) : []));
-
-  const conversationList = computed(() =>
-    dataSources.value.filter((item) => !item.inversion && !!item.conversationOptions),
+  const dataSources = computed(() =>
+    conversationId ? chatStore.getChatByConversationId(conversationId) : [],
   );
+
+  // const conversationList = computed(() => dataSources.value.filter((item) => item.sender === 'ai'));
+
   const prompt = ref<string>('');
   const loading = ref<boolean>(false);
 
@@ -139,33 +140,28 @@
     if (usingContext.value) {
       for (let i = 0; i < dataSources.value.length; i = i + 2)
         history.value.push([
-          `Human:${dataSources.value[i].messageText}`,
-          `Assistant:${dataSources.value[i + 1].messageText.split('\n\n数据来源：\n\n')[0]}`,
+          `human:${dataSources.value[i].messageText}`,
+          `ai:${dataSources.value[i + 1].messageText.split('\n\n数据来源：\n\n')[0]}`,
         ]);
     } else {
       history.value.length = 0;
     }
     if (!message || message.trim() === '') return;
 
-    chatStore.addChatByDialogId({
-      dialogId: dialogId,
+    const newChat: Message = {
+      conversationId: conversationId,
       messageText: message,
       sender: 'human',
       status: 0,
-    });
+    };
+    await chatStore.addChatByConversationId(newChat);
     scrollToBottom();
 
     loading.value = true;
     prompt.value = '';
 
-    let options: ConversationRequest = {};
-    const lastContext =
-      conversationList.value[conversationList.value.length - 1]?.conversationOptions;
-
-    if (lastContext && usingContext.value) options = { ...lastContext };
-
-    chatStore.addChatByDialogId({
-      dialogId: dialogId,
+    chatStore.addChatByConversationId({
+      conversationId: conversationId,
       messageText: '',
       sender: 'ai',
       status: 0,
@@ -183,19 +179,17 @@
               res.data.url.split('/static/')[1]
             }](http://127.0.0.1:9999${res.data.url})`
           : res.data.text;
-        chatStore.updateChatByUuid(+uuid, dataSources.value.length - 1, {
-          dateTime: new Date().toLocaleString(),
-          text: lastText + (result ?? ''),
-          inversion: false,
-          error: false,
-          loading: false,
-          conversationOptions: null,
-          requestOptions: { prompt: message, options: { ...options } },
+
+        chatStore.updateChatByConversationId({
+          conversationId: conversationId,
+          messageText: lastText + (result ?? ''),
+          sender: 'ai',
+          status: 0,
         });
         scrollToBottomIfAtBottom();
         loading.value = false;
 
-        chatStore.updateChatSomeByUuid(+uuid, dataSources.value.length - 1, { loading: false });
+        // chatStore.updateChatSomeByUuid(+uuid, dataSources.value.length - 1, { loading: false });
       };
 
       await fetchChatAPIOnce();
@@ -203,33 +197,33 @@
       const errorMessage = error?.message ?? '好像出错了，请稍后再试。';
 
       if (error.message === 'canceled') {
-        chatStore.updateChatSomeByUuid(+uuid, dataSources.value.length - 1, {
-          loading: false,
-        });
+        // chatStore.updateChatSomeByUuid(+uuid, dataSources.value.length - 1, {
+        //   loading: false,
+        // });
         scrollToBottomIfAtBottom();
         return;
       }
 
-      const currentChat = chatStore.getChatByUuidAndIndex(+uuid, dataSources.value.length - 1);
+      // const currentChat = chatStore.getChatByConversationId(conversationId);
 
-      if (currentChat?.text && currentChat.text !== '') {
-        chatStore.updateChatSomeByUuid(+uuid, dataSources.value.length - 1, {
-          text: `${currentChat.text}\n[${errorMessage}]`,
-          error: false,
-          loading: false,
-        });
-        return;
-      }
+      // if (currentChat?.text && currentChat.text !== '') {
+      //   chatStore.updateChatSomeByUuid(+uuid, dataSources.value.length - 1, {
+      //     text: `${currentChat.text}\n[${errorMessage}]`,
+      //     error: false,
+      //     loading: false,
+      //   });
+      //   return;
+      // }
 
-      chatStore.updateChatByUuid(+uuid, dataSources.value.length - 1, {
-        dateTime: new Date().toLocaleString(),
-        text: errorMessage,
-        inversion: false,
-        error: true,
-        loading: false,
-        conversationOptions: null,
-        requestOptions: { prompt: message, options: { ...options } },
-      });
+      // chatStore.updateChatByUuid(+uuid, dataSources.value.length - 1, {
+      //   dateTime: new Date().toLocaleString(),
+      //   text: errorMessage,
+      //   inversion: false,
+      //   error: true,
+      //   loading: false,
+      //   conversationOptions: null,
+      //   requestOptions: { prompt: message, options: { ...options } },
+      // });
       scrollToBottomIfAtBottom();
     } finally {
       loading.value = false;
@@ -311,8 +305,7 @@
             :key="index"
             :date-time="item.createdAt"
             :text="item.messageText"
-            :inversion="item.inversion"
-            :error="item.error"
+            :sender="item.sender"
             :loading="item.loading"
             @delete="handleDelete(item)"
           />

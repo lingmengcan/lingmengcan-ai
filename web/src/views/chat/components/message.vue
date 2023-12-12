@@ -10,7 +10,6 @@
     dateTime?: string;
     text?: string;
     inversion?: boolean;
-    error?: boolean;
     loading?: boolean;
   }
 
@@ -66,7 +65,6 @@
           <Text
             ref="textRef"
             :inversion="inversion"
-            :error="error"
             :text="text"
             :loading="loading"
             :as-raw-text="asRawText"

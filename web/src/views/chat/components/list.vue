@@ -8,32 +8,32 @@
   } from '@vicons/ionicons5';
   import { computed } from 'vue';
   import { useChatStore } from '@/store/modules/chat';
-  import { Dialog } from '@/models/chat';
+  import { Conversation } from '@/models/chat';
 
   const chatStore = useChatStore();
 
-  const dialogList = computed(() => chatStore.dialogList);
+  const conversationList = computed(() => chatStore.conversationList);
 
-  async function handleSelect({ dialogId }: Dialog) {
-    if (isActive(dialogId)) return;
+  async function handleSelect({ conversationId }: Conversation) {
+    if (isActive(conversationId)) return;
 
-    // if (chatStore.activeId) chatStore.updateDialog(dialogId);
-    await chatStore.setActive(dialogId);
+    // if (chatStore.activeId) chatStore.updateConversation(conversationId);
+    await chatStore.setActive(conversationId);
   }
 
-  function handleEdit(item: Dialog, isEdit: boolean, event?: MouseEvent) {
+  function handleEdit(item: Conversation, isEdit: boolean, event?: MouseEvent) {
     event?.stopPropagation();
     item.isEdit = isEdit;
-    chatStore.updateDialog(item);
+    chatStore.updateConversation(item);
   }
 
-  function handleDelete(item: Dialog, event?: MouseEvent) {
+  function handleDelete(item: Conversation, event?: MouseEvent) {
     event?.stopPropagation();
-    chatStore.deleteDialog(item);
+    chatStore.deleteConversation(item);
   }
 
-  function isActive(dialogId: string | undefined) {
-    return chatStore.activeId === dialogId;
+  function isActive(conversationId: string | undefined) {
+    return chatStore.activeId === conversationId;
   }
 </script>
 
@@ -41,11 +41,11 @@
   <n-scrollbar>
     <div class="mt-4">
       <div class="flex flex-col w-full gap-4">
-        <div v-for="(item, index) of dialogList" :key="index" class="list-chat">
+        <div v-for="(item, index) of conversationList" :key="index" class="list-chat">
           <n-button
             :bordered="false"
             class="list-chat-button"
-            :class="isActive(item.dialogId) && ['list-chat-button-selected']"
+            :class="isActive(item.conversationId) && ['list-chat-button-selected']"
             @click="handleSelect(item)"
           >
             <template #icon>
@@ -53,17 +53,17 @@
                 <ChatboxOutline />
               </n-icon>
             </template>
-            <n-input v-if="item.isEdit" v-model:value="item.dialogName" class="text-left" />
+            <n-input v-if="item.isEdit" v-model:value="item.conversationName" class="text-left" />
             <n-ellipsis
               v-else
               :tooltip="false"
               class="text-[12.5px]"
-              :class="isActive(item.dialogId) && ['w-40', 'text-left']"
+              :class="isActive(item.conversationId) && ['w-40', 'text-left']"
             >
-              {{ item.dialogName }}
+              {{ item.conversationName }}
             </n-ellipsis>
 
-            <div v-if="isActive(item.dialogId)" class="flex">
+            <div v-if="isActive(item.conversationId)" class="flex">
               <template v-if="item.isEdit">
                 <n-button
                   :bordered="false"
