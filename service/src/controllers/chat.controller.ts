@@ -46,4 +46,16 @@ export class ChatController {
   async add(@Body() conversation: Conversation) {
     return successJson(await this.conversationService.addConversation(conversation));
   }
+
+  /**
+   * 角色管理列表
+   *
+   * @param dto
+   * @returns
+   */
+  @UseGuards(AuthGuard('jwt'))
+  @Post('list')
+  async findAll() {
+    return successJson(await this.conversationService.findList());
+  }
 }

@@ -2,7 +2,7 @@ import axios from 'axios';
 import { BaseChatModel } from 'langchain/chat_models/base';
 import { AIMessage, BaseMessage, ChatResult } from 'langchain/schema';
 
-export class ChatGlm6BLLM extends BaseChatModel {
+export class ChatGlm6BLLM2 extends BaseChatModel {
   modelName: 'chatglm';
   temperature: number;
   max_length: number;

@@ -114,13 +114,6 @@
   }
 
   .code-block-header__copy {
-    @apply flex;
-    @apply gap-1;
-    @apply items-center;
-    @apply rounded;
-    @apply bg-none;
-    @apply p-1;
-    @apply text-xs;
-    @apply text-white;
+    @apply flex gap-1 items-center rounded bg-none p-1 text-xs text-white;
   }
 </style>

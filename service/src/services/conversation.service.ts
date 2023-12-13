@@ -19,6 +19,19 @@ export class ConversationService {
   }
 
   /**
+   * 对话列表
+   *
+   * @param roleDto
+   * @returns
+   */
+  async findlist() {
+    return this.repository.find({
+      where: { status: 0 },
+      order: { createdAt: 'DESC' },
+    });
+  }
+
+  /**
    * 新增
    *
    * @param menu 信息

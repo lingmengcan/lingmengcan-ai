@@ -1,4 +1,4 @@
-import { ChatGlm6BLLM } from '@/llm/chatglm2';
+import { ChatGlm6BLLM2 } from '@/llm/chatglm2';
 import { LLMChain } from 'langchain/chains';
 import {
   SystemMessagePromptTemplate,
@@ -17,7 +17,7 @@ export class ChatglmService {
     const result = await vectorStore.similaritySearch(message, 1);
 
     const fileSourceStr = result[0].metadata.source;
-    const chat = new ChatGlm6BLLM({ temperature: 0.01, history: history });
+    const chat = new ChatGlm6BLLM2({ temperature: 0.01, history: history });
     const translationPrompt = ChatPromptTemplate.fromMessages([
       SystemMessagePromptTemplate.fromTemplate(
         `基于已知内容, 回答用户问题。如果无法从中得到答案，请说'没有足够的相关信息'。已知内容:${result[0].pageContent}`,
@@ -43,7 +43,7 @@ export class ChatglmService {
   async chat(body) {
     const { message, history } = body;
 
-    const chat = new ChatGlm6BLLM({ temperature: 0.01, history: history, streaming: true });
+    const chat = new ChatGlm6BLLM2({ temperature: 0.01, history: history, streaming: true });
 
     const translationPrompt = ChatPromptTemplate.fromMessages([
       HumanMessagePromptTemplate.fromTemplate('{text}'),
