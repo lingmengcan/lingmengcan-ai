@@ -12,19 +12,27 @@ export class ConversationService {
     private dataSource: DataSource,
   ) {}
 
+  /**
+   * 获取实体
+   * @param id
+   * @returns
+   */
+  findOne(id: string): Promise<Conversation> {
+    return this.repository.findOneBy({ conversationId: id });
+  }
+
   findByConversationId(conversationId: string): Promise<Conversation> {
     return this.repository.findOne({
-      where: { conversationId: conversationId, status: 0 },
+      where: { conversationId, status: 0 },
     });
   }
 
   /**
    * 对话列表
    *
-   * @param roleDto
    * @returns
    */
-  async findlist() {
+  async findList() {
     return this.repository.find({
       where: { status: 0 },
       order: { createdAt: 'DESC' },
@@ -46,6 +54,33 @@ export class ConversationService {
     entity.userName = conversation.userName;
     entity.status = conversation.status;
     entity.createdAt = new Date();
+    entity.updatedAt = new Date();
+    return this.repository.save(entity);
+  }
+
+  /**
+   * 修改对话
+   *
+   * @param conversation 对话信息
+   * @return 结果
+   */
+  async updateConversation(conversation: Conversation) {
+    const entity = await this.findOne(conversation.conversationId);
+    entity.conversationName = conversation.conversationName;
+    entity.status = conversation.status;
+    entity.updatedAt = new Date();
+    return this.repository.save(entity);
+  }
+
+  /**
+   * 修改对话状态
+   *
+   * @param conversation 对话信息
+   * @return 结果
+   */
+  async updateStatus(conversation: Conversation) {
+    const entity = await this.findOne(conversation.conversationId);
+    entity.status = conversation.status;
     entity.updatedAt = new Date();
     return this.repository.save(entity);
   }

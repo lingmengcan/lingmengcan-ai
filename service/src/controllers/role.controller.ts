@@ -59,9 +59,7 @@ export class RoleController {
   @UseGuards(AuthGuard('jwt'))
   @Post('change-menus')
   async updateRoleMenus(@Body() dto: RoleMenusDto) {
-    return successJson(
-      await this.roleService.updateRoleMenus(dto.roleId, dto.menuIds),
-    );
+    return successJson(await this.roleService.updateRoleMenus(dto.roleId, dto.menuIds));
   }
 
   /**
