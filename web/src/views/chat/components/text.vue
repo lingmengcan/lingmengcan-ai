@@ -7,7 +7,6 @@
   import { copyToClip } from '@/utils';
 
   interface Props {
-    inversion?: boolean;
     text?: string;
     loading?: boolean;
     asRawText?: boolean;
@@ -86,7 +85,7 @@
 
 <template>
   <div ref="textRef" class="flex-1 w-full max-w-full text-sm dark:prose-invert md:text-base">
-    <div v-if="!asRawText" class="prose" v-html="text"></div>
+    <div v-if="!asRawText" class="prose max-w-full" v-html="text"></div>
     <div v-else class="whitespace-pre-wrap" v-text="text" />
 
     <span v-if="loading" class="w-[4px] h-[20px] block animate-blink"></span>

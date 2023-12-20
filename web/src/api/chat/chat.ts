@@ -4,7 +4,7 @@ import http, { Result } from '@/utils/http';
 
 // 获取对话列表
 export const getConversationList = () =>
-  http.request<Result<Conversation[]>>('chat/conversation/list', Method.GET);
+  http.request<Result<Conversation[]>>('chat/list', Method.POST);
 
 // 新增对话
 export const addConversation = (data: Conversation) =>
@@ -18,9 +18,13 @@ export const editConversation = (data: Conversation) =>
 export const changeConversationStatus = (data: Conversation) =>
   http.request<Result<Conversation>>('chat/change-conversation-status', Method.POST, data);
 
+// 清空列表
+export const clearConversationList = () =>
+  http.request<Result<Conversation>>('chat/clear-conversation-list', Method.POST);
+
 // 获取对话消息列表
-export const getMessagesByConversationId = (data: String) =>
-  http.request<Result<Message[]>>('chat/messages', Method.GET, data);
+export const getMessagesByConversationId = (conversationId: String) =>
+  http.request<Result<Message[]>>('chat/messages/' + conversationId, Method.GET);
 
 // 新增消息
 export const addMessage = (data: Message) =>

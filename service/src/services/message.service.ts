@@ -35,7 +35,7 @@ export class MessageService {
   async findListByConversationId(conversationId: string) {
     return this.repository.find({
       where: { status: 0, conversationId },
-      order: { createdAt: 'ASC' },
+      order: { createdAt: 'ASC', sender: 'ASC' },
     });
   }
 
@@ -50,10 +50,11 @@ export class MessageService {
 
     const entity = new Message();
     entity.messageId = messageId;
-    entity.messageText = message.messageText;
+    entity.previousId = message.previousId;
     entity.conversationId = message.conversationId;
     entity.messageText = message.messageText;
     entity.sender = message.sender;
+    entity.completed = message.completed;
     entity.status = message.status;
     entity.createdAt = new Date();
     return this.repository.save(entity);
@@ -69,6 +70,7 @@ export class MessageService {
     const entity = await this.findOne(message.messageId);
     entity.messageText = message.messageText;
     entity.status = message.status;
+    entity.completed = message.completed;
     return this.repository.save(entity);
   }
 

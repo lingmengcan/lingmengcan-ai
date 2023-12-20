@@ -1,11 +1,5 @@
 <script setup lang="ts">
-  import {
-    ChatbubblesOutline,
-    AddCircleOutline,
-    TrashOutline,
-    CloudDownloadOutline,
-    CloudUploadOutline,
-  } from '@vicons/ionicons5';
+  import { ChatbubblesOutline, AddCircleOutline, TrashOutline } from '@vicons/ionicons5';
   import { MenuFoldOutlined } from '@vicons/antd';
   import { ref } from 'vue';
   import { useChatStore } from '@/store/modules/chat';
@@ -16,7 +10,11 @@
   const chatListVisable = ref(true);
 
   function handleAdd() {
-    chatStore.addDialog();
+    chatStore.addConversation();
+  }
+
+  function handleClear() {
+    chatStore.clearConversationList();
   }
 </script>
 <template>
@@ -59,29 +57,13 @@
         <List />
 
         <div class="flex-col">
-          <n-button :bordered="false" class="gap-3 hover:bg-gray-500/10">
+          <n-button :bordered="false" class="gap-3 hover:bg-gray-500/10" @click="handleClear">
             <template #icon>
               <n-icon size="14">
                 <TrashOutline />
               </n-icon>
             </template>
             清空列表
-          </n-button>
-          <n-button :bordered="false" class="gap-3 hover:bg-gray-500/10">
-            <template #icon>
-              <n-icon size="14">
-                <CloudUploadOutline />
-              </n-icon>
-            </template>
-            导入对话
-          </n-button>
-          <n-button :bordered="false" class="gap-3 hover:bg-gray-500/10">
-            <template #icon>
-              <n-icon size="14">
-                <CloudDownloadOutline />
-              </n-icon>
-            </template>
-            导出对话
           </n-button>
         </div>
       </div>

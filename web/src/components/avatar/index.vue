@@ -5,7 +5,7 @@
   import logo from '@/assets/images/logo.png';
 
   const props = defineProps({
-    inversion: {
+    isAi: {
       type: [Boolean, undefined] as PropType<boolean | undefined>,
       required: true,
     },
@@ -14,7 +14,7 @@
   const userStore = useUserStore();
 
   const avatar = computed(() => {
-    const avatar = props.inversion ? userStore.userInfo.avatar : logo;
+    const avatar = props.isAi ? logo : userStore.userInfo.avatar;
 
     return avatar || defaultAvatar;
   });

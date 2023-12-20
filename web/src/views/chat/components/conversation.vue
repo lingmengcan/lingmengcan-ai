@@ -1,13 +1,10 @@
 <script lang="ts" setup>
-  import { PropType, Ref, computed, onMounted, ref } from 'vue';
-  import { useUsingContext } from '../hooks/useUsingContext';
+  import { PropType, Ref, watchEffect, computed, onMounted, ref } from 'vue';
   import { useRoute } from 'vue-router';
   import { useChatStore } from '@/store/modules/chat';
-  import { usePromptStore } from '@/store/modules/prompt';
   import { useScroll } from '../hooks/useScroll';
-  import { storeToRefs } from 'pinia';
   import { Message } from '@/models/chat';
-  import { chat, chatfile } from '@/api/chat/chat';
+  import { chat } from '@/api/chat/chat';
   import {
     ChatbubblesOutline,
     SettingsOutline,
@@ -15,7 +12,6 @@
     PaperPlaneOutline,
     StopCircleOutline,
   } from '@vicons/ionicons5';
-  import { useDialog } from 'naive-ui';
   import MessageComponent from './message.vue';
 
   defineProps({
@@ -28,34 +24,22 @@
   const emit = defineEmits(['update:chatListVisable']);
 
   const inputRef = ref<Ref | null>(null);
-  const dialog = useDialog();
   const route = useRoute();
   const chatStore = useChatStore();
 
-  // 添加PromptStore
-  const promptStore = usePromptStore();
+  const conversationId = ref<string>((route.params as { conversationId: string }).conversationId);
 
-  const { conversationId } = route.params as { conversationId: string };
-
-  const dataSources = computed(() =>
-    conversationId ? chatStore.getChatByConversationId(conversationId) : [],
-  );
-
-  // const conversationList = computed(() => dataSources.value.filter((item) => item.sender === 'ai'));
+  const messages = computed(() => chatStore.messages);
 
   const prompt = ref<string>('');
   const loading = ref<boolean>(false);
 
-  const { usingContext } = useUsingContext();
+  const usingContext = ref(true);
 
   const { scrollRef, scrollToBottom, scrollToBottomIfAtBottom } = useScroll();
 
   // 历史记录相关
   const history: any = ref([]);
-  // 使用storeToRefs，保证store修改后，联想部分能够重新渲染
-  const { promptList: promptTemplate } = storeToRefs<any>(promptStore);
-  // 是否开启知识库问答
-  const active = ref<boolean>(false);
 
   const selectedLlm = ref('ChatGLM3');
 
@@ -70,52 +54,10 @@
     },
   ];
 
-  // 可优化部分
-  // 搜索选项计算，这里使用value作为索引项，所以当出现重复value时渲染异常(多项同时出现选中效果)
-  // 理想状态下其实应该是key作为索引项,但官方的renderOption会出现问题，所以就需要value反renderLabel实现
-  const searchOptions = computed(() => {
-    if (prompt.value.startsWith('/')) {
-      return promptTemplate.value
-        .filter((item: { key: string }) =>
-          item.key.toLowerCase().includes(prompt.value.substring(1).toLowerCase()),
-        )
-        .map((obj: { value: any }) => {
-          return {
-            label: obj.value,
-            value: obj.value,
-          };
-        });
-    } else {
-      return [];
-    }
-  });
-
-  // value反渲染key
-  const renderOption = (option: { label: string }) => {
-    for (const i of promptTemplate.value) {
-      if (i.value === option.label) return [i.key];
-    }
-    return [];
-  };
-
   function handleStop() {
     if (loading.value) {
       loading.value = false;
     }
-  }
-
-  function handleDelete(message: Message) {
-    if (loading.value) return;
-
-    dialog.warning({
-      title: '提示',
-      content: '是否删除此消息?',
-      positiveText: '确定',
-      negativeText: '取消',
-      onPositiveClick: () => {
-        chatStore.deleteChat(message);
-      },
-    });
   }
 
   function handleEnter(event: KeyboardEvent) {
@@ -126,118 +68,111 @@
   }
 
   function handleSubmit() {
-    switch (selectedLlm.value) {
-      case 'ChatGLM3':
+    if (loading.value) return;
+
+    if (conversationId.value) {
+      switch (selectedLlm.value) {
+        case 'ChatGLM3':
+          onConversation();
+          break;
+        case 'GPT-3.5':
+          break;
+      }
+    } else {
+      chatStore.addConversation().then(() => {
+        conversationId.value = chatStore.activeId!;
         onConversation();
-        break;
-      case 'GPT-3.5':
-        break;
+      });
     }
   }
 
   async function onConversation() {
     const message = prompt.value;
+
     if (usingContext.value) {
-      for (let i = 0; i < dataSources.value.length; i = i + 2)
+      for (let i = 0; i < messages.value.length; i = i + 2) {
+        const humanMessage = messages.value[i];
+        const aiMessage = messages.value[i + 1];
         history.value.push([
-          `human:${dataSources.value[i].messageText}`,
-          `ai:${dataSources.value[i + 1].messageText.split('\n\n数据来源：\n\n')[0]}`,
+          `human:${humanMessage.sender === 'human' && humanMessage.messageText}`,
+          `ai:${aiMessage.previousId === humanMessage.messageId && aiMessage.messageText}`,
         ]);
+      }
     } else {
       history.value.length = 0;
     }
+
     if (!message || message.trim() === '') return;
 
+    // 问题入库
     const newChat: Message = {
-      conversationId: conversationId,
+      conversationId: conversationId.value,
       messageText: message,
       sender: 'human',
       status: 0,
+      completed: 1,
     };
-    await chatStore.addChatByConversationId(newChat);
-    scrollToBottom();
 
-    loading.value = true;
-    prompt.value = '';
+    const question = await chatStore.addChatByConversationId(newChat);
 
-    chatStore.addChatByConversationId({
-      conversationId: conversationId,
+    // 创建回答
+    const answer = await chatStore.addChatByConversationId({
+      conversationId: conversationId.value,
+      previousId: question?.messageId,
       messageText: '',
       sender: 'ai',
       status: 0,
+      completed: 0,
     });
+
     scrollToBottom();
 
+    // 等待回答
+    loading.value = true;
+    prompt.value = '';
+
     try {
-      const lastText = '';
       const fetchChatAPIOnce = async () => {
-        const res = active.value
-          ? await chatfile({ message, history: history.value })
-          : await chat({ message, history: history.value });
-        const result = active.value
-          ? `${res.data.response.text}\n\n数据来源：\n\n[${
-              res.data.url.split('/static/')[1]
-            }](http://127.0.0.1:9999${res.data.url})`
-          : res.data.text;
+        const res = await chat({ message, history: history.value });
 
-        chatStore.updateChatByConversationId({
-          conversationId: conversationId,
-          messageText: lastText + (result ?? ''),
-          sender: 'ai',
-          status: 0,
-        });
-        scrollToBottomIfAtBottom();
+        if (answer) {
+          answer.messageText = res.data.text ?? '';
+          answer.completed = 1;
+          // 创建回答
+          await chatStore.updateChatByConversationId(answer);
+
+          scrollToBottom();
+        }
+
+        scrollToBottom();
         loading.value = false;
-
-        // chatStore.updateChatSomeByUuid(+uuid, dataSources.value.length - 1, { loading: false });
       };
 
       await fetchChatAPIOnce();
     } catch (error: any) {
-      const errorMessage = error?.message ?? '好像出错了，请稍后再试。';
-
-      if (error.message === 'canceled') {
-        // chatStore.updateChatSomeByUuid(+uuid, dataSources.value.length - 1, {
-        //   loading: false,
-        // });
-        scrollToBottomIfAtBottom();
-        return;
-      }
-
-      // const currentChat = chatStore.getChatByConversationId(conversationId);
-
-      // if (currentChat?.text && currentChat.text !== '') {
-      //   chatStore.updateChatSomeByUuid(+uuid, dataSources.value.length - 1, {
-      //     text: `${currentChat.text}\n[${errorMessage}]`,
-      //     error: false,
-      //     loading: false,
-      //   });
-      //   return;
-      // }
-
-      // chatStore.updateChatByUuid(+uuid, dataSources.value.length - 1, {
-      //   dateTime: new Date().toLocaleString(),
-      //   text: errorMessage,
-      //   inversion: false,
-      //   error: true,
-      //   loading: false,
-      //   conversationOptions: null,
-      //   requestOptions: { prompt: message, options: { ...options } },
-      // });
       scrollToBottomIfAtBottom();
     } finally {
       loading.value = false;
     }
   }
 
-  onMounted(() => {
-    scrollToBottom();
-    if (inputRef.value) inputRef.value?.focus();
+  watchEffect(async () => {
+    if (conversationId.value) {
+      await chatStore.getChatByConversationId(conversationId.value);
+    }
   });
 
-  // onUnmounted(() => {
-  //   if (loading.value) controller.abort();
-  // });
+  onMounted(async () => {
+    await chatStore.setActive(conversationId.value);
+
+    if (conversationId.value) {
+      await chatStore.getChatByConversationId(conversationId.value);
+    }
+
+    scrollToBottom();
+
+    if (inputRef.value) inputRef.value?.focus();
+  });
 </script>
 
 <template>
@@ -289,7 +224,7 @@
     </div>
     <div class="flex flex-col justify-center flex-auto overflow-hidden">
       <div id="scrollRef" ref="scrollRef" class="max-h-full overflow-x-hidden">
-        <template v-if="!dataSources.length">
+        <template v-if="!messages.length">
           <div class="mx-auto space-y-4 max-w-[600px]">
             <div class="text-4xl font-semibold text-center text-gray-800">
               你好，我是一个智能对话系统
@@ -301,13 +236,12 @@
         </template>
         <template v-else>
           <MessageComponent
-            v-for="(item, index) of dataSources"
+            v-for="(item, index) of messages"
             :key="index"
             :date-time="item.createdAt"
             :text="item.messageText"
-            :sender="item.sender"
-            :loading="item.loading"
-            @delete="handleDelete(item)"
+            :is-ai="item.sender === 'ai'"
+            :loading="item.completed === 0"
           />
           <div class="sticky bottom-0 left-0 flex justify-center">
             <n-button v-if="loading" type="warning" @click="handleStop">
@@ -325,11 +259,7 @@
         <div
           class="stretch flex flex-row gap-3 last:mb-3 mx-2 mt-6 md:mx-4 md:last:mb-6 lg:mx-auto lg:max-w-3xl"
         >
-          <n-auto-complete
-            v-model:value="prompt"
-            :options="searchOptions"
-            :render-label="renderOption"
-          >
+          <n-auto-complete v-model:value="prompt">
             <template #default="{ handleInput, handleBlur, handleFocus }">
               <n-input
                 ref="inputRef"
@@ -346,7 +276,12 @@
                 @keypress="handleEnter"
               >
                 <template #suffix>
-                  <n-button :bordered="false" style="width: 20px" @click="handleSubmit">
+                  <n-button
+                    :bordered="false"
+                    :loading="loading"
+                    style="width: 20px"
+                    @click="handleSubmit"
+                  >
                     <template #icon>
                       <n-icon size="16">
                         <PaperPlaneOutline />
@@ -373,10 +308,7 @@
   }
 
   .action-button {
-    @apply bg-gray-200;
-    @apply w-10;
-    @apply h-10;
-    @apply hover:opacity-70;
+    @apply bg-gray-200 w-10 h-10 hover:opacity-70;
     border-radius: 0;
 
     &-border-l {

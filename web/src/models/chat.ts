@@ -12,10 +12,11 @@ export interface Conversation {
 //消息
 export interface Message {
   messageId?: string;
+  previousId?: string;
   conversationId: string;
   messageText: string;
   status: number;
   sender: string;
   createdAt?: string;
-  loading?: boolean;
+  completed: number;
 }

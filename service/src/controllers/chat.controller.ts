@@ -5,7 +5,7 @@ import { ChatService } from '@/services/chat.service';
 import { ConversationService } from '@/services/conversation.service';
 import { MessageService } from '@/services/message.service';
 import { successJson } from '@/utils/result';
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, UseGuards, Request } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
 
@@ -46,7 +46,9 @@ export class ChatController {
    */
   @UseGuards(AuthGuard('jwt'))
   @Post('/conversation/add')
-  async add(@Body() conversation: Conversation) {
+  async add(@Body() conversation: Conversation, @Request() req: any) {
+    const userName = req.user.userName;
+    conversation.userName = userName;
     return successJson(await this.conversationService.addConversation(conversation));
   }
 
@@ -71,8 +73,9 @@ export class ChatController {
    */
   @UseGuards(AuthGuard('jwt'))
   @Post('list')
-  async chatList() {
-    return successJson(await this.conversationService.findList());
+  async chatList(@Request() req: any) {
+    const userName = req.user.userName;
+    return successJson(await this.conversationService.findUserList(userName));
   }
 
   /**
@@ -88,6 +91,18 @@ export class ChatController {
   }
 
   /**
+   * 清空用户对话列表
+   *
+   * @returns
+   */
+  @UseGuards(AuthGuard('jwt'))
+  @Post('clear-conversation-list')
+  async clearConversationList(@Request() req: any) {
+    const userName = req.user.userName;
+    return successJson(await this.conversationService.clearConversationList(userName));
+  }
+
+  /**
    * 根据id获取详细信息
    *
    * @param conversationId
@@ -95,9 +110,9 @@ export class ChatController {
    */
   @UseGuards(AuthGuard('jwt'))
   @Get('messages/:conversationId')
-  async findOne(@Param('conversationId') conversationId: string) {
-    const user = await this.messageService.findListByConversationId(conversationId);
-    return successJson(user);
+  async findMessages(@Param('conversationId') conversationId: string) {
+    const res = await this.messageService.findListByConversationId(conversationId);
+    return successJson(res);
   }
 
   /**

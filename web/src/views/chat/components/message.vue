@@ -9,7 +9,7 @@
   interface Props {
     dateTime?: string;
     text?: string;
-    inversion?: boolean;
+    isAi?: boolean;
     loading?: boolean;
   }
 
@@ -25,7 +25,7 @@
   const message = useMessage();
   const textRef = ref<HTMLElement>();
 
-  const asRawText = ref(props.inversion);
+  const asRawText = ref(!props.isAi);
 
   const messageRef = ref<HTMLElement>();
 
@@ -50,27 +50,21 @@
       class="relative flex w-full gap-2 px-3 py-3 m-auto text-base md:gap-3 lg:gap-6 lg:max-w-3xl lg:px-0"
     >
       <div class="min-w-[32px] w-[32px] md:min-w-[40px] md:w-[40px]">
-        <Avatar :inversion="inversion" />
+        <Avatar :is-ai="isAi" />
       </div>
 
       <div
         class="flex items-center relative rounded-xl rounded-tl-[3px] px-4 py-2"
         :class="[
-          inversion
-            ? 'bg-[#D4E3FC]'
-            : 'w-full bg-gray-50 border border-gray-200 shadow-[0_1px_10px_rgba(8,26,81,0.05)]',
+          isAi
+            ? 'w-full bg-gray-50 border border-gray-200 shadow-[0_1px_10px_rgba(8,26,81,0.05)]'
+            : 'bg-[#D4E3FC]',
         ]"
       >
         <div class="flex flex-col w-full">
-          <Text
-            ref="textRef"
-            :inversion="inversion"
-            :text="text"
-            :loading="loading"
-            :as-raw-text="asRawText"
-          />
+          <Text ref="textRef" :text="text" :loading="loading" :as-raw-text="asRawText" />
           <div
-            v-if="!inversion"
+            v-if="isAi && !loading"
             class="flex flex-row items-center justify-between py-2 pb-0 mt-2 border-t border-gray-200"
           >
             <div

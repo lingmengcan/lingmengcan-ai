@@ -32,9 +32,9 @@ export class ConversationService {
    *
    * @returns
    */
-  async findList() {
+  async findUserList(userName: string) {
     return this.repository.find({
-      where: { status: 0 },
+      where: { status: 0, userName },
       order: { createdAt: 'DESC' },
     });
   }
@@ -83,5 +83,22 @@ export class ConversationService {
     entity.status = conversation.status;
     entity.updatedAt = new Date();
     return this.repository.save(entity);
+  }
+
+  /**
+   * 清空用户对话列表
+   *
+   * @param userName 用户
+   * @return 结果
+   */
+  async clearConversationList(userName: string) {
+    const res = await this.dataSource
+      .createQueryBuilder()
+      .update(Conversation)
+      .set({ status: 1 })
+      .where({ userName })
+      .execute();
+
+    return res;
   }
 }
