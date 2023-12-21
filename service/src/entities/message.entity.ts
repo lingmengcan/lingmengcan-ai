@@ -8,6 +8,9 @@ export class Message {
   @PrimaryColumn({ type: 'varchar', name: 'message_id', length: 36 })
   messageId: string;
 
+  @Column({ type: 'varchar', name: 'previous_id', length: 36 })
+  previousId: string;
+
   @Column({ type: 'varchar', name: 'conversation_id', length: 36 })
   conversationId: string;
 
@@ -15,8 +18,14 @@ export class Message {
   messageText: string;
 
   @Column('tinyint', {
+    name: 'completed',
+  })
+  @IsNotEmpty()
+  completed: number;
+
+  @Column('tinyint', {
     name: 'status',
-    comment: '-1 deleted, 0 normal，1 deactivated',
+    comment: '1 deleted, 0 normal，1 deactivated',
   })
   @IsNotEmpty()
   status: number;
