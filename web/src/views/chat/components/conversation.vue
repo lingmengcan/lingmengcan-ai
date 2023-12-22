@@ -23,6 +23,8 @@
 
   const emit = defineEmits(['update:chatListVisable']);
 
+  const temperature = ref(0.5);
+
   const inputRef = ref<Ref | null>(null);
   const route = useRoute();
   const chatStore = useChatStore();
@@ -165,9 +167,9 @@
   onMounted(async () => {
     await chatStore.setActive(conversationId.value);
 
-    if (conversationId.value) {
-      await chatStore.getChatByConversationId(conversationId.value);
-    }
+    conversationId.value
+      ? await chatStore.getChatByConversationId(conversationId.value)
+      : (chatStore.messages = []);
 
     scrollToBottom();
 
@@ -203,13 +205,52 @@
             :options="llmOptions"
             class="llm-select"
           />
-          <n-button :bordered="false" class="action-button action-button-border-l">
-            <template #icon>
-              <n-icon size="18">
-                <SettingsOutline />
-              </n-icon>
+          <n-popover ref="popoverRef" trigger="click" placement="bottom-start" width="500">
+            <template #trigger>
+              <n-button :bordered="false" class="action-button action-button-border-l">
+                <template #icon>
+                  <n-icon size="18">
+                    <SettingsOutline />
+                  </n-icon>
+                </template>
+              </n-button>
             </template>
-          </n-button>
+            <div>
+              <div class="w-full px-4 py-2 text-base font-bold border-b">参数设置</div>
+              <div class="flex flex-col w-full gap-6 p-4">
+                <div class="flex flex-col">
+                  <label class="mb-2 font-bold text-left text-neutral-700">生成温度</label>
+                  <span class="text-xs text-black/50">
+                    较高的数值（例如0.8）会使输出更随机，而较低的数值（例如0.2）会使输出更加聚焦和确定性更强。
+                  </span>
+                  <span class="mt-2 mb-1 font-sans text-center text-neutral-900">
+                    {{ temperature }}
+                  </span>
+                  <n-slider v-model:value="temperature" :step="0.1" :min="0" :max="1" />
+                  <ul class="w mt-2 pb-8 flex justify-between px-[12px] text-neutral-500 text-xs">
+                    <li class="flex justify-center"><span class="absolute">保守</span></li>
+                    <li class="flex justify-center"><span class="absolute">中立</span></li>
+                    <li class="flex justify-center"><span class="absolute">随性</span></li>
+                  </ul>
+                </div>
+              </div>
+              <div class="w-full px-4 pb-4">
+                <n-button
+                  :class="[
+                    'w-full px-4 py-2 border rounded-lg shadow border-neutral-500 text-neutral-900 hover:bg-neutral-100 focus:outline-none',
+                  ]"
+                >
+                  确定
+                </n-button>
+                <button
+                  type="button"
+                  class="w-full px-4 py-2 border rounded-lg shadow border-neutral-500 text-neutral-900 hover:bg-neutral-100 focus:outline-none"
+                >
+                  确定
+                </button>
+              </div>
+            </div>
+          </n-popover>
         </div>
       </div>
       <div class="relative flex">

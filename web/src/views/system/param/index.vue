@@ -13,19 +13,6 @@
           style="resize: none; max-height: 300px; overflow: hidden; height: 44px"
         ></textarea>
       </div>
-      <div class="flex flex-col">
-        <label class="mb-2 font-bold text-left text-neutral-700">生成温度</label>
-        <span class="text-xs text-black/50">
-          较高的数值（例如0.8）会使输出更随机，而较低的数值（例如0.2）会使输出更加聚焦和确定性更强。
-        </span>
-        <span class="mt-2 mb-1 font-sans text-center text-neutral-900">0.5</span>
-        <input class="cursor-pointer" type="range" min="0" max="1" step="0.1" value="0.5" />
-        <ul class="w mt-2 pb-8 flex justify-between px-[12px] text-neutral-500 text-xs">
-          <li class="flex justify-center"><span class="absolute">保守</span></li>
-          <li class="flex justify-center"><span class="absolute">中立</span></li>
-          <li class="flex justify-center"><span class="absolute">随性</span></li>
-        </ul>
-      </div>
     </div>
     <div class="w-full px-4 pb-4">
       <button
@@ -112,77 +99,6 @@
             </svg>
           </div>
         </div>
-      </div>
-    </div>
-    <div
-      class="absolute top-0 left-0 overflow-hidden flex items-center justify-center bg-[rgba(0,0,0,.1)] w-0 h-0"
-    >
-      <svg
-        stroke="currentColor"
-        fill="none"
-        stroke-width="2"
-        viewBox="0 0 24 24"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        class="animate-spin"
-        height="1em"
-        width="1em"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <line x1="12" y1="2" x2="12" y2="6"></line>
-        <line x1="12" y1="18" x2="12" y2="22"></line>
-        <line x1="4.93" y1="4.93" x2="7.76" y2="7.76"></line>
-        <line x1="16.24" y1="16.24" x2="19.07" y2="19.07"></line>
-        <line x1="2" y1="12" x2="6" y2="12"></line>
-        <line x1="18" y1="12" x2="22" y2="12"></line>
-        <line x1="4.93" y1="19.07" x2="7.76" y2="16.24"></line>
-        <line x1="16.24" y1="7.76" x2="19.07" y2="4.93"></line>
-      </svg>
-    </div>
-  </div>
-
-  <div
-    class="fixed top-0 right-0 min-h-screen max-h-screen z-50 bg-white flex w-[260px] flex-none flex-col pb-4 transition-all text-black lg:border lg:w-[400px] lg:absolute lg:min-h-[10rem] lg:max-h-[40rem] lg:top-12 lg:rounded-lg lg:shadow-[0_0_10px_rgba(0,0,0,0.10)]"
-  >
-    <div class="pb-4">
-      <div
-        class="px-4 w-full h-16 border-b leading-8 text-gy1 text-[1rem] cursor-pointer flex items-center gap-2"
-      >
-        <svg viewBox="0 0 16 16" width="16px" height="16px" style="display: block">
-          <path
-            d="M9.5397 3.53906L10.4589 4.4583L6.91856 7.99868L10.4589 11.5391L9.5397 12.4583L5.08008 7.99868L9.5397 3.53906Z"
-            fill="#000"
-            fill-opacity=".9"
-          ></path>
-        </svg>
-        新建提示词
-      </div>
-      <div class="leading-6 p-4 font-semibold text-[0.88rem] text-gy1">提示词标题</div>
-      <div class="w-full h-10 px-4">
-        <input
-          placeholder="请输入标题"
-          class="h-full w-full text-sm px-3 py-2 bg-gy1 hover:bg-gy2 focus:bg-white focus:border focus:border-brand text-gy1 rounded-[0.19rem] disabled:cursor-not-allowed"
-          value=""
-        />
-      </div>
-      <div class="leading-6 p-4 font-semibold text-[0.88rem] text-gy1">提示词内容</div>
-      <div class="w-full px-4">
-        <div class="flex flex-col flex-grow w-full rounded-lg">
-          <textarea
-            class="w-full px-3 py-2 rounded-[0.5rem] m-0 text-sm resize-none bg-gy1 hover:bg-gy2 text-gy1 focus:bg-white focus:border focus:border-brand placeholder:truncate disabled:cursor-not-allowed"
-            rows="9"
-            placeholder="请输入内容"
-            style="max-height: 300px; min-height: 200px; overflow: hidden"
-          ></textarea>
-        </div>
-      </div>
-      <div class="px-4 mt-7">
-        <button
-          class="w-full h-10 shadow px-4 leading-[2rem] rounded-[0.2rem] bg-blue1 text-white1 text-[0.88rem] cursor-pointer flex items-center gap-2 justify-center disabled:bg-brand_disabled disabled:cursor-not-allowed enabled:hover:opacity-70 focus:outline-none"
-          disabled=""
-        >
-          保存
-        </button>
       </div>
     </div>
     <div

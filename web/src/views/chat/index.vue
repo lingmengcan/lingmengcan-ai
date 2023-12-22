@@ -5,7 +5,10 @@
   import { useChatStore } from '@/store/modules/chat';
   import List from './components/list.vue';
   import Conversation from './components/conversation.vue';
+  import { useDialog, useMessage } from 'naive-ui';
 
+  const message = useMessage();
+  const dialog = useDialog();
   const chatStore = useChatStore();
   const chatListVisable = ref(true);
 
@@ -14,7 +17,17 @@
   }
 
   function handleClear() {
-    chatStore.clearConversationList();
+    dialog.warning({
+      title: '清空',
+      content: '您确定要清空对话吗',
+      positiveText: '确定',
+      negativeText: '取消',
+      onPositiveClick: () => {
+        chatStore.clearConversationList().then(() => {
+          message.success('清空成功');
+        });
+      },
+    });
   }
 </script>
 <template>

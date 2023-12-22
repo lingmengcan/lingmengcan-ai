@@ -62,6 +62,8 @@ import {
   NScrollbar,
   NPopconfirm,
   NAutoComplete,
+  NPopover,
+  NSlider,
 } from 'naive-ui';
 
 // https://www.naiveui.com/en-US/os-theme/docs/import-on-demand
@@ -128,6 +130,8 @@ const naive = create({
     NScrollbar,
     NPopconfirm,
     NAutoComplete,
+    NPopover,
+    NSlider,
   ],
 });
 
