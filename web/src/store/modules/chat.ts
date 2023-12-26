@@ -7,8 +7,8 @@ import {
   deleteMessagesByConversationId,
   editConversation,
   editMessage,
+  getConversationByConversationId,
   getConversationList,
-  getMessagesByConversationId,
 } from '@/api/chat/chat';
 import { Message, Conversation } from '@/models/chat';
 import router from '@/router';
@@ -16,38 +16,19 @@ import { defineStore } from 'pinia';
 
 export interface ChatState {
   activeId: string | undefined;
-  messages: Message[];
-  usingContext: boolean;
+  conversation: Conversation | undefined;
   conversationList: Conversation[];
 }
 
 export const useChatStore = defineStore('chat-store', {
   state: (): ChatState => ({
     activeId: '',
-    messages: [],
-    usingContext: false,
+    conversation: undefined,
     conversationList: [],
   }),
 
-  getters: {
-    // getChatHistoryByCurrentActive(state: ChatState) {
-    //   const index = state.conversationList.findIndex(
-    //     (item) => item.conversationId === state.activeId,
-    //   );
-    //   if (index !== -1) return state.conversationList[index];
-    //   return null;
-    // },
-    // getChatByConversationId(state: ChatState) {
-    //   return (conversationId?: string) => {
-    //     if (conversationId)
-    //       return state.messages.find((item) => item.conversationId === conversationId)?.data ?? [];
-    //     return state.messages.find((item) => item.conversationId === state.activeId)?.data ?? [];
-    //   };
-    // },
-  },
-
   actions: {
-    async getConversationList() {
+    async setConversationList() {
       const res = await getConversationList();
 
       if (res?.code === 0) {
@@ -55,12 +36,15 @@ export const useChatStore = defineStore('chat-store', {
       }
     },
 
-    async addConversation() {
+    async addConversation(temperature = 0.5, llm = 'ChatGLM3') {
       const defaultConversation = {
         conversationName: '新建对话',
+        temperature,
+        llm,
         userName: '',
         status: 0,
       };
+      console.log(defaultConversation);
       const res = await addConversation(defaultConversation);
 
       if (res?.code === 0) {
@@ -75,7 +59,7 @@ export const useChatStore = defineStore('chat-store', {
       const res = await editConversation(conversation);
 
       if (res?.code === 0) {
-        this.getConversationList();
+        this.setConversationList();
       }
     },
 
@@ -84,7 +68,7 @@ export const useChatStore = defineStore('chat-store', {
       const res = await changeConversationStatus(conversation);
 
       if (res?.code === 0) {
-        return await this.reloadRoute();
+        await this.reloadRoute();
       }
     },
 
@@ -92,28 +76,25 @@ export const useChatStore = defineStore('chat-store', {
       const res = await clearConversationList();
 
       if (res?.code === 0) {
-        return await this.reloadRoute();
+        await this.reloadRoute();
       }
-    },
-
-    setUsingContext(context: boolean) {
-      this.usingContext = context;
-      this.getConversationList();
     },
 
     async setActive(conversationId?: string) {
-      this.activeId = conversationId;
-      return await this.reloadRoute(conversationId);
+      if (this.activeId !== conversationId) {
+        this.activeId = conversationId;
+        await this.reloadRoute(conversationId);
+      }
     },
 
     async getChatByConversationId(conversationId: string) {
-      const res = await getMessagesByConversationId(conversationId);
+      const res = await getConversationByConversationId(conversationId);
 
       if (res?.code === 0) {
-        this.messages = res.data;
+        this.conversation = res.data;
       }
 
-      return this.messages;
+      return this.conversation;
     },
 
     async addChatByConversationId(message: Message) {
@@ -154,7 +135,7 @@ export const useChatStore = defineStore('chat-store', {
     },
 
     async reloadRoute(conversationId?: string | undefined) {
-      this.getConversationList();
+      this.setConversationList();
 
       await router.push({ name: 'chat', params: { conversationId } });
     },

@@ -1,4 +1,4 @@
-import { ChatGlmDto } from '@/dtos/chat.dto';
+import { ChatDto } from '@/dtos/chat.dto';
 import { Conversation } from '@/entities/conversation.entity';
 import { Message } from '@/entities/message.entity';
 import { ChatService } from '@/services/chat.service';
@@ -24,21 +24,21 @@ export class ChatController {
   @UseGuards(AuthGuard('jwt'))
   @Post('')
   @ApiBody({
-    description: 'Glm对话',
-    type: ChatGlmDto,
+    description: '对话',
+    type: ChatDto,
   })
-  async chat(@Body() dto: any) {
+  async chat(@Body() dto: ChatDto) {
     return successJson(await this.chatService.chat(dto));
   }
 
   @UseGuards(AuthGuard('jwt'))
-  @Post('chatfile')
+  @Post('regenerate')
   @ApiBody({
-    description: 'Glm文档问答',
-    type: ChatGlmDto,
+    description: '重新回答',
+    type: ChatDto,
   })
-  async chatfile(@Body() dto: any) {
-    return successJson(await this.chatService.chatfile(dto));
+  async regenerate(@Body() dto: any) {
+    return successJson(await this.chatService.regenerate(dto));
   }
 
   /**
@@ -109,9 +109,9 @@ export class ChatController {
    * @returns
    */
   @UseGuards(AuthGuard('jwt'))
-  @Get('messages/:conversationId')
-  async findMessages(@Param('conversationId') conversationId: string) {
-    const res = await this.messageService.findListByConversationId(conversationId);
+  @Get('conversation/:conversationId')
+  async findConversation(@Param('conversationId') conversationId: string) {
+    const res = await this.conversationService.findByConversationId(conversationId);
     return successJson(res);
   }
 

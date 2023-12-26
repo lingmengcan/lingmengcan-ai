@@ -43,7 +43,7 @@ export class ChatGlm6BLLM2 extends BaseChatModel {
     return (
       messages
         .map((message) => {
-          const messagePrompt = message._getType(); //getAnthropicPromptFromMessage(message._getType());
+          const messagePrompt = getAnthropicPromptFromMessage(message._getType());
           return `${messagePrompt} ${message.text}`;
         })
         .join('') + '\n\nAssistant:'
@@ -118,15 +118,15 @@ export class ChatGlm6BLLM2 extends BaseChatModel {
   }
 }
 
-// function getAnthropicPromptFromMessage(type) {
-//   switch (type) {
-//     case 'ai':
-//       return '\n\nAssistant:';
-//     case 'human':
-//       return '\n\nHuman:';
-//     case 'system':
-//       return '';
-//     default:
-//       throw new Error(`Unknown message type: ${type}`);
-//   }
-// }
+function getAnthropicPromptFromMessage(type) {
+  switch (type) {
+    case 'ai':
+      return '\n\nAssistant:';
+    case 'human':
+      return '\n\nHuman:';
+    case 'system':
+      return '';
+    default:
+      throw new Error(`Unknown message type: ${type}`);
+  }
+}

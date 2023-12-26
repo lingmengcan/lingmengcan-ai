@@ -42,7 +42,7 @@ export class Message {
   })
   createdAt: Date;
 
-  @ManyToOne(() => Conversation, (conversation) => conversation.conversationMessages, {
+  @ManyToOne(() => Conversation, (conversation) => conversation.messages, {
     onDelete: 'CASCADE',
     onUpdate: 'RESTRICT',
   })

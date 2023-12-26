@@ -1,4 +1,5 @@
 import { Conversation } from '@/entities/conversation.entity';
+import { Message } from '@/entities/message.entity';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
@@ -21,10 +22,30 @@ export class ConversationService {
     return this.repository.findOneBy({ conversationId: id });
   }
 
-  findByConversationId(conversationId: string): Promise<Conversation> {
-    return this.repository.findOne({
-      where: { conversationId, status: 0 },
-    });
+  async findByConversationId(conversationId: string): Promise<Conversation> {
+    const conversation = await this.repository
+      .createQueryBuilder('Conversation')
+      .leftJoinAndSelect('Conversation.messages', 'Message')
+      .where({ conversationId, status: 0 })
+      .orderBy({ 'Message.createdAt': 'ASC' })
+      .getOne();
+
+    // 按聊天问题记录排序
+    conversation.messages = conversation.messages.reduce((acc, humanMessage) => {
+      if (humanMessage.sender === 'Human') {
+        acc.push(humanMessage);
+        const aiMessages = conversation.messages.filter(
+          (msg) => msg.previousId === humanMessage.messageId,
+        );
+
+        if (aiMessages?.length > 0) {
+          acc.push(...aiMessages);
+        }
+      }
+      return acc;
+    }, [] as Message[]);
+
+    return conversation;
   }
 
   /**
@@ -42,7 +63,7 @@ export class ConversationService {
   /**
    * 新增
    *
-   * @param menu 信息
+   * @param conversation 信息
    * @return 结果
    */
   async addConversation(conversation: Conversation) {
@@ -53,6 +74,8 @@ export class ConversationService {
     entity.conversationName = conversation.conversationName;
     entity.userName = conversation.userName;
     entity.status = conversation.status;
+    entity.temperature = conversation.temperature;
+    entity.llm = conversation.llm;
     entity.createdAt = new Date();
     entity.updatedAt = new Date();
     return this.repository.save(entity);
@@ -67,6 +90,8 @@ export class ConversationService {
   async updateConversation(conversation: Conversation) {
     const entity = await this.findOne(conversation.conversationId);
     entity.conversationName = conversation.conversationName;
+    entity.llm = conversation.llm;
+    entity.temperature = conversation.temperature;
     entity.status = conversation.status;
     entity.updatedAt = new Date();
     return this.repository.save(entity);

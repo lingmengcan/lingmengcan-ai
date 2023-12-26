@@ -5,38 +5,36 @@
   import Text from './text.vue';
   import Avatar from '@/components/avatar/index.vue';
   import { CopyOutline } from '@vicons/ionicons5';
+  import { Message } from '@/models/chat';
 
   interface Props {
-    dateTime?: string;
-    text?: string;
-    isAi?: boolean;
-    loading?: boolean;
-  }
-
-  interface Emit {
-    (ev: 'regenerate'): void;
-    (ev: 'delete'): void;
+    item: Message;
+    loading: boolean;
   }
 
   const props = defineProps<Props>();
 
-  const emit = defineEmits<Emit>();
+  const emit = defineEmits(['regenerate']);
 
   const message = useMessage();
+
   const textRef = ref<HTMLElement>();
 
-  const asRawText = ref(!props.isAi);
+  const isAi = ref(props.item.sender === 'Assistant');
+
+  const asRawText = ref(!isAi.value);
 
   const messageRef = ref<HTMLElement>();
 
   function handleRegenerate() {
     messageRef.value?.scrollIntoView();
-    emit('regenerate');
+
+    emit('regenerate', props.item);
   }
 
   async function handleCopy() {
     try {
-      await copyToClip(props.text || '');
+      await copyToClip(props.item?.messageText || '');
       message.success('复制成功');
     } catch {
       message.error('复制失败');
@@ -62,7 +60,12 @@
         ]"
       >
         <div class="flex flex-col w-full">
-          <Text ref="textRef" :text="text" :loading="loading" :as-raw-text="asRawText" />
+          <Text
+            ref="textRef"
+            :text="item?.messageText"
+            :loading="loading"
+            :as-raw-text="asRawText"
+          />
           <div
             v-if="isAi && !loading"
             class="flex flex-row items-center justify-between py-2 pb-0 mt-2 border-t border-gray-200"

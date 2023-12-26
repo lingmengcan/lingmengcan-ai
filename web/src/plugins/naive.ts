@@ -64,6 +64,7 @@ import {
   NAutoComplete,
   NPopover,
   NSlider,
+  NDivider,
 } from 'naive-ui';
 
 // https://www.naiveui.com/en-US/os-theme/docs/import-on-demand
@@ -132,6 +133,7 @@ const naive = create({
     NAutoComplete,
     NPopover,
     NSlider,
+    NDivider,
   ],
 });
 

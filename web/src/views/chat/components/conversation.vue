@@ -3,8 +3,8 @@
   import { useRoute } from 'vue-router';
   import { useChatStore } from '@/store/modules/chat';
   import { useScroll } from '../hooks/useScroll';
-  import { Message } from '@/models/chat';
-  import { chat } from '@/api/chat/chat';
+  import { ChatParams, Message } from '@/models/chat';
+  import { chat, regenerate } from '@/api/chat/chat';
   import {
     ChatbubblesOutline,
     SettingsOutline,
@@ -13,6 +13,8 @@
     StopCircleOutline,
   } from '@vicons/ionicons5';
   import MessageComponent from './message.vue';
+  import PromptComponent from './prompt.vue';
+  import { PopoverInst } from 'naive-ui';
 
   defineProps({
     chatListVisable: {
@@ -24,6 +26,7 @@
   const emit = defineEmits(['update:chatListVisable']);
 
   const temperature = ref(0.5);
+  const popoverParamRef = ref<PopoverInst | null>(null);
 
   const inputRef = ref<Ref | null>(null);
   const route = useRoute();
@@ -31,17 +34,13 @@
 
   const conversationId = ref<string>((route.params as { conversationId: string }).conversationId);
 
-  const messages = computed(() => chatStore.messages);
+  const conversation = computed(() => chatStore.conversation);
 
   const prompt = ref<string>('');
   const loading = ref<boolean>(false);
-
-  const usingContext = ref(true);
+  const answer = ref<Message>();
 
   const { scrollRef, scrollToBottom, scrollToBottomIfAtBottom } = useScroll();
-
-  // 历史记录相关
-  const history: any = ref([]);
 
   const selectedLlm = ref('ChatGLM3');
 
@@ -58,6 +57,13 @@
 
   function handleStop() {
     if (loading.value) {
+      // 更新回答
+      if (answer.value) {
+        answer.value.messageText = '已暂停生成。';
+        answer.value.completed = 1;
+        chatStore.updateChatByConversationId(answer.value);
+      }
+
       loading.value = false;
     }
   }
@@ -73,15 +79,9 @@
     if (loading.value) return;
 
     if (conversationId.value) {
-      switch (selectedLlm.value) {
-        case 'ChatGLM3':
-          onConversation();
-          break;
-        case 'GPT-3.5':
-          break;
-      }
+      onConversation();
     } else {
-      chatStore.addConversation().then(() => {
+      chatStore.addConversation(temperature.value, selectedLlm.value).then(() => {
         conversationId.value = chatStore.activeId!;
         onConversation();
       });
@@ -91,26 +91,13 @@
   async function onConversation() {
     const message = prompt.value;
 
-    if (usingContext.value) {
-      for (let i = 0; i < messages.value.length; i = i + 2) {
-        const humanMessage = messages.value[i];
-        const aiMessage = messages.value[i + 1];
-        history.value.push([
-          `human:${humanMessage.sender === 'human' && humanMessage.messageText}`,
-          `ai:${aiMessage.previousId === humanMessage.messageId && aiMessage.messageText}`,
-        ]);
-      }
-    } else {
-      history.value.length = 0;
-    }
-
     if (!message || message.trim() === '') return;
 
     // 问题入库
     const newChat: Message = {
       conversationId: conversationId.value,
       messageText: message,
-      sender: 'human',
+      sender: 'Human',
       status: 0,
       completed: 1,
     };
@@ -118,11 +105,11 @@
     const question = await chatStore.addChatByConversationId(newChat);
 
     // 创建回答
-    const answer = await chatStore.addChatByConversationId({
+    answer.value = await chatStore.addChatByConversationId({
       conversationId: conversationId.value,
       previousId: question?.messageId,
       messageText: '',
-      sender: 'ai',
+      sender: 'Assistant',
       status: 0,
       completed: 0,
     });
@@ -134,14 +121,23 @@
     prompt.value = '';
 
     try {
-      const fetchChatAPIOnce = async () => {
-        const res = await chat({ message, history: history.value });
+      const fetchChatApiOnce = async () => {
+        const chatParams: ChatParams = {
+          message: question!,
+          temperature: temperature.value,
+          llm: selectedLlm.value,
+        };
+        const res = await chat(chatParams);
 
-        if (answer) {
-          answer.messageText = res.data.text ?? '';
-          answer.completed = 1;
-          // 创建回答
-          await chatStore.updateChatByConversationId(answer);
+        if (answer.value) {
+          answer.value.messageText = res.data.text ?? '';
+
+          //当回答没有被终止时，更新回答
+          if (answer.value.completed === 0) {
+            answer.value.completed = 1;
+            // 更新回答
+            await chatStore.updateChatByConversationId(answer.value);
+          }
 
           scrollToBottom();
         }
@@ -150,7 +146,7 @@
         loading.value = false;
       };
 
-      await fetchChatAPIOnce();
+      await fetchChatApiOnce();
     } catch (error: any) {
       scrollToBottomIfAtBottom();
     } finally {
@@ -158,18 +154,51 @@
     }
   }
 
+  async function onRegenerate(answer: Message) {
+    // 等待回答
+    try {
+      answer.messageText = '';
+      answer.completed = 0;
+
+      const fetchChatApiOnce = async () => {
+        const regenerateParams: ChatParams = {
+          message: answer,
+          temperature: temperature.value,
+          llm: selectedLlm.value,
+        };
+        const res = await regenerate(regenerateParams);
+
+        if (res?.code === 0) {
+          answer.messageText = res.data.text ?? '';
+
+          answer.completed = 1;
+          // 更新回答
+          await chatStore.updateChatByConversationId(answer);
+        }
+      };
+
+      await fetchChatApiOnce();
+    } catch (error: any) {
+    } finally {
+    }
+  }
+
+  function handleSetting() {
+    popoverParamRef.value?.setShow(false);
+  }
+
   watchEffect(async () => {
     if (conversationId.value) {
       await chatStore.getChatByConversationId(conversationId.value);
+      selectedLlm.value = chatStore.conversation?.llm as string;
+      temperature.value = chatStore.conversation?.temperature ?? 0.5;
+    } else {
+      chatStore.conversation = undefined;
     }
   });
 
   onMounted(async () => {
-    await chatStore.setActive(conversationId.value);
-
-    conversationId.value
-      ? await chatStore.getChatByConversationId(conversationId.value)
-      : (chatStore.messages = []);
+    chatStore.activeId = conversationId.value;
 
     scrollToBottom();
 
@@ -205,7 +234,7 @@
             :options="llmOptions"
             class="llm-select"
           />
-          <n-popover ref="popoverRef" trigger="click" placement="bottom-start" width="500">
+          <n-popover ref="popoverParamRef" trigger="click" placement="bottom-end" width="400">
             <template #trigger>
               <n-button :bordered="false" class="action-button action-button-border-l">
                 <template #icon>
@@ -235,37 +264,30 @@
                 </div>
               </div>
               <div class="w-full px-4 pb-4">
-                <n-button
-                  :class="[
-                    'w-full px-4 py-2 border rounded-lg shadow border-neutral-500 text-neutral-900 hover:bg-neutral-100 focus:outline-none',
-                  ]"
-                >
-                  确定
-                </n-button>
-                <button
-                  type="button"
-                  class="w-full px-4 py-2 border rounded-lg shadow border-neutral-500 text-neutral-900 hover:bg-neutral-100 focus:outline-none"
-                >
-                  确定
-                </button>
+                <n-button class="setting-button" @click="handleSetting">确定</n-button>
               </div>
             </div>
           </n-popover>
         </div>
       </div>
       <div class="relative flex">
-        <n-button :bordered="false" class="action-button">
-          <template #icon>
-            <n-icon size="18">
-              <GridOutline />
-            </n-icon>
+        <n-popover ref="popoverParamRef" trigger="click" placement="bottom-end" width="400">
+          <template #trigger>
+            <n-button :bordered="false" class="action-button">
+              <template #icon>
+                <n-icon size="18">
+                  <GridOutline />
+                </n-icon>
+              </template>
+            </n-button>
           </template>
-        </n-button>
+          <PromptComponent />
+        </n-popover>
       </div>
     </div>
     <div class="flex flex-col justify-center flex-auto overflow-hidden">
       <div id="scrollRef" ref="scrollRef" class="max-h-full overflow-x-hidden">
-        <template v-if="!messages.length">
+        <template v-if="!conversation?.messages?.length">
           <div class="mx-auto space-y-4 max-w-[600px]">
             <div class="text-4xl font-semibold text-center text-gray-800">
               你好，我是一个智能对话系统
@@ -277,12 +299,11 @@
         </template>
         <template v-else>
           <MessageComponent
-            v-for="(item, index) of messages"
+            v-for="(item, index) of conversation?.messages"
             :key="index"
-            :date-time="item.createdAt"
-            :text="item.messageText"
-            :is-ai="item.sender === 'ai'"
+            :item="item"
             :loading="item.completed === 0"
+            @regenerate="onRegenerate"
           />
           <div class="sticky bottom-0 left-0 flex justify-center">
             <n-button v-if="loading" type="warning" @click="handleStop">
@@ -355,5 +376,9 @@
     &-border-l {
       border-left: #d8e1f0 1px solid;
     }
+  }
+
+  .setting-button {
+    @apply w-full px-4 py-2 border rounded-lg shadow border-neutral-500 text-neutral-900 hover:bg-neutral-100 focus:outline-none;
   }
 </style>

@@ -13,6 +13,12 @@ export class Conversation {
   @Column('varchar', { name: 'user_name', length: 32 })
   userName: string;
 
+  @Column('float', { name: 'temperature' })
+  temperature: number;
+
+  @Column('varchar', { name: 'llm', length: 32 })
+  llm: string;
+
   @Column('tinyint', {
     name: 'status',
     comment: '-1 deleted, 0 normal，1 deactivated',
@@ -33,5 +39,5 @@ export class Conversation {
   updatedAt: Date;
 
   @OneToMany(() => Message, (message) => message.conversation)
-  conversationMessages: Message[];
+  messages: Message[];
 }

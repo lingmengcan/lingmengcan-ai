@@ -33,10 +33,25 @@ export class MessageService {
    * @returns
    */
   async findListByConversationId(conversationId: string) {
-    return this.repository.find({
+    const messages = await this.repository.find({
       where: { status: 0, conversationId },
-      order: { createdAt: 'ASC', sender: 'ASC' },
+      order: { createdAt: 'ASC' },
     });
+
+    // 按聊天问题记录排序
+    const res = messages.reduce((acc, humanMessage) => {
+      if (humanMessage.sender === 'Human') {
+        acc.push(humanMessage);
+        const aiMessages = messages.filter((msg) => msg.previousId === humanMessage.messageId);
+
+        if (aiMessages?.length > 0) {
+          acc.push(...aiMessages);
+        }
+      }
+      return acc;
+    }, [] as Message[]);
+
+    return res;
   }
 
   /**

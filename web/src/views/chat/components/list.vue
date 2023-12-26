@@ -15,7 +15,7 @@
   const conversationList = computed(() => {
     const list = chatStore.conversationList;
     if (list.length === 0) {
-      chatStore.getConversationList();
+      chatStore.setConversationList();
     }
     return list;
   });

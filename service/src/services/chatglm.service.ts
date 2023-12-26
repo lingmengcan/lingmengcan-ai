@@ -40,10 +40,8 @@ export class ChatglmService {
   }
 
   //自由对话
-  async chat(body) {
-    const { message, history } = body;
-
-    const chat = new ChatGlm6BLLM2({ temperature: 0.01, history: history, streaming: true });
+  async chat(message: string, history: any, temperature: number) {
+    const chat = new ChatGlm6BLLM2({ temperature: temperature, history: history, streaming: true });
 
     const translationPrompt = ChatPromptTemplate.fromMessages([
       HumanMessagePromptTemplate.fromTemplate('{text}'),
