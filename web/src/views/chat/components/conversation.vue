@@ -3,7 +3,7 @@
   import { useRoute } from 'vue-router';
   import { useChatStore } from '@/store/modules/chat';
   import { useScroll } from '../hooks/useScroll';
-  import { ChatParams, Message } from '@/models/chat';
+  import { ChatParams, Message, Prompt } from '@/models/chat';
   import { chat, regenerate } from '@/api/chat/chat';
   import {
     ChatbubblesOutline,
@@ -15,6 +15,7 @@
   import MessageComponent from './message.vue';
   import PromptComponent from './prompt.vue';
   import { PopoverInst } from 'naive-ui';
+  import { usePromptStore } from '@/store/modules/prompt';
 
   defineProps({
     chatListVisable: {
@@ -27,10 +28,12 @@
 
   const temperature = ref(0.5);
   const popoverParamRef = ref<PopoverInst | null>(null);
+  const popoverPromptRef = ref<PopoverInst | null>(null);
 
   const inputRef = ref<Ref | null>(null);
   const route = useRoute();
   const chatStore = useChatStore();
+  const promptStore = usePromptStore();
 
   const conversationId = ref<string>((route.params as { conversationId: string }).conversationId);
 
@@ -154,6 +157,11 @@
     }
   }
 
+  function onSelectPrompt(item: Prompt) {
+    prompt.value = item.content;
+    popoverPromptRef.value?.setShow(false);
+  }
+
   async function onRegenerate(answer: Message) {
     // 等待回答
     try {
@@ -186,6 +194,29 @@
   function handleSetting() {
     popoverParamRef.value?.setShow(false);
   }
+
+  // 自动拉出提示词
+  const promptOptions = computed(() => {
+    if (prompt.value.startsWith('/')) {
+      let promptList = promptStore.promptList;
+      if (promptList.length === 0) {
+        promptStore.getPromptList();
+      }
+
+      return promptList
+        .filter((item: Prompt) =>
+          item.content.toLowerCase().includes(prompt.value.substring(1).toLowerCase()),
+        )
+        .map((prompt: Prompt) => {
+          return {
+            label: prompt.content,
+            value: prompt.content,
+          };
+        });
+    } else {
+      return [];
+    }
+  });
 
   watchEffect(async () => {
     if (conversationId.value) {
@@ -271,7 +302,7 @@
         </div>
       </div>
       <div class="relative flex">
-        <n-popover ref="popoverParamRef" trigger="click" placement="bottom-end" width="400">
+        <n-popover ref="popoverPromptRef" trigger="click" placement="bottom-end" width="400">
           <template #trigger>
             <n-button :bordered="false" class="action-button">
               <template #icon>
@@ -281,7 +312,7 @@
               </template>
             </n-button>
           </template>
-          <PromptComponent />
+          <PromptComponent @select-prompt="onSelectPrompt" />
         </n-popover>
       </div>
     </div>
@@ -321,7 +352,7 @@
         <div
           class="stretch flex flex-row gap-3 last:mb-3 mx-2 mt-6 md:mx-4 md:last:mb-6 lg:mx-auto lg:max-w-3xl"
         >
-          <n-auto-complete v-model:value="prompt">
+          <n-auto-complete v-model:value="prompt" :options="promptOptions">
             <template #default="{ handleInput, handleBlur, handleFocus }">
               <n-input
                 ref="inputRef"

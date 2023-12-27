@@ -28,6 +28,18 @@ export class PromptService {
   }
 
   /**
+   * 列表
+   *
+   * @returns
+   */
+  async findUserList(userName: string) {
+    return this.repository.find({
+      where: { status: 0, userName },
+      order: { createdAt: 'DESC' },
+    });
+  }
+
+  /**
    * 新增
    *
    * @param prompt 信息
@@ -42,6 +54,20 @@ export class PromptService {
     entity.userName = prompt.userName;
     entity.status = prompt.status;
     entity.createdAt = new Date();
+    entity.content = prompt.content;
+    return this.repository.save(entity);
+  }
+
+  /**
+   * 修改指令
+   *
+   * @param prompt 指令信息
+   * @return 结果
+   */
+  async updatePrompt(prompt: Prompt) {
+    const entity = await this.findOne(prompt.promptId);
+    entity.title = prompt.title;
+    entity.status = prompt.status;
     entity.content = prompt.content;
     return this.repository.save(entity);
   }

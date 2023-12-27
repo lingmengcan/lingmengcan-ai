@@ -11,6 +11,7 @@ import { UserModule } from './modules/user.module';
 import { MenuModule } from './modules/menu.module';
 import { RoleModule } from './modules/role.module';
 import { ChatModule } from './modules/chat.module';
+import { PromptModule } from './modules/prompt.module';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { ChatModule } from './modules/chat.module';
     MenuModule,
     RoleModule,
     ChatModule,
+    PromptModule,
   ],
   controllers: [AppController],
   providers: [AppService],

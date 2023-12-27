@@ -1,31 +1,33 @@
-import storage from '@/utils/storage';
+import { changePromptStatus, getPromptList } from '@/api/chat/prompt';
+import { Prompt } from '@/models/chat';
 import { defineStore } from 'pinia';
 
+export interface PromptState {
+  promptList: Prompt[];
+}
+
 export const usePromptStore = defineStore('prompt-store', {
-  state: (): PromptStore => getLocalPromptList(),
+  state: (): PromptState => ({
+    promptList: [],
+  }),
 
   actions: {
-    updatePromptList(promptList: []) {
-      this.$patch({ promptList });
-      setLocalPromptList({ promptList });
+    async getPromptList() {
+      const res = await getPromptList();
+      if (res?.code === 0) {
+        this.promptList = res.data;
+
+        return this.promptList;
+      }
     },
-    getPromptList() {
-      return this.$state;
+
+    async deletePrompt(conversation: Prompt) {
+      conversation.status = 1; // 软删除
+      const res = await changePromptStatus(conversation);
+
+      if (res?.code === 0) {
+        await this.getPromptList();
+      }
     },
   },
 });
-
-export type PromptList = [];
-
-export interface PromptStore {
-  promptList: PromptList;
-}
-
-export function getLocalPromptList(): PromptStore {
-  const promptStore: PromptStore | undefined = storage.get('promptStore');
-  return promptStore ?? { promptList: [] };
-}
-
-export function setLocalPromptList(promptStore: PromptStore): void {
-  storage.set('promptStore', promptStore);
-}

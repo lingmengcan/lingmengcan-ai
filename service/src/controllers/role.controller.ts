@@ -50,7 +50,7 @@ export class RoleController {
     return successJson(await this.roleService.findMenuIdsByRoleId(roleId));
   }
 
-  /**s
+  /**
    * 查找所有角色次菜单id
    *
    * @param roleId
