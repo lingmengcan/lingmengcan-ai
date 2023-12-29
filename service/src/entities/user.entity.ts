@@ -8,14 +8,11 @@ export class User {
   @PrimaryGeneratedColumn({ type: 'bigint', name: 'user_id', unsigned: true })
   userId: string;
 
-  @Column('bigint', { name: 'dept_id' })
-  deptId: string;
-
   @Column('varchar', { name: 'user_name', length: 32 })
   userName: string;
 
-  @Column('varchar', { name: 'chinese_name', length: 64 })
-  chineseName: string;
+  @Column('varchar', { name: 'nick_name', length: 64 })
+  nickName: string;
 
   @Column('varchar', { name: 'email', length: 64 })
   email: string;

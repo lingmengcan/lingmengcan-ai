@@ -206,7 +206,7 @@ export class RoleService {
   }
 
   /**
-   * 修改角色状态
+   * 添加角色
    *
    * @param role 角色信息
    * @return 结果

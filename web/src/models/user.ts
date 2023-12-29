@@ -1,21 +1,19 @@
 // 用户model
 export interface User {
   userId: string;
-  deptId: string;
-  deptName?: string;
   userName: string;
-  chineseName: string;
+  nickName: string;
   email: string;
   phone: string;
   sex: string;
   avatar?: string;
-  password: string;
+  password?: string;
   loginIp?: string;
   loginDate?: string;
   status: number;
   description?: string;
-  createdUser: string;
-  updatedUser: string;
+  createdUser?: string;
+  updatedUser?: string;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -26,6 +24,18 @@ export interface UserList {
   page: number;
   pageSize: number;
   count: number;
+}
+
+/**
+ * 查询对象
+ */
+export interface UserParams {
+  userName: string;
+  nickName: string;
+  phone: string;
+  status: string | null;
+  page: number;
+  pageSize: number;
 }
 
 /**
@@ -43,4 +53,12 @@ export interface LoginParams {
 export interface UserRight {
   user: User;
   permissions: string[];
+}
+
+/**
+ * 用户密码重置
+ */
+export interface UserResetPwd {
+  userId: string;
+  password: string;
 }
