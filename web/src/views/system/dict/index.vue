@@ -1,16 +1,10 @@
 <script lang="ts" setup>
-  import {
-    addUser,
-    changeUserStatus,
-    editUser,
-    getUserList,
-    resetPassword,
-  } from '@/api/system/user';
-  import { User, UserParams } from '@/models/user';
+  import { addDict, changeDictStatus, editDict, getDictList } from '@/api/system/dict';
+  import { Dict, DictParams } from '@/models/dict';
   import { formatDateTime } from '@/utils';
   import { DataTableRowKey, FormInst, NButton, NSwitch, useDialog, useMessage } from 'naive-ui';
   import { h, onMounted, ref } from 'vue';
-  import { DeleteOutlined, EditOutlined, PlusOutlined, ReloadOutlined } from '@vicons/antd';
+  import { DeleteOutlined, EditOutlined, PlusOutlined } from '@vicons/antd';
   import { getMenus } from '@/api/system/menu';
   import { handleTree } from '@/utils/menu';
   import { Menu } from '@/models/menu';
@@ -32,25 +26,22 @@
   const drawerFormRef = ref<FormInst | null>(null);
 
   // 新增/修改弹窗数据初始化
-  const userInitData: User = {
-    userId: '',
-    userName: '',
-    nickName: '',
-    password: '123456', //初始密码
-    email: '',
-    phone: '',
-    sex: '',
+  const dictInitData: Dict = {
+    dictId: '',
+    dictName: '',
+    dictCode: '',
+    dictType: '',
+    sort: 0,
     status: 0,
     description: '',
   };
-  const drawerFormData = ref(userInitData);
+  const drawerFormData = ref(dictInitData);
 
   const drawerRules = {
-    userName: { required: true, message: '用户名称必填', trigger: 'blur' },
-    nickName: { required: true, message: '用户名称必填', trigger: 'blur' },
-    phone: { required: true, message: '用户昵称必填', trigger: 'blur' },
-    email: { required: true, message: 'email必填', trigger: 'blur' },
-    sex: { required: true, message: '性别必填', trigger: 'blur' },
+    dictName: { required: true, message: '字典名称必填', trigger: 'blur' },
+    dictCode: { required: true, message: '字典编码必填', trigger: 'blur' },
+    dictType: { required: true, message: '字典类型必填', trigger: 'blur' },
+    sort: { required: true, message: '排序必填', trigger: 'blur' },
     status: { required: true, message: '状态必填', trigger: 'blur' },
   };
 
@@ -60,66 +51,48 @@
     { label: '停用', value: 1 },
   ]);
 
-  // sex options
-  const sexOptions = ref([
-    { label: '男', value: '1' },
-    { label: '女', value: '0' },
-    { label: '未知', value: '2' },
-  ]);
-
   const queryFormData = ref({
-    userName: '',
-    nickName: '',
-    phone: '',
+    dictName: '',
+    dictCode: '',
+    dictType: '',
     status: null,
-  });
-
-  const showResetPwdModal = ref(false);
-  const resetPwdData = ref({
-    userId: '',
-    userName: '',
-    password: '',
   });
 
   const columns = [
     {
-      key: 'userId',
-      title: '用户ID',
+      key: 'dictId',
+      title: '字典ID',
       type: 'selection',
     },
     {
-      key: 'userName',
-      title: '用户名称',
+      key: 'dictName',
+      title: '字典名称',
       width: 100,
       ellipsis: {
         tooltip: true,
       },
     },
     {
-      key: 'nickName',
-      title: '用户昵称',
+      key: 'dictCode',
+      title: '字典编码',
       width: 100,
       ellipsis: {
         tooltip: true,
       },
     },
     {
-      key: 'phone',
-      title: '电话',
+      key: 'dictType',
+      title: '字典类型',
       width: 100,
       ellipsis: {
         tooltip: true,
       },
     },
     {
-      key: 'email',
-      title: 'email',
-      width: 120,
-      ellipsis: {
-        tooltip: true,
-      },
+      key: '排序',
+      title: 'sort',
+      width: 60,
     },
-
     {
       key: 'status',
       title: '状态',
@@ -131,7 +104,7 @@
           size: 'small',
           rubberBand: false,
           value: row['status'] === 0,
-          disabled: !hasPermission('system_user_edit'),
+          disabled: !hasPermission('system_dict_edit'),
           tableLoading: !!row.changing,
           onUpdateValue: () => handleChangeStatus(row),
         });
@@ -162,7 +135,7 @@
               size: 'small',
               type: 'primary',
               style: 'margin-left: 10px;',
-              disabled: !hasPermission('system_user_edit'),
+              disabled: !hasPermission('system_dict_edit'),
               onClick: () => handleEdit(row),
             },
             {
@@ -177,26 +150,12 @@
               size: 'small',
               type: 'error',
               style: 'margin-left: 10px;',
-              disabled: !hasPermission('system_user_delete'),
+              disabled: !hasPermission('system_dict_delete'),
               onClick: () => handleDelete(row),
             },
             {
               default: () => '删除',
               icon: renderIcon(DeleteOutlined),
-            },
-          ),
-          h(
-            NButton,
-            {
-              size: 'small',
-              type: 'info',
-              style: 'margin-left: 10px;',
-              disabled: !hasPermission('system_user_resetpwd'),
-              onClick: () => handleResetPassword(row),
-            },
-            {
-              default: () => '重置密码',
-              icon: renderIcon(ReloadOutlined),
             },
           ),
         ];
@@ -206,10 +165,10 @@
 
   const tableLoading = ref(true);
   const rowKey = (rowData: RowData) => {
-    return rowData.userId;
+    return rowData.dictId;
   };
   const checkedRowKeysRef = ref<DataTableRowKey[]>([]);
-  const tableData = ref<User[]>([]);
+  const tableData = ref<Dict[]>([]);
   const pagination = ref({
     page: 1,
     pageSize: 10,
@@ -234,13 +193,13 @@
   const query = async (page: number, pageSize = 10) => {
     try {
       tableLoading.value = true;
-      const requestData: UserParams = {
+      const requestData: DictParams = {
         ...queryFormData.value,
         page: page,
         pageSize,
       };
 
-      const res = await getUserList(requestData);
+      const res = await getDictList(requestData);
       if (res?.code === 0) {
         tableData.value = res.data?.list;
         pagination.value.page = page;
@@ -268,9 +227,9 @@
 
   const clearQuery = () => {
     queryFormData.value = {
-      userName: '',
-      nickName: '',
-      phone: '',
+      dictName: '',
+      dictCode: '',
+      dictType: '',
       status: null,
     };
     query(1, pagination.value.pageSize);
@@ -289,17 +248,17 @@
     row.changing = true;
     let text = '停用';
 
-    const user: User = { ...userInitData };
-    Object.assign(user, row);
+    const dict: Dict = { ...dictInitData };
+    Object.assign(dict, row);
 
     switch (row.status) {
       case 1:
         text = '启用';
-        user.status = 0;
+        dict.status = 0;
         break;
       case 0:
         text = '停用';
-        user.status = 1;
+        dict.status = 1;
         break;
       case -1:
         text = '删除';
@@ -308,11 +267,11 @@
 
     dialog.info({
       title: '系统消息',
-      content: `确认要"${text}""${row.userName}"用户吗？`,
+      content: `确认要"${text}""${row.dictName}"字典吗？`,
       positiveText: '确定',
       negativeText: '取消',
       onPositiveClick: async () => {
-        const res = await changeUserStatus(user);
+        const res = await changeDictStatus(dict);
         if (res?.code === 0) {
           message.success(`${text}成功`);
         }
@@ -325,24 +284,24 @@
     });
   };
 
-  // 新增用户
+  // 新增字典
   const handleAdd = async () => {
-    drawerTitle.value = '新增用户';
+    drawerTitle.value = '新增字典';
     showDrawer.value = true;
-    drawerFormData.value = { ...userInitData };
+    drawerFormData.value = { ...dictInitData };
 
-    console.log(drawerFormData.value.userId);
+    console.log(drawerFormData.value.dictId);
   };
 
-  // 删除用户 status = -1
+  // 删除字典 status = -1
   const handleDelete = async (row: RowData) => {
     row.status = -1;
     handleChangeStatus(row);
   };
 
-  // 修改用户
+  // 修改字典
   const handleEdit = async (row: RowData) => {
-    drawerTitle.value = '修改用户';
+    drawerTitle.value = '修改字典';
     showDrawer.value = true;
 
     // 赋值
@@ -356,15 +315,15 @@
     });
     drawerFormRef.value?.validate(async (errors) => {
       if (!errors) {
-        const requestData: User = drawerFormData.value;
+        const requestData: Dict = drawerFormData.value;
 
-        const res = drawerFormData.value.userId
-          ? await editUser(requestData)
-          : await addUser(requestData);
+        const res = drawerFormData.value.dictId
+          ? await editDict(requestData)
+          : await addDict(requestData);
 
         if (res?.code === 0) {
           showDrawer.value = false;
-          drawerFormData.value = { ...userInitData };
+          drawerFormData.value = { ...dictInitData };
           query(pagination.value.page, pagination.value.pageSize);
         }
       } else {
@@ -374,26 +333,6 @@
 
       messageReactive.destroy();
     });
-  };
-
-  // 重置密码
-  const handleResetPassword = async (row: RowData) => {
-    resetPwdData.value.userName = row.userName;
-    resetPwdData.value.userId = row.userId;
-
-    showResetPwdModal.value = true;
-  };
-
-  // 提交重置密码
-  const onResetPwd = async () => {
-    const res = await resetPassword({
-      userId: resetPwdData.value.userId,
-      password: resetPwdData.value.password,
-    });
-    if (res?.code === 0) {
-      showResetPwdModal.value = false;
-      message.success(`重置密码成功`);
-    }
   };
 
   onMounted(async () => {
@@ -407,14 +346,14 @@
   <n-card :bordered="false">
     <n-form ref="formRef" inline label-placement="left" label-width="auto" :model="queryFormData">
       <n-grid :cols="24" :x-gap="24">
-        <n-form-item-gi :span="6" label="用户名称" path="userName">
-          <n-input v-model:value="queryFormData.userName" placeholder="请输入用户名称" />
+        <n-form-item-gi :span="6" label="字典名称" path="dictName">
+          <n-input v-model:value="queryFormData.dictName" placeholder="请输入字典名称" />
         </n-form-item-gi>
-        <n-form-item-gi :span="6" label="用户昵称" path="userName">
-          <n-input v-model:value="queryFormData.nickName" placeholder="请输入用户昵称" />
+        <n-form-item-gi :span="6" label="字典编码" path="dictCode">
+          <n-input v-model:value="queryFormData.dictCode" placeholder="请输入字典编码" />
         </n-form-item-gi>
-        <n-form-item-gi :span="6" label="电话" path="userCode">
-          <n-input v-model:value="queryFormData.phone" placeholder="请输入电话" />
+        <n-form-item-gi :span="6" label="字典类型" path="dictType">
+          <n-input v-model:value="queryFormData.dictType" placeholder="请输入字典类型" />
         </n-form-item-gi>
         <n-form-item-gi :span="6" label="状态" path="status">
           <n-select v-model:value="queryFormData.status" :options="statusOptions" />
@@ -422,7 +361,7 @@
         <n-form-item-gi :span="6">
           <n-space>
             <n-button @click="clearQuery">重置</n-button>
-            <n-button v-permission="['system_user_query']" type="primary" @click="handleQuery">
+            <n-button v-permission="['system_dict_query']" type="primary" @click="handleQuery">
               查询
             </n-button>
           </n-space>
@@ -434,13 +373,13 @@
     <div class="table-toolbar">
       <!--顶部左侧区域-->
       <div class="flex items-center table-toolbar-left">
-        <n-button v-permission="['system_user_add']" type="primary" @click="handleAdd">
+        <n-button v-permission="['system_dict_add']" type="primary" @click="handleAdd">
           <template #icon>
             <n-icon>
               <PlusOutlined />
             </n-icon>
           </template>
-          添加用户
+          添加字典
         </n-button>
       </div>
     </div>
@@ -459,7 +398,7 @@
     </div>
   </n-card>
 
-  <!-- 新增修改用户 -->
+  <!-- 新增修改字典 -->
   <n-drawer v-model:show="showDrawer" :width="399">
     <n-drawer-content :title="drawerTitle" closable>
       <n-form
@@ -469,34 +408,17 @@
         :model="drawerFormData"
         :rules="drawerRules"
       >
-        <n-form-item label="用户名称" path="userName">
-          <n-input v-model:value="drawerFormData.userName" placeholder="输入用户名称" />
+        <n-form-item label="字典名称" path="dictName">
+          <n-input v-model:value="drawerFormData.dictName" placeholder="输入字典名称" />
         </n-form-item>
-        <n-form-item v-if="!drawerFormData.userId" label="密码" path="password">
-          <n-input
-            v-model:value="drawerFormData.password"
-            type="password"
-            show-password-on="click"
-            placeholder="请输入密码"
-          ></n-input>
+        <n-form-item label="字典编码" path="dictCode">
+          <n-input v-model:value="drawerFormData.dictCode" placeholder="输入字典编码" />
         </n-form-item>
-        <n-form-item label="用户昵称" path="nickName">
-          <n-input v-model:value="drawerFormData.nickName" placeholder="输入用户昵称" />
+        <n-form-item label="字典类型" path="dictType">
+          <n-input v-model:value="drawerFormData.dictType" placeholder="输入字典类型" />
         </n-form-item>
-        <n-form-item label="email" path="email">
-          <n-input v-model:value="drawerFormData.email" placeholder="输入email" />
-        </n-form-item>
-        <n-form-item label="电话" path="phone">
-          <n-input v-model:value="drawerFormData.phone" placeholder="输入电话" />
-        </n-form-item>
-        <n-form-item label="性别" path="sex">
-          <n-radio-group v-model:value="drawerFormData.sex">
-            <n-space>
-              <n-radio v-for="item in sexOptions" :key="item.value" :value="item.value">
-                {{ item.label }}
-              </n-radio>
-            </n-space>
-          </n-radio-group>
+        <n-form-item label="排序" path="sort">
+          <n-input-number v-model:value="drawerFormData.sort" :min="0" />
         </n-form-item>
         <n-form-item label="状态" name="status">
           <n-radio-group v-model:value="drawerFormData.status">
@@ -511,7 +433,7 @@
           <n-input
             v-model:value="drawerFormData.description"
             type="textarea"
-            placeholder="请输入用户描述"
+            placeholder="请输入字典描述"
           />
         </n-form-item>
       </n-form>
@@ -522,18 +444,4 @@
       </template>
     </n-drawer-content>
   </n-drawer>
-
-  <!-- 重置密码对话框 -->
-  <n-modal v-model:show="showResetPwdModal" :show-icon="false" preset="dialog" title="重置密码">
-    <div>
-      <div class="flex mb-3">请输入"{{ resetPwdData.userName }}"的新密码</div>
-      <n-input
-        v-model="resetPwdData.password"
-        class="flex mb-3"
-        placeholder="请输入密码"
-        type="password"
-      />
-      <n-button type="primary" @click="onResetPwd">提交</n-button>
-    </div>
-  </n-modal>
 </template>
