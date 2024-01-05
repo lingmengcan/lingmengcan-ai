@@ -11,7 +11,7 @@
  Target Server Version : 80200 (8.2.0)
  File Encoding         : 65001
 
- Date: 29/12/2023 17:38:12
+ Date: 05/01/2024 17:30:49
 */
 
 SET NAMES utf8mb4;
@@ -50,7 +50,7 @@ INSERT INTO `conversation` VALUES ('efc59f74-e0dc-4dbc-8d8a-fbeb247c13cb', '新�
 DROP TABLE IF EXISTS `dict`;
 CREATE TABLE `dict`  (
   `dict_id` bigint UNSIGNED NOT NULL,
-  `dict_type` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `dict_type` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '',
   `dict_code` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `dict_name` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `sort` int NOT NULL,
@@ -108,7 +108,7 @@ INSERT INTO `menu` VALUES (7, 0, 'lingmengcan', 'https://lingmengcan.tech', 'lay
 INSERT INTO `menu` VALUES (8, 1, '用户管理', 'user', '/system/user/index', 'user', '', NULL, 'system_user_index', 'menu', 0, 0, '', 1, 0, '用户管理菜单', 'admin', 'admin', '2021-10-21 10:34:32', '2023-12-28 14:26:37');
 INSERT INTO `menu` VALUES (9, 1, '角色管理', 'role', '/system/role/index', 'role', '', '', 'system_role_index', 'menu', 0, 0, '', 2, 0, '角色管理菜单', 'admin', 'admin', '2021-10-21 10:36:49', '2023-11-23 11:11:08');
 INSERT INTO `menu` VALUES (10, 1, '菜单管理', 'menu', '/system/menu/index', 'menu', '', NULL, 'system_menu_index', 'menu', 0, 0, '', 3, 0, '菜单管理菜单', 'admin', 'admin', '2021-10-21 10:38:03', '2023-11-23 11:12:12');
-INSERT INTO `menu` VALUES (11, 1, '字典管理', 'param', '/system/param/index', 'param', NULL, NULL, 'system_param_index', 'menu', 0, 0, '', 4, 0, '字典管理', 'admin', 'admin', '2022-05-20 11:09:04', '2023-11-22 10:10:02');
+INSERT INTO `menu` VALUES (11, 1, '字典管理', 'dict', '/system/dict/index', 'param', NULL, NULL, 'system_dict_index', 'menu', 0, 0, '', 4, 0, '字典管理', 'admin', 'admin', '2022-05-20 11:09:04', '2024-01-03 16:08:24');
 INSERT INTO `menu` VALUES (12, 2, '生成', NULL, '/draw/generate', 'generate', '', '', 'draw_generate', 'menu', 0, 0, '', 1, 0, '数据门户列表', 'admin', 'admin', '2022-08-15 17:01:20', '2022-09-06 10:51:55');
 INSERT INTO `menu` VALUES (13, 3, '对话', 'chat', '/chat/index', ':conversationId?', NULL, NULL, 'chat_index', 'menu', 0, 0, '', 2, 0, 'chat', 'admin', 'admin', '2022-08-25 17:16:46', '2023-11-30 09:54:18');
 INSERT INTO `menu` VALUES (14, 4, '日志管理', NULL, '/monitor/log/index', 'log', NULL, NULL, 'monitor:log:index', 'menu', 0, 0, '', 1, 0, '301', 'admin', 'admin', '2022-05-19 11:18:49', '2022-07-12 15:07:32');
