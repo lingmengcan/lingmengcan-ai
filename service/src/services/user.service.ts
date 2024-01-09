@@ -1,5 +1,6 @@
 import { UserListDto } from '@/dtos/user.dto';
 import { User } from '@/entities/user.entity';
+import { isNullOrUndefined } from '@/utils';
 import { genPassowrd } from '@/utils/cryptogram';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -67,7 +68,7 @@ export class UserService {
       });
     }
 
-    if (status) {
+    if (!isNullOrUndefined(status)) {
       qb = qb.andWhere('User.status = :value', {
         value: status,
       });

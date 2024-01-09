@@ -145,7 +145,7 @@
         tooltip: true,
       },
       render(row: RowData) {
-        return h('span', formatDateTime(row['createDate']));
+        return h('span', formatDateTime(row['createdAt']));
       },
     },
     {

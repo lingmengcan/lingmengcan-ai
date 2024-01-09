@@ -41,7 +41,7 @@
     dictName: { required: true, message: '字典名称必填', trigger: 'blur' },
     dictCode: { required: true, message: '字典编码必填', trigger: 'blur' },
     dictType: { required: true, message: '字典类型必填', trigger: 'blur' },
-    sort: { required: true, message: '排序必填', trigger: 'blur' },
+    sort: { type: 'number', required: true, message: '排序必填', trigger: 'blur' },
     status: { required: true, message: '状态必填', trigger: 'blur' },
   };
 
@@ -89,8 +89,8 @@
       },
     },
     {
-      key: '排序',
-      title: 'sort',
+      key: 'sort',
+      title: '排序',
       width: 60,
     },
     {
@@ -118,7 +118,7 @@
         tooltip: true,
       },
       render(row: RowData) {
-        return h('span', formatDateTime(row['createDate']));
+        return h('span', formatDateTime(row['createdAt']));
       },
     },
     {
@@ -288,9 +288,9 @@
   const handleAdd = async () => {
     drawerTitle.value = '新增字典';
     showDrawer.value = true;
-    drawerFormData.value = { ...dictInitData };
 
-    console.log(drawerFormData.value.dictId);
+    console.log(dictInitData);
+    drawerFormData.value = { ...dictInitData };
   };
 
   // 删除字典 status = -1

@@ -1,6 +1,7 @@
 import { MenuListDto } from '@/dtos/menu.dto';
 import { Meta, Route } from '@/dtos/route.dto';
 import { Menu } from '@/entities/menu.entity';
+import { isNullOrUndefined } from '@/utils';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -50,7 +51,7 @@ export class MenuService {
       });
     }
 
-    if (status) {
+    if (!isNullOrUndefined(status)) {
       qb = qb.andWhere('Menu.status = :value', {
         value: status,
       });

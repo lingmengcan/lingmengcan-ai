@@ -1,41 +1,47 @@
 <template>
-  <div class="layout-header">
+  <div
+    class="flex items-center justify-between p-0 w-full h-16 shadow-md transition-all duration-200 z-10"
+  >
     <!--顶部菜单-->
     <!--左侧菜单-->
-    <div class="layout-header-left">
+    <div class="flex items-center">
       <!-- 菜单收起 -->
       <div
-        class="ml-1 layout-header-trigger layout-header-trigger-min"
+        class="flex m-3 cursor-pointer hover:bg-gray-200"
         @click="emit('update:collapsed', !collapsed)"
       >
-        <n-icon v-if="collapsed" size="18">
+        <n-icon v-if="collapsed" size="20">
           <MenuUnfoldOutlined />
         </n-icon>
-        <n-icon v-else size="18">
+        <n-icon v-else style="margin: 0" size="20">
           <MenuFoldOutlined />
         </n-icon>
       </div>
 
       <!-- 面包屑 -->
-      <n-breadcrumb>
+      <n-breadcrumb class="flex mr-10">
         <template
           v-for="routeItem in breadcrumbList"
           :key="routeItem.name === 'Redirect' ? void 0 : routeItem.name"
         >
           <n-breadcrumb-item v-if="routeItem.meta.title">
-            <span class="link-text">
-              <component :is="routeItem.meta.icon" v-if="routeItem.meta.icon" />
+            <span class="text-base">
               {{ routeItem.meta.title }}
             </span>
           </n-breadcrumb-item>
         </template>
       </n-breadcrumb>
+
+      <!-- 菜单 -->
+      <Menu :inverted="false" :collapsed="false" mode="horizontal" />
     </div>
 
-    <div class="layout-header-right">
+    <div class="flex items-center mr-5">
       <!--切换全屏-->
-      <div class="layout-header-trigger layout-header-trigger-min">
-        <n-tooltip placement="bottom">
+      <div
+        class="flex items-center h-16 px-3 text-center cursor-pointer transition-all duration-200 ease-in-out"
+      >
+        <n-tooltip placement="bottom" class="hover:bg-gray-200">
           <template #trigger>
             <n-icon size="18">
               <component :is="fullscreenIcon" @click="toggleFullScreen" />
@@ -45,15 +51,13 @@
         </n-tooltip>
       </div>
       <!-- 个人中心 -->
-      <div class="layout-header-trigger layout-header-trigger-min">
+      <div
+        class="inline-block h-16 text-center cursor-pointer transition-all duration-200 ease-in-out"
+      >
         <n-dropdown trigger="hover" :options="avatarOptions" @select="avatarSelect">
-          <div class="avatar">
-            <n-avatar round>
-              {{ username }}
-              <template #icon>
-                <UserOutlined />
-              </template>
-            </n-avatar>
+          <div class="flex items-center h-16 px-1 hover:bg-gray-200">
+            <Avatar round />
+            <span class="ml-1 text-sky-500">{{ username }}</span>
           </div>
         </n-dropdown>
       </div>
@@ -63,10 +67,17 @@
 
 <script setup lang="ts">
   import { useUserStore } from '@/store/modules/user';
-  import { MenuFoldOutlined, MenuUnfoldOutlined, UserOutlined } from '@vicons/antd';
+  import {
+    MenuFoldOutlined,
+    MenuUnfoldOutlined,
+    FullscreenOutlined,
+    FullscreenExitOutlined,
+  } from '@vicons/antd';
   import { useDialog, useMessage } from 'naive-ui';
   import { computed, ref } from 'vue';
   import { RouteLocationMatched, useRoute, useRouter } from 'vue-router';
+  import Menu from './menu.vue';
+  import Avatar from '@/components/avatar/index.vue';
 
   defineProps({
     collapsed: {
@@ -79,12 +90,12 @@
 
   const router = useRouter();
   const route = useRoute();
-  const fullscreenIcon = ref('FullscreenOutlined');
+  const fullscreenIcon = ref(FullscreenOutlined);
   const userStore = useUserStore();
   const message = useMessage();
   const dialog = useDialog();
 
-  const username = ''; //userStore.getNickname();
+  const username = userStore.getUsername;
 
   const breadcrumbList = computed(() => {
     return generator(route.matched);
@@ -107,7 +118,7 @@
   // 切换全屏图标
   const toggleFullscreenIcon = () =>
     (fullscreenIcon.value =
-      document.fullscreenElement !== null ? 'FullscreenExitOutlined' : 'FullscreenOutlined');
+      document.fullscreenElement !== null ? FullscreenExitOutlined : FullscreenOutlined);
 
   // 监听全屏切换事件
   document.addEventListener('fullscreenchange', toggleFullscreenIcon);
@@ -171,130 +182,3 @@
     });
   };
 </script>
-
-<style lang="less" scoped>
-  .layout-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0;
-    height: 64px;
-    box-shadow: 0 1px 4px rgb(0 21 41 / 8%);
-    transition: all 0.2s ease-in-out;
-    width: 100%;
-    z-index: 11;
-
-    &-left {
-      display: flex;
-      align-items: center;
-
-      .logo {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        height: 64px;
-        line-height: 64px;
-        overflow: hidden;
-        white-space: nowrap;
-        padding-left: 10px;
-
-        img {
-          width: auto;
-          height: 32px;
-          margin-right: 10px;
-        }
-
-        .title {
-          margin-bottom: 0;
-        }
-      }
-
-      ::v-deep(.ant-breadcrumb span:last-child .link-text) {
-        color: #515a6e;
-      }
-
-      .n-breadcrumb {
-        display: inline-block;
-      }
-
-      &-menu {
-        color: var(--text-color);
-      }
-    }
-
-    &-right {
-      display: flex;
-      align-items: center;
-      margin-right: 20px;
-
-      .avatar {
-        display: flex;
-        align-items: center;
-        height: 64px;
-      }
-
-      > * {
-        cursor: pointer;
-      }
-    }
-
-    &-trigger {
-      display: inline-block;
-      width: 64px;
-      height: 64px;
-      text-align: center;
-      cursor: pointer;
-      transition: all 0.2s ease-in-out;
-
-      .n-icon {
-        display: flex;
-        align-items: center;
-        height: 64px;
-        line-height: 64px;
-      }
-
-      &:hover {
-        background: hsla(0, 0%, 100%, 0.08);
-      }
-
-      .anticon {
-        font-size: 16px;
-        color: #515a6e;
-      }
-    }
-
-    &-trigger-min {
-      width: auto;
-      padding: 0 12px;
-    }
-  }
-
-  .layout-header-light {
-    background: #fff;
-    color: #515a6e;
-
-    .n-icon {
-      color: #515a6e;
-    }
-
-    .layout-header-left {
-      ::v-deep(.n-breadcrumb .n-breadcrumb-item:last-child .n-breadcrumb-item__link) {
-        color: #515a6e;
-      }
-    }
-
-    .layout-header-trigger {
-      &:hover {
-        background: #f8f8f9;
-      }
-    }
-  }
-
-  .layout-header-fix {
-    position: fixed;
-    top: 0;
-    right: 0;
-    left: 200px;
-    z-index: 11;
-  }
-</style>

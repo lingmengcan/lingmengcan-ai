@@ -5,6 +5,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
+import { isNullOrUndefined } from '@/utils';
 
 @Injectable()
 export class RoleService {
@@ -50,7 +51,7 @@ export class RoleService {
       });
     }
 
-    if (status) {
+    if (!isNullOrUndefined(status)) {
       qb = qb.andWhere('Role.status = :value', {
         value: status,
       });

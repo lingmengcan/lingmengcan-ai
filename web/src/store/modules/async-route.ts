@@ -5,20 +5,6 @@ import { store } from '@/store';
 import { defaultRoutes } from '@/router/index';
 import { generateDynamicRoutes } from '@/router/generator';
 
-// interface TreeHelperConfig {
-//   id: string;
-//   children: string;
-//   pid: string;
-// }
-
-// const DEFAULT_CONFIG: TreeHelperConfig = {
-//   id: 'id',
-//   children: 'children',
-//   pid: 'pid',
-// };
-
-// const getConfig = (config: Partial<TreeHelperConfig>) => Object.assign({}, DEFAULT_CONFIG, config);
-
 export interface AsyncRouteState {
   menus: RouteRecordRaw[];
   routers: any[];
@@ -26,26 +12,6 @@ export interface AsyncRouteState {
   keepAliveComponents: string[];
   isDynamicRouteAdded: boolean;
 }
-
-// function filter<T = any>(
-//   tree: T[],
-//   func: (n: T) => boolean,
-//   config: Partial<TreeHelperConfig> = {},
-// ): T[] {
-//   config = getConfig(config);
-//   const children = config.children as string;
-
-//   function listFilter(list: T[]) {
-//     return list
-//       .map((node: any) => ({ ...node }))
-//       .filter((node) => {
-//         node[children] = node[children] && listFilter(node[children]);
-//         return func(node) || (node[children] && node[children].length);
-//       });
-//   }
-
-//   return listFilter(tree);
-// }
 
 export const useAsyncRouteStore = defineStore({
   id: 'app-async-route',

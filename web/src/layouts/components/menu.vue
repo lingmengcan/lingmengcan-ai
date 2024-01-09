@@ -4,9 +4,18 @@
   import { useAsyncRouteStore } from '@/store/modules/async-route';
   import { generatorMenu } from '@/utils/menu';
 
-  defineProps({
+  const props = defineProps({
     collapsed: {
       type: Boolean,
+      required: true,
+    },
+    isAdmin: {
+      type: Boolean,
+      default: false,
+    },
+    mode: {
+      type: String,
+      default: 'vertical',
       required: true,
     },
   });
@@ -25,6 +34,7 @@
   const openKeys = ref(getOpenKeys);
 
   const getSelectedKeys = computed(() => unref(selectedKeys));
+
   // 跟随页面路由变化，切换菜单选中状态
   watch(
     () => currentRoute.fullPath,
@@ -34,7 +44,22 @@
   );
 
   function updateMenu() {
-    menus.value = generatorMenu(asyncRouteStore.getMenus);
+    const dataMenus = generatorMenu(asyncRouteStore.getMenus);
+
+    if (props.mode === 'vertical') {
+      if (props.isAdmin) {
+        menus.value = dataMenus;
+      } else {
+        menus.value = dataMenus.map((item) => {
+          delete item.children;
+          return item;
+        });
+      }
+    } else {
+      const parentKey = openKeys.value.shift();
+      const items = dataMenus.find((item) => item.key === parentKey);
+      menus.value = items ? items.children : [];
+    }
 
     updateSelectedKeys();
   }
@@ -42,8 +67,8 @@
   function updateSelectedKeys() {
     const matched = currentRoute.matched;
     openKeys.value = matched.map((item) => item.name);
-    const activeMenu: string = (currentRoute.meta?.activeMenu as string) || '';
-    selectedKeys.value = activeMenu ? (activeMenu as string) : (currentRoute.name as string);
+
+    selectedKeys.value = currentRoute.name as string;
   }
 
   // 点击菜单
@@ -75,6 +100,7 @@
     }
     return subRouteChildren.includes(key);
   }
+
   onMounted(() => {
     updateMenu();
   });
@@ -82,8 +108,9 @@
 
 <template>
   <NMenu
+    class="items-center"
     :options="menus"
-    mode="vertical"
+    :mode="mode"
     :inverted="true"
     :collapsed="collapsed"
     :collapsed-width="64"

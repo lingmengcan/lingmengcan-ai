@@ -253,7 +253,7 @@
       title: '创建时间',
       width: 120,
       render(row: RowData) {
-        return h('span', formatDateTime(row['createDate']));
+        return h('span', formatDateTime(row['createdAt']));
       },
     },
     {

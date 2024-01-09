@@ -1,26 +1,7 @@
 <template>
-  <n-layout class="layout" has-sider>
-    <n-layout-content class="content"><RouterView></RouterView></n-layout-content>
+  <n-layout class="flex flex-col h-screen bg-black" has-sider>
+    <n-layout-content class="flex-1 h-screen bg-white">
+      <RouterView></RouterView>
+    </n-layout-content>
   </n-layout>
 </template>
-
-<script>
-  export default {
-    name: 'App',
-  };
-</script>
-
-<style scoped>
-  .layout {
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    background-color: #000;
-  }
-
-  .content {
-    flex: 1;
-    height: 100vh;
-    background-color: #fff;
-  }
-</style>

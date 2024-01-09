@@ -246,7 +246,7 @@
       title: '创建时间',
       width: 120,
       render(row: RowData) {
-        return h('span', formatDateTime(row['createDate']));
+        return h('span', formatDateTime(row['createdAt']));
       },
     },
     {
@@ -400,7 +400,7 @@
 
     drawerTitle.value = '新增菜单';
     showDrawer.value = true;
-    drawerFormData.value = menuInitData;
+    drawerFormData.value = { ...menuInitData };
   };
 
   // 新增菜单
@@ -409,7 +409,7 @@
 
     drawerTitle.value = '新增菜单';
     showDrawer.value = true;
-    drawerFormData.value = menuInitData;
+    drawerFormData.value = { ...menuInitData };
     drawerFormData.value.parentId = menuId;
   };
 
@@ -480,7 +480,7 @@
 
         if (res?.code === 0) {
           showDrawer.value = false;
-          drawerFormData.value = menuInitData;
+          drawerFormData.value = { ...menuInitData };
           query();
         }
       } else {

@@ -7,7 +7,7 @@
   const props = defineProps({
     isAi: {
       type: [Boolean, undefined] as PropType<boolean | undefined>,
-      required: true,
+      default: false,
     },
   });
 

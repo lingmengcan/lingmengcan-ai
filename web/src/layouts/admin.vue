@@ -25,7 +25,7 @@
       @expand="collapsed = false"
     >
       <Logo :collapsed="collapsed" />
-      <Menu :inverted="inverted" :collapsed="collapsed" />
+      <Menu :inverted="inverted" :collapsed="collapsed" :is-admin="true" mode="vertical" />
     </n-layout-sider>
     <n-layout :inverted="false">
       <n-layout-header :inverted="false" position="absolute">

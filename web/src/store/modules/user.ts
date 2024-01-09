@@ -8,7 +8,6 @@ import { LoginParams, User } from '@/models/user';
 export interface UserState {
   token: string;
   username: string;
-  welcome: string;
   avatar: string;
   permissions: string[];
   userInfo: User;
@@ -19,7 +18,6 @@ export const useUserStore = defineStore({
   state: (): UserState => ({
     token: DataStorage.get(ACCESS_TOKEN, ''),
     username: '',
-    welcome: '',
     avatar: '',
     permissions: [],
     userInfo: DataStorage.get(CURRENT_USER, {}),
@@ -31,7 +29,7 @@ export const useUserStore = defineStore({
     getAvatar(): string {
       return this.avatar;
     },
-    getNickname(): string {
+    getUsername(): string {
       return this.username;
     },
     getPermissions(): string[] {
@@ -48,6 +46,9 @@ export const useUserStore = defineStore({
     setAvatar(avatar: string) {
       this.avatar = avatar;
     },
+    setUsername(username: string) {
+      this.username = username;
+    },
     setPermissions(permissions: string[]) {
       this.permissions = permissions;
     },
@@ -60,7 +61,7 @@ export const useUserStore = defineStore({
 
       if (res && res.code === ResultEnum.SUCCESS) {
         DataStorage.set(ACCESS_TOKEN, res.data);
-        console.log('token', DataStorage.get(ACCESS_TOKEN));
+
         this.setToken(res.data);
       }
       return res;
@@ -76,6 +77,7 @@ export const useUserStore = defineStore({
         this.setPermissions(permissions);
         this.setUserInfo(user);
         this.setAvatar(user.avatar as string);
+        this.setUsername(user.userName);
       }
 
       return res?.data;
@@ -86,10 +88,9 @@ export const useUserStore = defineStore({
       this.setPermissions([]);
       this.setUserInfo({
         userName: '',
+        nickName: '',
         email: '',
         userId: '',
-        deptId: '',
-        chineseName: '',
         phone: '',
         sex: '',
         password: '',

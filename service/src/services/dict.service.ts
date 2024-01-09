@@ -1,5 +1,6 @@
 import { DictListDto } from '@/dtos/dict.dto';
 import { Dict } from '@/entities/dict.entity';
+import { isNullOrUndefined } from '@/utils';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
@@ -27,7 +28,7 @@ export class DictService {
     });
   }
 
-  findByDictname(dictname: string): Promise<Dict> {
+  findByDictName(dictname: string): Promise<Dict> {
     return this.repository.findOne({
       where: { dictName: dictname, status: 0 },
     });
@@ -66,7 +67,7 @@ export class DictService {
       });
     }
 
-    if (status) {
+    if (!isNullOrUndefined(status)) {
       qb = qb.andWhere('Dict.status = :value', {
         value: status,
       });
@@ -134,7 +135,6 @@ export class DictService {
     entity.updatedUser = dict.updatedUser;
     entity.createdAt = new Date();
     entity.updatedAt = new Date();
-    console.log(entity);
 
     return this.repository.save(entity);
   }
