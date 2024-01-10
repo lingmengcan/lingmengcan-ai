@@ -87,20 +87,10 @@
 
 <style lang="less" scoped>
   .action-button {
-    @apply bg-gray-200;
-    @apply w-10;
-    @apply h-10;
-    @apply hover:opacity-70;
-    border-radius: 0;
-
-    &-border-l {
-      border-left: #d8e1f0 1px solid;
-    }
+    @apply w-10 h-10 bg-gray-200 hover:bg-slate-200 rounded;
   }
 
   .new-chat-button {
-    @apply bg-white;
-    @apply w-full;
-    @apply h-10;
+    @apply w-full h-10 bg-white;
   }
 </style>

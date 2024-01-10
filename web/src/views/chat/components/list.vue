@@ -48,36 +48,32 @@
   <n-scrollbar>
     <div class="mt-4">
       <div class="flex flex-col w-full gap-4">
-        <div v-for="(item, index) of conversationList" :key="index" class="list-chat">
-          <n-input v-if="item.isEdit" v-model:value="item.conversationName" class="list-chat-input">
+        <div v-for="(item, index) of conversationList" :key="index">
+          <n-input
+            v-if="item.isEdit"
+            v-model:value="item.conversationName"
+            class="w-full h-11 items-center"
+          >
             <template #suffix>
-              <n-button
-                :bordered="false"
-                class="list-chat-edit-button"
+              <n-icon
+                size="14"
+                class="mr-1 text-blue-800 hover:text-gray-500 cursor-pointer"
                 @click="handleEdit(item, false, $event)"
               >
-                <template #icon>
-                  <n-icon size="14">
-                    <CheckmarkOutline />
-                  </n-icon>
-                </template>
-              </n-button>
-              <n-button
-                :bordered="false"
-                class="list-chat-edit-button"
+                <CheckmarkOutline />
+              </n-icon>
+
+              <n-icon
+                size="14"
+                class="text-blue-800 hover:text-gray-500 cursor-pointer"
                 @click="item.isEdit = false"
               >
-                <template #icon>
-                  <n-icon size="14">
-                    <CloseOutline />
-                  </n-icon>
-                </template>
-              </n-button>
+                <CloseOutline />
+              </n-icon>
             </template>
           </n-input>
           <n-button
             v-else
-            :bordered="false"
             class="list-chat-button"
             :class="isActive(item.conversationId) && ['list-chat-button-selected']"
             @click="handleSelect(item)"
@@ -96,27 +92,19 @@
             </n-ellipsis>
 
             <div v-if="isActive(item.conversationId)" class="flex">
-              <n-button
-                :bordered="false"
-                class="list-chat-edit-button"
+              <n-icon
+                size="14"
+                class="mr-1 text-blue-800 hover:text-gray-500 cursor-pointer"
                 @click="handleEdit(item, true, $event)"
               >
-                <template #icon>
-                  <n-icon size="14">
-                    <PencilOutline />
-                  </n-icon>
-                </template>
-              </n-button>
+                <PencilOutline />
+              </n-icon>
 
               <n-popconfirm placement="top" @positive-click="handleDelete(item, $event)">
                 <template #trigger>
-                  <n-button :bordered="false" class="list-chat-edit-button">
-                    <template #icon>
-                      <n-icon size="14">
-                        <TrashOutline />
-                      </n-icon>
-                    </template>
-                  </n-button>
+                  <n-icon size="14" class="text-blue-800 hover:text-gray-500 cursor-pointer">
+                    <TrashOutline />
+                  </n-icon>
                 </template>
                 删除后无法恢复，是否继续删除？
               </n-popconfirm>
@@ -129,35 +117,11 @@
 </template>
 
 <style lang="less" scoped>
-  .list-chat {
-    @apply relative flex items-center;
+  .list-chat-button {
+    @apply w-full h-11 bg-sky-200 rounded-sm justify-start;
 
-    &-input {
-      @apply w-full h-11 items-center;
-    }
-
-    &-button {
-      @apply w-full h-11;
-      background-color: #ebecf0;
-      border-radius: 5px;
-      justify-content: left;
-
-      &-selected {
-        border: solid 2px #5e8cdc;
-        background-color: #d4e3fc;
-      }
-    }
-
-    &-button:hover {
-      background-color: #d4e3fc;
-    }
-
-    &-edit-button {
-      width: 20px;
-      min-width: 20px;
-      padding: 10px;
-      color: #0052d9;
-      @apply hover:text-neutral-400;
+    &-selected {
+      @apply border-2 border-solid border-blue-500 bg-blue-200;
     }
   }
 </style>

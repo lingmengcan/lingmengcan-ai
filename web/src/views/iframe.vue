@@ -4,7 +4,7 @@
 
   const currentRoute = useRoute();
   const loading = ref(false);
-  const frameRef = ref<HTMLFrameElement | null>(null);
+  const frameRef = ref<HTMLIFrameElement | null>(null);
   const frameSrc = ref<string>('');
 
   if (unref(currentRoute.meta)?.frameSrc) {
@@ -40,23 +40,12 @@
 
 <template>
   <n-spin :show="loading">
-    <div class="frame">
-      <iframe ref="frameRef" :src="frameSrc" class="frame-iframe"></iframe>
+    <div class="w-full h-screen">
+      <iframe
+        ref="frameRef"
+        :src="frameSrc"
+        class="w-full h-full overflow-hidden border-0 box-border"
+      ></iframe>
     </div>
   </n-spin>
 </template>
-
-<style lang="less" scoped>
-  .frame {
-    width: 100%;
-    height: 100vh;
-
-    &-iframe {
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      border: 0;
-      box-sizing: border-box;
-    }
-  }
-</style>

@@ -117,11 +117,11 @@
       completed: 0,
     });
 
-    scrollToBottom();
-
     // 等待回答
     loading.value = true;
     prompt.value = '';
+
+    scrollToBottom();
 
     try {
       const fetchChatApiOnce = async () => {
@@ -317,9 +317,11 @@
       </div>
     </div>
     <div class="flex flex-col justify-center flex-auto overflow-hidden">
-      <div id="scrollRef" ref="scrollRef" class="max-h-full overflow-x-hidden">
+      <div id="scrollRef" ref="scrollRef" class="p-1 h-screen overflow-x-hidden">
         <template v-if="!conversation?.messages?.length">
-          <div class="mx-auto space-y-4 max-w-[600px]">
+          <div
+            class="flex flex-col justify-center h-full items-center mx-auto space-y-4 max-w-[600px]"
+          >
             <div class="text-4xl font-semibold text-center text-gray-800">
               你好，我是一个智能对话系统
             </div>
@@ -394,18 +396,15 @@
 <style lang="less" scoped>
   .llm-select {
     :deep(.n-base-selection-label) {
-      margin-left: 3px;
-      border: none;
-      background-color: transparent;
+      @apply ml-1 border-none bg-transparent;
     }
   }
 
   .action-button {
-    @apply bg-gray-200 w-10 h-10 hover:opacity-70;
-    border-radius: 0;
+    @apply bg-gray-200 w-10 h-10 hover:opacity-70 rounded-none;
 
     &-border-l {
-      border-left: #d8e1f0 1px solid;
+      @apply border-l border-blue-400;
     }
   }
 

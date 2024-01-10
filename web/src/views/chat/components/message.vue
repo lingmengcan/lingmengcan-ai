@@ -94,8 +94,6 @@
 
 <style lang="less" scoped>
   .copy-button {
-    @apply text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 items-center;
-    height: 20px;
-    width: 20px;
+    @apply w-5 h-5 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 items-center;
   }
 </style>

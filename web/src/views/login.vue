@@ -80,16 +80,15 @@
 </script>
 
 <template>
-  <div class="view-account">
-    <div class="view-account-header"></div>
-    <div class="view-account-container">
-      <div class="view-account-top">
-        <div class="view-account-top-logo">
+  <div class="flex flex-col h-full overflow-auto">
+    <div class="flex-grow flex-1 px-3 py-7 max-w-md mx-auto">
+      <div class="py-7 text-center">
+        <div>
           <img src="@/assets/images/full-logo.png" alt="" />
         </div>
-        <div class="view-account-top-desc">你好，lingmengcan ai解决方案, 欢迎使用</div>
+        <div class="text-sm text-sky-300">你好，lingmengcan ai解决方案, 欢迎使用</div>
       </div>
-      <div class="view-account-form">
+      <div>
         <n-form
           ref="formRef"
           label-placement="left"
@@ -130,7 +129,7 @@
             </n-input>
             <img :src="captchaUrl" @click="refreshCaptcha" />
           </n-form-item>
-          <n-form-item class="default-color">
+          <n-form-item>
             <div class="flex justify-between">
               <div class="flex-initial">
                 <n-checkbox v-model:checked="autoLogin">自动登录</n-checkbox>
@@ -150,55 +149,3 @@
     </div>
   </div>
 </template>
-
-<style lang="less" scoped>
-  .view-account {
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    overflow: auto;
-
-    &-container {
-      flex: 1;
-      padding: 32px 12px;
-      max-width: 384px;
-      min-width: 320px;
-      margin: 0 auto;
-    }
-
-    &-top {
-      padding: 32px 0;
-      text-align: center;
-
-      &-desc {
-        font-size: 14px;
-        color: #808695;
-      }
-    }
-
-    &-other {
-      width: 100%;
-    }
-
-    .default-color {
-      color: #515a6e;
-
-      .ant-checkbox-wrapper {
-        color: #515a6e;
-      }
-    }
-  }
-
-  @media (min-width: 768px) {
-    .view-account {
-      background-image: url('../assets/images/login.svg');
-      background-repeat: no-repeat;
-      background-position: 50%;
-      background-size: 100%;
-    }
-
-    .page-account-container {
-      padding: 32px 0 24px 0;
-    }
-  }
-</style>

@@ -430,10 +430,10 @@
       </n-grid>
     </n-form>
   </n-card>
-  <n-card :bordered="false" class="mt-4">
-    <div class="table-toolbar">
+  <n-card :bordered="false" class="mt-2">
+    <div class="mb-2">
       <!--顶部左侧区域-->
-      <div class="flex items-center table-toolbar-left">
+      <div class="flex items-center">
         <n-button v-permission="['system_user_add']" type="primary" @click="handleAdd">
           <template #icon>
             <n-icon>
@@ -444,7 +444,7 @@
         </n-button>
       </div>
     </div>
-    <div class="s-table">
+    <div>
       <n-data-table
         ref="table"
         remote

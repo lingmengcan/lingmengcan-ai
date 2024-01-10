@@ -74,7 +74,7 @@
     FullscreenExitOutlined,
   } from '@vicons/antd';
   import { useDialog, useMessage } from 'naive-ui';
-  import { computed, ref } from 'vue';
+  import { computed, shallowRef } from 'vue';
   import { RouteLocationMatched, useRoute, useRouter } from 'vue-router';
   import Menu from './menu.vue';
   import Avatar from '@/components/avatar/index.vue';
@@ -90,7 +90,7 @@
 
   const router = useRouter();
   const route = useRoute();
-  const fullscreenIcon = ref(FullscreenOutlined);
+  const fullscreenIcon = shallowRef(FullscreenOutlined);
   const userStore = useUserStore();
   const message = useMessage();
   const dialog = useDialog();
