@@ -4,6 +4,7 @@ import { AIMessage, BaseMessage, ChatResult } from 'langchain/schema';
 
 export class ChatGlm6BLLM2 extends BaseChatModel {
   modelName: 'chatglm';
+  baseUrl: string;
   temperature: number;
   max_length: number;
   top_p: number;
@@ -14,6 +15,7 @@ export class ChatGlm6BLLM2 extends BaseChatModel {
     super(fields ?? {});
 
     this.modelName = 'chatglm';
+    this.baseUrl = fields?.baseUrl ?? '';
     this.temperature = fields?.temperature ?? 0.7;
     this.max_length = fields?.max_length ?? 2048;
     this.top_p = fields?.top_p ?? 0.7;
@@ -24,6 +26,7 @@ export class ChatGlm6BLLM2 extends BaseChatModel {
   invocationParams() {
     return {
       model: this.modelName,
+      baseUrl: this.baseUrl,
       temperature: this.temperature,
       top_p: this.top_p,
       max_length: this.max_length,
@@ -71,16 +74,12 @@ export class ChatGlm6BLLM2 extends BaseChatModel {
   async completionWithRetry(request) {
     const makeCompletionRequest = async () => {
       try {
-        const res: any = await axios.post(
-          process.env.CHATGLM_6B_SERVER_URL ?? 'http://localhost',
-          request,
-          {
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            // responseType: this.streaming ? 'stream' : 'json',
+        const res: any = await axios.post(this.baseUrl, request, {
+          headers: {
+            'Content-Type': 'application/json',
           },
-        );
+          // responseType: this.streaming ? 'stream' : 'json',
+        });
 
         return res;
       } catch (error) {

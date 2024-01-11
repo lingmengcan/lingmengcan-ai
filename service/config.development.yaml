@@ -1,6 +1,6 @@
 http:
   host: 'localhost'
-  port: 80
+  port: 9999
   prefix: 'api'
 
 mariadb:
@@ -13,3 +13,8 @@ mariadb:
 
 mongodb:
   db: 'mongodb://localhost:27017/lingmengcan'
+
+llms:
+  embedding_server_url: 'http://127.0.0.1:56391'
+  chatglm_6b_server_url: 'http://127.0.0.1:56721'   
+  openai_api_key: ''

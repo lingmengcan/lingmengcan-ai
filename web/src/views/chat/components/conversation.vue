@@ -245,7 +245,6 @@
       <div class="flex gap-3">
         <n-button
           v-if="!chatListVisable"
-          :bordered="false"
           class="action-button"
           @click="emit('update:chatListVisable', !chatListVisable)"
         >
@@ -304,7 +303,7 @@
       <div class="relative flex">
         <n-popover ref="popoverPromptRef" trigger="click" placement="bottom-end" width="400">
           <template #trigger>
-            <n-button :bordered="false" class="action-button">
+            <n-button class="action-button">
               <template #icon>
                 <n-icon size="18">
                   <GridOutline />

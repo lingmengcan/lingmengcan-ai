@@ -4,12 +4,14 @@ import { ChatDto } from '@/dtos/chat.dto';
 import { MessageService } from './message.service';
 import { Message } from '@/entities/message.entity';
 import { ConversationService } from './conversation.service';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class ChatService {
   constructor(
     private readonly messageService: MessageService,
     private readonly conversationService: ConversationService,
+    private configService: ConfigService,
   ) {}
 
   //自由对话
@@ -59,8 +61,9 @@ export class ChatService {
 
     switch (llm) {
       case 'ChatGLM3':
+        const baseUrl = this.configService.get<string>('llms.chatglm_6b_server_url');
         const res = new ChatglmService();
-        return res.chat(message.messageText, history, temperature);
+        return res.chat(baseUrl, message.messageText, history, temperature);
     }
   }
 }

@@ -8,9 +8,10 @@ export default () => {
   const env = process.env.NODE_ENV || 'development';
   const YAML_CONFIG_FILENAME = `../../config.${env}.yaml`;
 
-  return yaml.load(
-    readFileSync(join(__dirname, YAML_CONFIG_FILENAME), 'utf8'),
-  ) as Record<string, any>;
+  return yaml.load(readFileSync(join(__dirname, YAML_CONFIG_FILENAME), 'utf8')) as Record<
+    string,
+    any
+  >;
 };
 
 // export default () => ({
@@ -28,10 +29,10 @@ export default () => {
 // });
 
 // 环境配置
-export class SystemConfig {
-  prefix = '';
-  port = 80;
-}
+// export class SystemConfig {
+//   prefix = '';
+//   port = 80;
+// }
 
 // // 数据库配置
 // export interface DatabaseConfig {

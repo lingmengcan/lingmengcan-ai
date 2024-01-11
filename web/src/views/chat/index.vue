@@ -44,11 +44,7 @@
             </n-icon>
             <div>对话列表</div>
           </div>
-          <n-button
-            :bordered="false"
-            class="action-button"
-            @click="chatListVisable = !chatListVisable"
-          >
+          <n-button class="action-button" @click="chatListVisable = !chatListVisable">
             <template #icon>
               <n-icon>
                 <MenuFoldOutlined />

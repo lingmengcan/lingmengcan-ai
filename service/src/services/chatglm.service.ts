@@ -10,14 +10,18 @@ import { GlobalService } from './global';
 export class ChatglmService {
   //文档问答
   async chatfile(body) {
-    const { message, history } = body;
+    const { baseUrl, message, history } = body;
     console.log('step1', message, history);
 
     const vectorStore = GlobalService.globalVar;
     const result = await vectorStore.similaritySearch(message, 1);
 
     const fileSourceStr = result[0].metadata.source;
-    const chat = new ChatGlm6BLLM2({ temperature: 0.01, history: history });
+    const chat = new ChatGlm6BLLM2({
+      baseUrl,
+      temperature: 0.01,
+      history,
+    });
     const translationPrompt = ChatPromptTemplate.fromMessages([
       SystemMessagePromptTemplate.fromTemplate(
         `基于已知内容, 回答用户问题。如果无法从中得到答案，请说'没有足够的相关信息'。已知内容:${result[0].pageContent}`,
@@ -40,8 +44,13 @@ export class ChatglmService {
   }
 
   //自由对话
-  async chat(message: string, history: any, temperature: number) {
-    const chat = new ChatGlm6BLLM2({ temperature: temperature, history: history, streaming: true });
+  async chat(baseUrl: string, message: string, history: any, temperature: number) {
+    const chat = new ChatGlm6BLLM2({
+      baseUrl,
+      temperature: temperature,
+      history: history,
+      streaming: true,
+    });
 
     const translationPrompt = ChatPromptTemplate.fromMessages([
       HumanMessagePromptTemplate.fromTemplate('{text}'),
