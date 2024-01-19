@@ -17,4 +17,4 @@ mongodb:
 llms:
   embedding_server_url: 'http://127.0.0.1:56391'
   chatglm_6b_server_url: 'http://127.0.0.1:56721'   
-  openai_api_key: ''
+  openai_api_key: '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'

@@ -1,16 +1,16 @@
-import { ChatGlm6BLLM2 } from '@/llm/chatglm2';
+import { ChatGlm6BLLM2 } from '@/llms/chatglm';
 import { LLMChain } from 'langchain/chains';
-import {
-  SystemMessagePromptTemplate,
-  HumanMessagePromptTemplate,
-  ChatPromptTemplate,
-} from 'langchain/prompts';
 import { GlobalService } from './global';
+import {
+  ChatPromptTemplate,
+  HumanMessagePromptTemplate,
+  SystemMessagePromptTemplate,
+} from '@langchain/core/prompts';
 
 export class ChatglmService {
   //文档问答
   async chatfile(body) {
-    const { baseUrl, message, history } = body;
+    const { apiUrl, message, history } = body;
     console.log('step1', message, history);
 
     const vectorStore = GlobalService.globalVar;
@@ -18,7 +18,7 @@ export class ChatglmService {
 
     const fileSourceStr = result[0].metadata.source;
     const chat = new ChatGlm6BLLM2({
-      baseUrl,
+      apiUrl,
       temperature: 0.01,
       history,
     });
@@ -44,26 +44,58 @@ export class ChatglmService {
   }
 
   //自由对话
-  async chat(baseUrl: string, message: string, history: any, temperature: number) {
-    const chat = new ChatGlm6BLLM2({
-      baseUrl,
+  async chat(apiUrl: string, message: string, history: any, temperature: number) {
+    const llm = new ChatGlm6BLLM2({
+      apiUrl,
+      streaming: true,
       temperature: temperature,
       history: history,
-      streaming: true,
     });
 
-    const translationPrompt = ChatPromptTemplate.fromMessages([
-      HumanMessagePromptTemplate.fromTemplate('{text}'),
+    const prompt = ChatPromptTemplate.fromMessages([
+      HumanMessagePromptTemplate.fromTemplate('{input}'),
     ]);
 
+    // const outputParser = new StringOutputParser();
+    // const chain = prompt.pipe(llm).pipe(outputParser);
+    // const stream = await chain.stream({
+    //   input: message,
+    // });
+    // for await (const item of stream) {
+    //   console.log('stream item:', item);
+    // }
+
+    // const response = new Response(stream, {
+    //   headers: { 'content-type': 'text/plain; charset=utf-8' },
+    // });
+
     const chain = new LLMChain({
-      prompt: translationPrompt,
-      llm: chat,
+      prompt,
+      llm,
     });
 
-    const response = await chain.call({
-      text: message,
-    });
+    // Call the chain with the inputs and a callback for the streamed tokens
+    const response = await chain.call(
+      {
+        input: message,
+      },
+      [
+        {
+          handleLLMNewToken(token: string) {
+            // process.stdout.write(token);
+            console.log({ token });
+          },
+        },
+      ],
+    );
+
+    // console.log({ res });
+
+    // const response = await chain.invoke({
+    //   input: message,
+    // });
+
+    console.log(response);
 
     return response;
   }

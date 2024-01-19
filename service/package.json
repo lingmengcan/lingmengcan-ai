@@ -21,6 +21,8 @@
     "genorm": "rm -rf entities-template & npx typeorm-model-generator -h localhost -d lingmengcan -p 3306 -u root -x 123456 -e mysql -o entities-template --noConfig true --ce pascal --cp camel"
   },
   "dependencies": {
+    "@langchain/core": "^0.1.14",
+    "@langchain/openai": "^0.0.12",
     "@nestjs/common": "^10.0.0",
     "@nestjs/config": "^3.1.1",
     "@nestjs/core": "^10.0.0",
@@ -34,12 +36,13 @@
     "class-validator": "^0.14.0",
     "express-session": "^1.17.3",
     "js-yaml": "^4.1.0",
-    "langchain": "^0.0.170",
+    "langchain": "^0.1.2",
     "mysql2": "^3.6.2",
     "passport": "^0.6.0",
     "passport-jwt": "^4.0.1",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.8.1",
+    "stream": "^0.0.2",
     "svg-captcha": "^1.4.0",
     "typeorm": "^0.3.17",
     "uuid": "^9.0.1"

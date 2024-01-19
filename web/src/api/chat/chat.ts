@@ -46,5 +46,6 @@ export const deleteMessagesByConversationId = (data: String) =>
 export const chat = (data: ChatParams) => http.request<any>('chat', Method.POST, data);
 
 // 重新生成
-export const regenerate = (data: ChatParams) =>
-  http.request<any>('chat/regenerate', Method.POST, data);
+export const regenerate = (data: ChatParams) => {
+  return http.request<any>('chat/regenerate', Method.POST, data);
+};

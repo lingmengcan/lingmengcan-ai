@@ -2,6 +2,7 @@ export enum ContentType {
   form = 'application/x-www-form-urlencoded',
   json = 'application/json; charset=utf-8',
   multipart = 'multipart/form-data',
+  stream = 'text/plain',
 }
 
 export enum Method {
@@ -18,3 +19,5 @@ export enum Method {
 export interface RequestParams {
   [key: string]: any;
 }
+
+export type ResponseType = 'arraybuffer' | 'blob' | 'document' | 'json' | 'text' | 'stream';

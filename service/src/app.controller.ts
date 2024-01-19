@@ -3,6 +3,7 @@ import { AppService } from './app.service';
 import { AuthService } from './services/auth.service';
 import { successJson } from './utils/result';
 import { LoginDto } from './dtos/auth.dto';
+import { Response } from 'express';
 
 @Controller()
 export class AppController {
@@ -14,6 +15,20 @@ export class AppController {
   @Get()
   index(@Res() res) {
     res.status(302).redirect('/doc');
+  }
+
+  @Get('stream')
+  async stream(@Res() res: Response) {
+    res.setHeader('Content-Type', 'text/event-stream');
+    res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('Connection', 'keep-alive');
+
+    for (let i = 0; i < 10; i++) {
+      res.write(`data: ${i}\n\n`);
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+    }
+
+    res.end();
   }
 
   /**

@@ -118,10 +118,10 @@
 
 <style lang="less" scoped>
   .list-chat-button {
-    @apply w-full h-11 bg-sky-200 rounded-sm justify-start;
+    @apply w-full h-11 bg-sky-200 rounded-md justify-start;
 
     &-selected {
-      @apply border-2 border-solid border-blue-500 bg-blue-200;
+      @apply bg-sky-300;
     }
   }
 </style>

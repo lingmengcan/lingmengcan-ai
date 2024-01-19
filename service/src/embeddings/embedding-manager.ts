@@ -1,5 +1,5 @@
-import { Embeddings } from 'langchain/embeddings/base';
-import { OpenAIEmbeddings } from 'langchain/embeddings/openai';
+import { Embeddings } from '@langchain/core/embeddings';
+import { OpenAIEmbeddings } from '@langchain/openai';
 
 export class EmbeddingManager {
   private static instance: EmbeddingManager;

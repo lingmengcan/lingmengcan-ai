@@ -91,6 +91,20 @@
     }
   }
 
+  async function chatStream(data: ChatParams) {
+    const res = await fetch(import.meta.env.VITE_GLOB_API_URL + '/chat/stream', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+
+    if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+
+    const reader = res.body?.getReader();
+
+    return reader;
+  }
+
   async function onConversation() {
     const message = prompt.value;
 
@@ -130,10 +144,23 @@
           temperature: temperature.value,
           llm: selectedLlm.value,
         };
-        const res = await chat(chatParams);
+        // const res = await chat(chatParams);
+        const res = await chatStream(chatParams);
 
-        if (answer.value) {
-          answer.value.messageText = res.data.text ?? '';
+        if (answer.value && res) {
+          try {
+            while (true) {
+              const { done, value } = await res.read();
+              if (done) break;
+              answer.value.messageText += new TextDecoder().decode(value);
+
+              scrollToBottom();
+            }
+          } catch (error) {
+            console.error('Error reading stream:', error);
+          } finally {
+            res?.releaseLock(); // 确保释放读取器
+          }
 
           //当回答没有被终止时，更新回答
           if (answer.value.completed === 0) {
@@ -141,8 +168,6 @@
             // 更新回答
             await chatStore.updateChatByConversationId(answer.value);
           }
-
-          scrollToBottom();
         }
 
         scrollToBottom();
@@ -333,7 +358,7 @@
           <MessageComponent
             v-for="(item, index) of conversation?.messages"
             :key="index"
-            :item="item"
+            :item="item.messageId === answer?.messageId ? (answer as Message) : item"
             :loading="item.completed === 0"
             @regenerate="onRegenerate"
           />

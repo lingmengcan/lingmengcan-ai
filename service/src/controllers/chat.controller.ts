@@ -5,9 +5,10 @@ import { ChatService } from '@/services/chat.service';
 import { ConversationService } from '@/services/conversation.service';
 import { MessageService } from '@/services/message.service';
 import { successJson } from '@/utils/result';
-import { Body, Controller, Get, Param, Post, UseGuards, Request } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, UseGuards, Request, Res } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
+import { Response } from 'express';
 
 @ApiTags('chat') // 添加 接口标签 装饰器
 @Controller('chat')
@@ -21,14 +22,50 @@ export class ChatController {
   /**
    * Glm对话
    */
+  @Post('stream')
+  @ApiBody({
+    description: '对话',
+    type: ChatDto,
+  })
+  async chatToStream(@Body() dto: ChatDto, @Res() res: Response) {
+    res.setHeader('Content-Type', 'text/plain');
+    res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('Connection', 'keep-alive');
+    res.setHeader('Transfer-Encoding', 'chunked');
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    const { message, temperature } = dto;
+    const history = [];
+    const stream = await this.chatService.chatOpenAi(message.messageText, temperature, history);
+    for await (const chunk of stream) {
+      console.log(chunk);
+      res.write(chunk);
+    }
+
+    res.end();
+  }
+
+  /**
+   * Glm对话
+   */
   @UseGuards(AuthGuard('jwt'))
   @Post('')
   @ApiBody({
     description: '对话',
     type: ChatDto,
   })
-  async chat(@Body() dto: ChatDto) {
-    return successJson(await this.chatService.chat(dto));
+  async chat(@Body() dto: ChatDto, @Res() res: Response) {
+    res.setHeader('Content-Type', 'text/event-stream');
+    res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('Connection', 'keep-alive');
+    const { message, temperature } = dto;
+    const history = [];
+    const stream = await this.chatService.chatOpenAi(message.messageText, temperature, history);
+    for await (const chunk of stream) {
+      res.write(chunk);
+    }
+
+    res.end();
+    // return successJson(await this.chatService.chat(dto));
   }
 
   @UseGuards(AuthGuard('jwt'))
