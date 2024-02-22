@@ -1,13 +1,20 @@
 http:
   host: 'localhost'
-  port: 80
+  port: 9999
   prefix: 'api'
 
-db:
-  type: 'mysql'
+mariadb:
   host: 'localhost'
   port: 3306
-  database: 'lingmengcan'
+  database: 'lingmengcan-ai'
   username: 'lingmengcan'
-  password: 'LMCPassword'
+  password: '123456'
   charset: 'utf8'
+
+mongodb:
+  db: 'mongodb://localhost:27017/lingmengcan'
+
+llms:
+  chatglm3_6b_server_url: 'http://127.0.0.1:8000/v1/'   
+  openai_proxy_url: 'https://oai.hconeai.com/v1' # https://api.openai.com/v1
+  openai_api_key: 'sk-lingmengcan'

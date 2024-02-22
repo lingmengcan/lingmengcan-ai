@@ -8,7 +8,7 @@ mariadb:
   port: 3306
   database: 'lingmengcan-ai'
   username: 'lingmengcan'
-  password: 'LMCPassword'
+  password: '123456'
   charset: 'utf8'
 
 mongodb:

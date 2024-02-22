@@ -1,9 +1,9 @@
 # 大模型AI应用平台 lingmengcan-ai
 
-lingmengcan-ai 是一个基于大模型的ai系统，目前提供对话和后台角色管理。本平台使用的技术栈，包括Vue 3、Naive UI和Tailwind CSS构建UI层，以及NestJS、LangChainJS和MySQL为服务层
+lingmengcan-ai 是一个基于大模型的ai系统，目前提供对话和后台角色管理。使用的技术栈，包括Vue 3、Naive UI和Tailwind CSS构建UI层，以及NestJS、LangChainJS和MySQL为服务层;该项目是一个可以实现 __完全本地化__推理的知识库增强方案, 重点解决数据安全保护，私域化部署的企业痛点。
 
 ## 特点
-
+- **大模型**: 使用openai或者本地本地部署ChatGLM3 (https://github.com/THUDM/ChatGLM3)，用openai api的格式统一所有本地模型
 - **对话**: 支持与大型语言模型进行高效、自然的对话交互。
 - **角色管理**: 包含一个完整的后台角色管理模块，便于用户管理和权限控制。
 - **AIGC功能**: 后续完善。
@@ -11,8 +11,15 @@ lingmengcan-ai 是一个基于大模型的ai系统，目前提供对话和后台
 
 ## 技术栈
 
-- **UI层**: Vue 3、Naive UI、Tailwind CSS
-- **服务层**: NestJS、LangChainJS、MySQL
+- **UI层**: 使用 Vue 3、Naive UI、Tailwind CSS
+- **服务层**: 使用 NestJS、LangChainJS、MySQL 实现业务逻辑开发与数据处理，提高与拓展模型层的性能，提供对话、aigc、训练、推理和后台管理等你功能；对话参考项目 https://github.com/chatchat-space/Langchain-Chatchat 持续优化。
+    依托于本项目支持的开源 LLM 与 Embedding 模型，本项目可实现全部使用开源模型离线私有部署。与此同时，本项目也支持 OpenAI GPT API 的调用，并将在后续持续扩充对各类模型及模型 API 的接入。
+    本项目实现原理如下图所示，过程包括加载文件 -> 读取文本 -> 文本分割 -> 文本向量化 -> 问句向量化 -> 在文本向量中匹配出与问句向量最相似的 top k个 -> 匹配出的文本作为上下文和问题一起添加到 prompt中 -> 提交给 LLM生成回答。
+
+    ![alt text](images/langchain+chatglm.png)
+
+    从文档处理角度来看，实现流程如下：
+    ![alt text](images/langchain+chatglm2.png)
 
 ## 快速开始
 
@@ -20,42 +27,45 @@ lingmengcan-ai 是一个基于大模型的ai系统，目前提供对话和后台
 
 确保您的开发环境满足以下要求：
 
-- Node.js 版本 12.x 或更高
-- MySQL 版本 5.7 或更高
+- Python 3.10+
+- Node.js 18+
+- MySQL 5.7+
+
+### 如果本地已有模型：从本地加载模型
+
+请参考 [THUDM/ChatGLM3#从本地加载模型](https://github.com/THUDM/ChatGLM3#从本地加载模型)
 
 ### 安装
 
 克隆项目到本地：
 
-```bash
-git clone <项目仓库URL>
-cd <项目目录>
+git clone https://github.com/lingmengcan/lingmengcan-ai
+cd lingmengcan-ai
 
-安装依赖：
+#### 存储层(mysql)
+    安装mysql，然后导入根目录的 lingmengcan.sql 文件
 
-# 安装前端依赖
-cd frontend
-npm install
+#### 服务层(service)
+- 安装依赖
+    cd service
+    pnpm install
+- 配置
+  - config.development.yaml\
+    `在项目的根目录下，设置config.development.yaml，chatglm3_6b_server_url为chatGLM3的ip地址 或者 openai_api_key`
+- 运行
+    pnpm run start
 
-# 安装后端依赖
-cd ../backend
-npm install
+#### 前端UI层
+- 安装依赖
+    cd web
+    pnpm install
+- 运行
+    pnpm dev
 
-运行
-启动前端开发服务器：
+现在，您可以通过访问 http://localhost:8089 来体验lingmengcan-ai。
 
-cd frontend
-npm run serve
 
-启动后端服务：
-
-cd backend
-npm run start
-
-现在，您可以通过访问 http://localhost:8080 来体验lingmengcan-ai。
-
-贡献
-我们欢迎所有形式的贡献，无论是小的文档修正还是新功能的提议。请阅读我们的贡献指南了解如何开始。
-
-许可证
-本项目采用 MIT 许可证。
+### 项目截图
+![alt text](images/1.png)
+![alt text](images/2.png)
+![alt text](images/3.png)
