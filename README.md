@@ -12,7 +12,7 @@ lingmengcan-ai 是一个基于大模型的ai系统，目前提供对话和后台
 ## 技术栈
 
 - **UI层**: 使用 Vue 3、Naive UI、Tailwind CSS
-- **服务层**: 使用 NestJS、LangChainJS、MySQL 实现业务逻辑开发与数据处理，提高与拓展模型层的性能，提供对话、aigc、训练、推理和后台管理等你功能；对话参考项目 https://github.com/chatchat-space/Langchain-Chatchat 持续优化。
+- **服务层**: 使用 NestJS、LangChainJ 实现业务逻辑开发与数据处理，提高与拓展模型层的性能，提供对话、aigc、训练、推理和后台管理等你功能；对话参考项目 https://github.com/chatchat-space/Langchain-Chatchat 持续优化。
     依托于本项目支持的开源 LLM 与 Embedding 模型，本项目可实现全部使用开源模型离线私有部署。与此同时，本项目也支持 OpenAI GPT API 的调用，并将在后续持续扩充对各类模型及模型 API 的接入。
     本项目实现原理如下图所示，过程包括加载文件 -> 读取文本 -> 文本分割 -> 文本向量化 -> 问句向量化 -> 在文本向量中匹配出与问句向量最相似的 top k个 -> 匹配出的文本作为上下文和问题一起添加到 prompt中 -> 提交给 LLM生成回答。
 
@@ -20,6 +20,8 @@ lingmengcan-ai 是一个基于大模型的ai系统，目前提供对话和后台
 
     从文档处理角度来看，实现流程如下：
     ![实现原理图2](img/langchain+chatglm2.png)
+
+- **数据层**: 使用 MySQL，后续加入redis、mongodb
 
 ## 快速开始
 
