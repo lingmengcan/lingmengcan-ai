@@ -36,7 +36,7 @@ CREATE TABLE `conversation`  (
 -- ----------------------------
 -- Records of conversation
 -- ----------------------------
-
+ 
 -- ----------------------------
 -- Table structure for dict
 -- ----------------------------
