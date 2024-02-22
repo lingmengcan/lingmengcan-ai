@@ -16,10 +16,10 @@ lingmengcan-ai 是一个基于大模型的ai系统，目前提供对话和后台
     依托于本项目支持的开源 LLM 与 Embedding 模型，本项目可实现全部使用开源模型离线私有部署。与此同时，本项目也支持 OpenAI GPT API 的调用，并将在后续持续扩充对各类模型及模型 API 的接入。
     本项目实现原理如下图所示，过程包括加载文件 -> 读取文本 -> 文本分割 -> 文本向量化 -> 问句向量化 -> 在文本向量中匹配出与问句向量最相似的 top k个 -> 匹配出的文本作为上下文和问题一起添加到 prompt中 -> 提交给 LLM生成回答。
 
-    ![实现原理图1](images/langchain+chatglm.png)
+    ![实现原理图1](img/langchain+chatglm.png)
 
     从文档处理角度来看，实现流程如下：
-    ![实现原理图2](images/langchain+chatglm2.png)
+    ![实现原理图2](img/langchain+chatglm2.png)
 
 ## 快速开始
 
@@ -37,13 +37,8 @@ lingmengcan-ai 是一个基于大模型的ai系统，目前提供对话和后台
 
 ### 安装
 
-克隆项目到本地：
-
-git clone https://github.com/lingmengcan/lingmengcan-ai
-cd lingmengcan-ai
-
 #### 存储层(mysql)
-    安装mysql，然后导入根目录的 lingmengcan.sql 文件
+- 安装mysql，然后导入根目录的 lingmengcan.sql 文件
 
 #### 服务层(service)
 - 安装依赖
@@ -51,7 +46,7 @@ cd lingmengcan-ai
     pnpm install
 - 配置
   - config.development.yaml\
-    `在项目的根目录下，设置config.development.yaml，chatglm3_6b_server_url为chatGLM3的ip地址 或者 openai_api_key`
+    在项目的根目录下，设置config.development.yaml，chatglm3_6b_server_url为chatGLM3的ip地址 或者 openai_api_key
 - 运行
     pnpm run start
 
@@ -66,10 +61,10 @@ cd lingmengcan-ai
 
 
 ### 项目截图
-![对话1](images/1.png)
-![对话2](images/2.png)
-![登录](images/3.png)
-![用户管理](images/4.png)
-![角色管理](images/5.png)
-![菜单管理](images/6.png)
-![字典管理](images/7.png)
+![对话1](img/1.png)
+![对话2](img/2.png)
+![登录](img/3.png)
+![用户管理](img/4.png)
+![角色管理](img/5.png)
+![菜单管理](img/6.png)
+![字典管理](img/7.png)
