@@ -1,8 +1,8 @@
 {
-  "name": "service",
-  "version": "0.0.1",
-  "description": "",
-  "author": "",
+  "name": "lingmengcan-service",
+  "version": "0.9.20240222",
+  "description": "lingmengcan-ai",
+  "author": "lingmengcan",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
