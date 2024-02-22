@@ -34,6 +34,10 @@ lingmengcan-ai 是一个基于大模型的ai系统，目前提供对话和后台
 ### 如果本地已有模型：从本地加载模型
 
 请参考 [THUDM/ChatGLM3#从本地加载模型](https://github.com/THUDM/ChatGLM3#从本地加载模型)
+- 克隆ChatGLM3项目
+- cd openai_api_demo
+- python api_server.py
+就启用了本地chatglm 服务，硬件配置参考ChatGLM3要求
 
 ### 安装
 
