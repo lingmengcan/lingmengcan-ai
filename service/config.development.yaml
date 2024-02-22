@@ -15,6 +15,6 @@ mongodb:
   db: 'mongodb://localhost:27017/lingmengcan'
 
 llms:
-  embedding_server_url: 'http://127.0.0.1:56391'
-  chatglm_6b_server_url: 'http://127.0.0.1:56721'   
-  openai_api_key: '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'
+  chatglm3_6b_server_url: 'http://127.0.0.1:8000/v1/'   
+  openai_proxy_url: 'https://oai.hconeai.com/v1' # https://api.openai.com/v1
+  openai_api_key: 'sk-lingmengcan'

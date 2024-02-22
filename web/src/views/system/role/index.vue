@@ -514,7 +514,6 @@
   };
 
   function checkedTree(keys: string[]) {
-    console.log(keys);
     checkedKeys.value = keys;
   }
 
@@ -525,7 +524,7 @@
   function checkedAllHandle() {
     if (!checkedAll.value) {
       checkedKeys.value = allMenuKeys.value;
-      console.log(checkedKeys.value);
+
       checkedAll.value = true;
     } else {
       checkedKeys.value = [];

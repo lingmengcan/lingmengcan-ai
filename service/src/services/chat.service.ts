@@ -12,6 +12,8 @@ import {
 } from '@langchain/core/prompts';
 import { StringOutputParser } from '@langchain/core/output_parsers';
 import { ChatOpenAI } from '@langchain/openai';
+import { ChatMessageHistory } from '@langchain/community/stores/message/in_memory';
+import { AIMessage, HumanMessage } from '@langchain/core/messages';
 
 @Injectable()
 export class ChatService {
@@ -44,50 +46,66 @@ export class ChatService {
 
   // 调用大模型对话
   async chatLlm(message: Message, temperature: number, llm: string) {
-    // const conversation = await this.conversationService.findByConversationId(
-    //   message.conversationId,
-    // );
+    const conversation = await this.conversationService.findByConversationId(
+      message.conversationId,
+    );
 
-    // if (temperature !== conversation.temperature || llm !== conversation.llm) {
-    //   conversation.temperature = temperature;
-    //   conversation.llm = llm;
-    //   this.conversationService.updateConversation(conversation);
-    // }
-
-    // // 带入历史对话
-    const history = [];
-    // conversation.messages.forEach((humanMessage) => {
-    //   if (humanMessage.sender === 'Human' && humanMessage.createdAt < message.createdAt) {
-    //     const aiMessage = conversation.messages.find(
-    //       (msg) => msg.previousId === humanMessage.messageId && msg.sender === 'Assistant',
-    //     );
-
-    //     history.push([`Human:${humanMessage.messageText}`, `Assistant:${aiMessage?.messageText}`]);
-    //   }
-    // });
-
-    switch (llm) {
-      case 'ChatGLM3':
-        const apiUrl = this.configService.get<string>('llms.chatglm_6b_server_url');
-        const res = new ChatglmService();
-        return res.chat(apiUrl, message.messageText, history, temperature);
-      case 'GPT-3.5':
-        return this.chatOpenAi(message.messageText, temperature, history);
+    if (temperature !== conversation.temperature || llm !== conversation.llm) {
+      conversation.temperature = temperature;
+      conversation.llm = llm;
+      this.conversationService.updateConversation(conversation);
     }
+
+    // This is where you will store your chat history.
+    const messageHistory = new ChatMessageHistory();
+
+    conversation.messages.forEach((item) => {
+      if (item.createdAt < new Date(message.createdAt)) {
+        if (item.sender === 'Human') {
+          messageHistory.addMessage(new HumanMessage(item.messageText));
+        } else if (item.sender === 'Assistant') {
+          messageHistory.addMessage(new AIMessage(item.messageText));
+        }
+      }
+    });
+
+    let basePath = '';
+    let openAIApiKey = 'EMPTY';
+    switch (llm) {
+      case 'ChatGLM2':
+        // const apiUrl = this.configService.get<string>('llms.chatglm_6b_server_url');
+        // const res = new ChatglmService();
+        // return res.chat(apiUrl, message.messageText, messageHistory, temperature);
+        break;
+      case 'ChatGLM3':
+        basePath = this.configService.get<string>('llms.chatglm3_6b_server_url');
+        break;
+      case 'gpt-3.5-turbo':
+        basePath = this.configService.get<string>('llms.openai_proxy_url');
+        openAIApiKey = this.configService.get<string>('llms.openai_api_key');
+        break;
+    }
+
+    return this.chatOpenAi(
+      message.messageText,
+      temperature,
+      messageHistory,
+      basePath,
+      openAIApiKey,
+    );
   }
 
   //自由对话
-  async chatOpenAi(message: string, temperature: number, history: any) {
+  async chatOpenAi(
+    message: string,
+    temperature: number,
+    messageHistory: ChatMessageHistory,
+    basePath: string,
+    openAIApiKey: string,
+  ) {
     //根据内容回答问题
-    const openAIApiKey = this.configService.get<string>('llms.openai_api_key');
-
-    console.log(1, openAIApiKey);
-
     // Instantiate your model and prompt.
-    const llm = new ChatOpenAI(
-      { openAIApiKey, temperature, streaming: true },
-      { basePath: 'https://oai.hconeai.com/v1' },
-    );
+    const llm = new ChatOpenAI({ openAIApiKey, temperature, streaming: true }, { basePath });
 
     const prompt = ChatPromptTemplate.fromMessages([
       new MessagesPlaceholder('history'),
@@ -99,7 +117,7 @@ export class ChatService {
     const chain = prompt.pipe(llm).pipe(outputParser);
 
     const stream = await chain.stream({
-      history,
+      history: await messageHistory.getMessages(),
       input: message,
     });
 

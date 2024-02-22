@@ -44,7 +44,7 @@ export const useChatStore = defineStore('chat-store', {
         userName: '',
         status: 0,
       };
-      console.log(defaultConversation);
+
       const res = await addConversation(defaultConversation);
 
       if (res?.code === 0) {

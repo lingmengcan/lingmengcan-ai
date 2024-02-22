@@ -289,7 +289,6 @@
     drawerTitle.value = '新增字典';
     showDrawer.value = true;
 
-    console.log(dictInitData);
     drawerFormData.value = { ...dictInitData };
   };
 

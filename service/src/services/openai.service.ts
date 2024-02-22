@@ -9,7 +9,6 @@ export class OpenaiService {
     //根据内容回答问题
     //const app = await NestFactory.create(AppModule);
     const { message, api_key, basePath } = body;
-    console.log('step1', message);
 
     const chat = new ChatOpenAI(
       { temperature: 0.01, openAIApiKey: api_key },

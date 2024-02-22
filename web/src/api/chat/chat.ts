@@ -1,6 +1,6 @@
 import { ChatParams, Conversation, Message } from '@/models/chat';
 import { Method } from '@/utils/axios/types';
-import http, { Result } from '@/utils/http';
+import http, { Result, httpStream } from '@/utils/http';
 
 // 获取对话列表
 export const getConversationList = () =>
@@ -43,9 +43,15 @@ export const deleteMessagesByConversationId = (data: String) =>
   http.request<Result<String>>('chat/clear-conversation-messages', Method.POST, data);
 
 // 对话
-export const chat = (data: ChatParams) => http.request<any>('chat', Method.POST, data);
+// export const chat = (data: ChatParams) => http.request<any>('chat', Method.POST, data);
 
 // 重新生成
 export const regenerate = (data: ChatParams) => {
-  return http.request<any>('chat/regenerate', Method.POST, data);
+  return httpStream('/chat/regenerate', data);
+  // return http.request<any>('chat/regenerate', Method.POST, data);
 };
+
+// 流式对话
+export async function chat(data: ChatParams) {
+  return httpStream('/chat', data);
+}

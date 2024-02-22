@@ -330,8 +330,6 @@
     drawerTitle.value = '新增用户';
     showDrawer.value = true;
     drawerFormData.value = { ...userInitData };
-
-    console.log(drawerFormData.value.userId);
   };
 
   // 删除用户 status = -1

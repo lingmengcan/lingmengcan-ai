@@ -146,7 +146,6 @@ export class UserService {
     entity.updatedUser = user.updatedUser;
     entity.createdAt = new Date();
     entity.updatedAt = new Date();
-    console.log(entity);
 
     return this.repository.save(entity);
   }

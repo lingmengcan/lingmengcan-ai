@@ -22,31 +22,6 @@ export class ChatController {
   /**
    * Glm对话
    */
-  @Post('stream')
-  @ApiBody({
-    description: '对话',
-    type: ChatDto,
-  })
-  async chatToStream(@Body() dto: ChatDto, @Res() res: Response) {
-    res.setHeader('Content-Type', 'text/plain');
-    res.setHeader('Cache-Control', 'no-cache');
-    res.setHeader('Connection', 'keep-alive');
-    res.setHeader('Transfer-Encoding', 'chunked');
-    res.setHeader('X-Content-Type-Options', 'nosniff');
-    const { message, temperature } = dto;
-    const history = [];
-    const stream = await this.chatService.chatOpenAi(message.messageText, temperature, history);
-    for await (const chunk of stream) {
-      console.log(chunk);
-      res.write(chunk);
-    }
-
-    res.end();
-  }
-
-  /**
-   * Glm对话
-   */
   @UseGuards(AuthGuard('jwt'))
   @Post('')
   @ApiBody({
@@ -54,18 +29,28 @@ export class ChatController {
     type: ChatDto,
   })
   async chat(@Body() dto: ChatDto, @Res() res: Response) {
-    res.setHeader('Content-Type', 'text/event-stream');
+    res.setHeader('Content-Type', 'text/plain');
     res.setHeader('Cache-Control', 'no-cache');
     res.setHeader('Connection', 'keep-alive');
-    const { message, temperature } = dto;
-    const history = [];
-    const stream = await this.chatService.chatOpenAi(message.messageText, temperature, history);
+    res.setHeader('Transfer-Encoding', 'chunked');
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    const { message, temperature, llm } = dto;
+    const stream = await this.chatService.chatLlm(message, temperature, llm);
     for await (const chunk of stream) {
       res.write(chunk);
     }
-
     res.end();
-    // return successJson(await this.chatService.chat(dto));
+
+    // const { message, temperature, llm } = dto;
+    // const stream = await this.chatService.chatLlm(message, temperature, llm);
+    // const httpResponse = new Response(stream, {
+    //   headers: {
+    //     'Content-Type': 'text/plain; charset=utf-8',
+    //     'Transfer-Encoding': 'chunked',
+    //     'X-Content-Type-Options': 'nosniff',
+    //   },
+    // });
+    // return httpResponse;
   }
 
   @UseGuards(AuthGuard('jwt'))
@@ -74,8 +59,18 @@ export class ChatController {
     description: '重新回答',
     type: ChatDto,
   })
-  async regenerate(@Body() dto: any) {
-    return successJson(await this.chatService.regenerate(dto));
+  async regenerate(@Body() dto: ChatDto, @Res() res: Response) {
+    res.setHeader('Content-Type', 'text/plain');
+    res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('Connection', 'keep-alive');
+    res.setHeader('Transfer-Encoding', 'chunked');
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    const stream = await this.chatService.regenerate(dto);
+    for await (const chunk of stream) {
+      res.write(chunk);
+    }
+    res.end();
+    // return successJson(await this.chatService.regenerate(dto));
   }
 
   /**

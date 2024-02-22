@@ -21,6 +21,7 @@
     "genorm": "rm -rf entities-template & npx typeorm-model-generator -h localhost -d lingmengcan -p 3306 -u root -x 123456 -e mysql -o entities-template --noConfig true --ce pascal --cp camel"
   },
   "dependencies": {
+    "@langchain/community": "^0.0.23",
     "@langchain/core": "^0.1.14",
     "@langchain/openai": "^0.0.12",
     "@nestjs/common": "^10.0.0",

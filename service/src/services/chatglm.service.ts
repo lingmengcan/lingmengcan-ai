@@ -4,14 +4,16 @@ import { GlobalService } from './global';
 import {
   ChatPromptTemplate,
   HumanMessagePromptTemplate,
+  MessagesPlaceholder,
   SystemMessagePromptTemplate,
 } from '@langchain/core/prompts';
+import { StringOutputParser } from '@langchain/core/output_parsers';
+import { ChatMessageHistory } from '@langchain/community/stores/message/in_memory';
 
 export class ChatglmService {
   //文档问答
   async chatfile(body) {
     const { apiUrl, message, history } = body;
-    console.log('step1', message, history);
 
     const vectorStore = GlobalService.globalVar;
     const result = await vectorStore.similaritySearch(message, 1);
@@ -44,59 +46,32 @@ export class ChatglmService {
   }
 
   //自由对话
-  async chat(apiUrl: string, message: string, history: any, temperature: number) {
+  async chat(
+    apiUrl: string,
+    message: string,
+    messageHistory: ChatMessageHistory,
+    temperature: number,
+  ) {
     const llm = new ChatGlm6BLLM2({
       apiUrl,
-      streaming: true,
       temperature: temperature,
-      history: history,
+      streaming: true,
     });
 
     const prompt = ChatPromptTemplate.fromMessages([
+      new MessagesPlaceholder('history'),
       HumanMessagePromptTemplate.fromTemplate('{input}'),
     ]);
 
-    // const outputParser = new StringOutputParser();
-    // const chain = prompt.pipe(llm).pipe(outputParser);
-    // const stream = await chain.stream({
-    //   input: message,
-    // });
-    // for await (const item of stream) {
-    //   console.log('stream item:', item);
-    // }
+    const outputParser = new StringOutputParser();
 
-    // const response = new Response(stream, {
-    //   headers: { 'content-type': 'text/plain; charset=utf-8' },
-    // });
+    const chain = prompt.pipe(llm).pipe(outputParser);
 
-    const chain = new LLMChain({
-      prompt,
-      llm,
+    const stream = await chain.stream({
+      history: await messageHistory.getMessages(),
+      input: message,
     });
 
-    // Call the chain with the inputs and a callback for the streamed tokens
-    const response = await chain.call(
-      {
-        input: message,
-      },
-      [
-        {
-          handleLLMNewToken(token: string) {
-            // process.stdout.write(token);
-            console.log({ token });
-          },
-        },
-      ],
-    );
-
-    // console.log({ res });
-
-    // const response = await chain.invoke({
-    //   input: message,
-    // });
-
-    console.log(response);
-
-    return response;
+    return stream;
   }
 }

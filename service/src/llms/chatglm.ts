@@ -131,39 +131,43 @@ export class ChatGlm6BLLM2 extends BaseChatModel {
     runManager?: CallbackManagerForLLMRun,
   ): AsyncGenerator<ChatGenerationChunk> {
     const params = this.invocationParams(options);
+
     const stream = await this.createStreamWithRetry({
       ...params,
       prompt: this.formatMessagesAsPrompt(messages),
     });
 
-    // const modelSent = false;
-    // const stopReasonSent = false;
-    for await (const data of stream) {
-      if (options.signal?.aborted) {
-        stream.controller.abort();
-        throw new Error('AbortError: User aborted the request.');
-      }
-      // const additional_kwargs: Record<string, unknown> = {};
-
-      // if (data?.model && !modelSent) {
-      //   additional_kwargs.model = data?.model;
-      //   modelSent = true;
-      // } else if (data?.stop_reason && !stopReasonSent) {
-      //   additional_kwargs.stop_reason = data?.stop_reason;
-      //   stopReasonSent = true;
-      // }
-
-      // const delta = data?.completion ?? '';
-      yield new ChatGenerationChunk({
-        message: new AIMessageChunk({
-          content: data,
-        }),
-        text: data,
-      });
-      await runManager?.handleLLMNewToken(data);
-
-      if (data.stop_reason) {
+    while (true) {
+      const { value, done } = await stream.read();
+      if (done) {
         break;
+      }
+
+      // 将 Uint8Array 转换为字符串
+      const chunk = new TextDecoder().decode(value);
+      console.log(chunk + '   1   ');
+      // 这里假设每个数据块都是一个完整的 JSON 字符串
+      // 如果实际数据不是这样，您可能需要进行更复杂的处理，比如累积数据直到可以解析为 JSON
+      try {
+        // const parsedData = JSON.parse(chunkStr);
+
+        // 从解析的数据中提取所需信息
+        // const responseText = parsedData.response;
+
+        // console.log(responseText);
+
+        // 创建并 yield 一个新的 ChatGenerationChunk 实例
+        yield new ChatGenerationChunk({
+          message: new AIMessageChunk({
+            content: chunk,
+          }),
+          text: chunk,
+        });
+
+        // 如果有回调管理器，处理新令牌
+        await runManager?.handleLLMNewToken(chunk);
+      } catch (error) {
+        console.error('Error parsing JSON from chunk', error);
       }
     }
   }
@@ -177,7 +181,7 @@ export class ChatGlm6BLLM2 extends BaseChatModel {
     return (
       messages
         .map((message) => {
-          const messagePrompt = getAnthropicPromptFromMessage(message);
+          const messagePrompt = getPromptFromMessage(message);
           return `${messagePrompt} ${message.content}`;
         })
         .join('') + '\n\nAssistant:'
@@ -204,8 +208,6 @@ export class ChatGlm6BLLM2 extends BaseChatModel {
       });
     }
 
-    // console.log(res);
-
     const generations: ChatGeneration[] = (res.response ?? '')
       .split('\n\nAssistant:')
       .map((message) => ({
@@ -226,22 +228,23 @@ export class ChatGlm6BLLM2 extends BaseChatModel {
   protected async createStreamWithRetry(request) {
     const makeCompletionRequest = async () => {
       try {
-        const res = await axios.post(this.apiUrl, request, {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          responseType: this.streaming ? 'stream' : 'json',
+        const res = await fetch(this.apiUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(request),
         });
 
-        return res;
+        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+
+        const reader = res.body?.getReader();
+
+        return reader;
       } catch (error) {
         console.error('Error in completion request:', error);
         throw error;
       }
     };
-    return this.caller.call(makeCompletionRequest).then((res) => {
-      return res.data;
-    });
+    return this.caller.call(makeCompletionRequest);
   }
 
   /** @ignore */
@@ -252,7 +255,6 @@ export class ChatGlm6BLLM2 extends BaseChatModel {
           headers: {
             'Content-Type': 'application/json',
           },
-          // responseType: this.streaming ? 'stream' : 'json',
         });
 
         return res;
@@ -281,7 +283,7 @@ export class ChatGlm6BLLM2 extends BaseChatModel {
  * @param message The base message from which to get the chatglm prompt.
  * @returns The chatglm prompt from the base message.
  */
-function getAnthropicPromptFromMessage(message: BaseMessage) {
+function getPromptFromMessage(message: BaseMessage) {
   const type = message._getType();
   switch (type) {
     case 'ai':

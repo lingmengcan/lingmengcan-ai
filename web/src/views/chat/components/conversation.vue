@@ -53,8 +53,8 @@
       value: 'ChatGLM3',
     },
     {
-      label: 'GPT-3.5',
-      value: 'GPT-3.5',
+      label: 'gpt-3.5-turbo',
+      value: 'gpt-3.5-turbo',
     },
   ];
 
@@ -89,20 +89,6 @@
         onConversation();
       });
     }
-  }
-
-  async function chatStream(data: ChatParams) {
-    const res = await fetch(import.meta.env.VITE_GLOB_API_URL + '/chat/stream', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
-    });
-
-    if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-
-    const reader = res.body?.getReader();
-
-    return reader;
   }
 
   async function onConversation() {
@@ -145,7 +131,7 @@
           llm: selectedLlm.value,
         };
         // const res = await chat(chatParams);
-        const res = await chatStream(chatParams);
+        const res = await chat(chatParams);
 
         if (answer.value && res) {
           try {
@@ -201,8 +187,20 @@
         };
         const res = await regenerate(regenerateParams);
 
-        if (res?.code === 0) {
-          answer.messageText = res.data.text ?? '';
+        if (res) {
+          try {
+            while (true) {
+              const { done, value } = await res.read();
+              if (done) break;
+              answer.messageText += new TextDecoder().decode(value);
+
+              scrollToBottom();
+            }
+          } catch (error) {
+            console.error('Error reading stream:', error);
+          } finally {
+            res?.releaseLock(); // 确保释放读取器
+          }
 
           answer.completed = 1;
           // 更新回答

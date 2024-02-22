@@ -92,6 +92,21 @@ export function useHttp(withToken = true) {
   return request;
 }
 
+export async function httpStream(url: string, data: any) {
+  const token = DataStorage.get(ACCESS_TOKEN, '');
+  const res = await fetch(import.meta.env.VITE_GLOB_API_URL + url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+    body: JSON.stringify(data),
+  });
+
+  if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+
+  const reader = res.body?.getReader();
+
+  return reader;
+}
+
 /**
  * Note: 接口结果标准类
  *
