@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { ChatglmService } from './chatglm.service';
 import { ChatDto } from '@/dtos/chat.dto';
 import { MessageService } from './message.service';
 import { Message } from '@/entities/message.entity';
@@ -36,12 +35,6 @@ export class ChatService {
     // 获取问题
     const message = await this.messageService.findByMessageId(dto.message.previousId);
     return this.chatLlm(message, temperature, llm);
-  }
-
-  //文档问答
-  async chatfile(body) {
-    const res = new ChatglmService();
-    return res.chatfile(body);
   }
 
   // 调用大模型对话
