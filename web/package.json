@@ -1,6 +1,6 @@
 {
   "name": "lingmengcan-web",
-  "version": "0.9.20240222",
+  "version": "0.9.0.20240222",
   "private": true,
   "scripts": {
     "dev": "vite",

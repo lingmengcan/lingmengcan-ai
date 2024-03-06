@@ -13,6 +13,7 @@ import { RoleModule } from './modules/role.module';
 import { ChatModule } from './modules/chat.module';
 import { PromptModule } from './modules/prompt.module';
 import { DictModule } from './modules/dict.module';
+import { FileModule } from './modules/file.module';
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { DictModule } from './modules/dict.module';
     ChatModule,
     PromptModule,
     DictModule,
+    FileModule,
   ],
   controllers: [AppController],
   providers: [AppService],

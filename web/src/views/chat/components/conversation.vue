@@ -339,7 +339,7 @@
       </div>
     </div>
     <div class="flex flex-col justify-center flex-auto overflow-hidden">
-      <div id="scrollRef" ref="scrollRef" class="p-1 h-screen overflow-x-hidden">
+      <div id="scrollRef" ref="scrollRef" class="h-screen p-1 overflow-x-hidden">
         <template v-if="!conversation?.messages?.length">
           <div
             class="flex flex-col justify-center h-full items-center mx-auto space-y-4 max-w-[600px]"
@@ -373,8 +373,11 @@
       <div
         class="w-full pb-2 border-transparent bg-gradient-to-b from-transparent via-white/50 to-white"
       >
+        <n-upload action="/api/file/upload">
+          <n-button>上传文件</n-button>
+        </n-upload>
         <div
-          class="stretch flex flex-row gap-3 last:mb-3 mx-2 mt-6 md:mx-4 md:last:mb-6 lg:mx-auto lg:max-w-3xl"
+          class="flex flex-row gap-3 mx-2 mt-6 stretch last:mb-3 md:mx-4 md:last:mb-6 lg:mx-auto lg:max-w-3xl"
         >
           <n-auto-complete v-model:value="prompt" :options="promptOptions">
             <template #default="{ handleInput, handleBlur, handleFocus }">

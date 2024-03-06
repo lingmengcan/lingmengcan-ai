@@ -8,6 +8,7 @@ import {
   ChatPromptTemplate,
   HumanMessagePromptTemplate,
   MessagesPlaceholder,
+  SystemMessagePromptTemplate,
 } from '@langchain/core/prompts';
 import { StringOutputParser } from '@langchain/core/output_parsers';
 import { ChatOpenAI } from '@langchain/openai';
@@ -102,6 +103,38 @@ export class ChatService {
 
     const prompt = ChatPromptTemplate.fromMessages([
       new MessagesPlaceholder('history'),
+      HumanMessagePromptTemplate.fromTemplate('{input}'),
+    ]);
+
+    const outputParser = new StringOutputParser();
+
+    const chain = prompt.pipe(llm).pipe(outputParser);
+
+    const stream = await chain.stream({
+      history: await messageHistory.getMessages(),
+      input: message,
+    });
+
+    return stream;
+  }
+
+  //文档问答
+  async chatfileOpenAi(
+    message: string,
+    temperature: number,
+    messageHistory: ChatMessageHistory,
+    basePath: string,
+    openAIApiKey: string,
+  ) {
+
+    //根据内容回答问题
+    // Instantiate your model and prompt.
+    const llm = new ChatOpenAI({ openAIApiKey, temperature, streaming: true }, { basePath });
+    const prompt = ChatPromptTemplate.fromMessages([
+      new MessagesPlaceholder('history'),
+      SystemMessagePromptTemplate.fromTemplate(
+        `基于已知内容, 回答用户问题。如果无法从中得到答案，请说'没有足够的相关信息'。已知内容:`,
+      ),
       HumanMessagePromptTemplate.fromTemplate('{input}'),
     ]);
 
