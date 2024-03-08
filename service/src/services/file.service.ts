@@ -10,7 +10,7 @@ import { OpenAIEmbeddings } from '@langchain/openai';
 export class FileService {
   //上传文件向量化
   async refactorVectorStore() {
-    const loader = new DirectoryLoader('./file-upload', {
+    const loader = new DirectoryLoader('./upload-files', {
       '.txt': (path) => new TextLoader(path),
       '.docx': (path) => new DocxLoader(path),
       '.pdf': (path) => new PDFLoader(path),
@@ -31,7 +31,7 @@ export class FileService {
 
   //获取本地文件列表
   async getFileList() {
-    const directoryPath = './file-upload';
+    const directoryPath = './upload-files';
     const files = fs.readdirSync(directoryPath);
     return files;
   }

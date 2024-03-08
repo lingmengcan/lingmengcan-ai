@@ -21,6 +21,22 @@ import { FileModule } from './modules/file.module';
       isGlobal: true,
       load: [configuration],
     }),
+    // MulterModule.registerAsync({
+    //   useFactory() {
+    //     return {
+    //       storage: diskStorage({
+    //         //文件储存位置
+    //         destination: 'upload-files',
+    //         //文件名定制
+    //         filename: (req, file, callback) => {
+    //           const path = Date.now() + '-' + uuidv4() + extname(file.originalname);
+    //           callback(null, path);
+    //         },
+    //       }),
+    //     };
+    //   },
+    // }),
+
     TypeOrmModule.forRootAsync({
       useFactory: (configService: ConfigService) => ({
         type: 'mysql',

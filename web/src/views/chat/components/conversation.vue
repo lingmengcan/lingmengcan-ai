@@ -14,7 +14,7 @@
   } from '@vicons/ionicons5';
   import MessageComponent from './message.vue';
   import PromptComponent from './prompt.vue';
-  import { PopoverInst } from 'naive-ui';
+  import { PopoverInst, UploadFileInfo, useMessage } from 'naive-ui';
   import { usePromptStore } from '@/store/modules/prompt';
 
   defineProps({
@@ -23,6 +23,7 @@
       default: true,
     },
   });
+  const messageUi = useMessage();
 
   const emit = defineEmits(['update:chatListVisable']);
 
@@ -218,6 +219,24 @@
     popoverParamRef.value?.setShow(false);
   }
 
+  async function beforeUpload(data: { file: UploadFileInfo; fileList: UploadFileInfo[] }) {
+    // 定义允许的文件类型数组
+    const allowedTypes = [
+      'application/pdf',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      'text/plain',
+    ];
+
+    const fileType = data.file.file?.type;
+
+    // 检查文件类型是否在允许的类型数组中
+    if (!fileType || !allowedTypes.includes(fileType)) {
+      messageUi.error('只能上传txt/pdf/docx文件，请重新上传');
+      return false;
+    }
+    return true;
+  }
+
   // 自动拉出提示词
   const promptOptions = computed(() => {
     if (prompt.value.startsWith('/')) {
@@ -373,12 +392,18 @@
       <div
         class="w-full pb-2 border-transparent bg-gradient-to-b from-transparent via-white/50 to-white"
       >
-        <n-upload action="/api/file/upload">
-          <n-button>上传文件</n-button>
-        </n-upload>
-        <div
-          class="flex flex-row gap-3 mx-2 mt-6 stretch last:mb-3 md:mx-4 md:last:mb-6 lg:mx-auto lg:max-w-3xl"
-        >
+        <div class="gap-3 mx-2 mt-6 stretch last:mb-3 md:mx-4 md:last:mb-6 lg:mx-auto lg:max-w-3xl">
+          <div class="mb-1">
+            <n-upload
+              action="/api/file/upload"
+              accept=".txt,.pdf,.doc,.docx"
+              :show-file-list="false"
+              @before-upload="beforeUpload"
+            >
+              <n-button>上传文件</n-button>
+            </n-upload>
+          </div>
+
           <n-auto-complete v-model:value="prompt" :options="promptOptions">
             <template #default="{ handleInput, handleBlur, handleFocus }">
               <n-input
