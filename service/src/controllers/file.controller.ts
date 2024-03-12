@@ -1,6 +1,16 @@
+import { FileDto } from '@/dtos/file.dto';
 import { FileService } from '@/services/file.service';
 import { successJson } from '@/utils/result';
-import { Controller, Post, UseInterceptors, UploadedFile } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  UseInterceptors,
+  UploadedFile,
+  Body,
+  Request,
+  UseGuards,
+} from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiTags } from '@nestjs/swagger';
 import { Express } from 'express';
@@ -15,13 +25,17 @@ export class FileController {
    *
    * @returns
    */
-  // @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt'))
   @UseInterceptors(FileInterceptor('file'))
   @Post('upload')
-  async upload(@UploadedFile() file: Express.Multer.File) {
-    console.log(file.path);
+  async upload(
+    @Body() dto: FileDto,
+    @Request() req: any,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    const userName = req.user.userName;
+    console.log(file);
     // 处理文件保存逻辑
-    return { success: true };
-    // return successJson(await this.fileService.refactorVectorStore());
+    return successJson(await this.fileService.refactorVectorStore(dto, userName, file));
   }
 }

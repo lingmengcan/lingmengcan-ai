@@ -70,7 +70,6 @@ export class ChatController {
       res.write(chunk);
     }
     res.end();
-    // return successJson(await this.chatService.regenerate(dto));
   }
 
   /**

@@ -1,6 +1,7 @@
 import { IsNotEmpty } from 'class-validator';
 import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
 import { Message } from './message.entity';
+import { File } from './file.entity';
 
 @Entity('conversation')
 export class Conversation {
@@ -40,4 +41,7 @@ export class Conversation {
 
   @OneToMany(() => Message, (message) => message.conversation)
   messages: Message[];
+
+  @OneToMany(() => File, (file) => file.conversation)
+  files: File[];
 }

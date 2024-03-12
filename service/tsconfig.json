@@ -17,6 +17,8 @@
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
+    // 加载 commonjs 规范模块
+    "esModuleInterop": true,
     "paths": {
       "@/*": [
         "src/*"

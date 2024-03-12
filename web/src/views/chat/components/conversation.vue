@@ -16,6 +16,8 @@
   import PromptComponent from './prompt.vue';
   import { PopoverInst, UploadFileInfo, useMessage } from 'naive-ui';
   import { usePromptStore } from '@/store/modules/prompt';
+  import storage from '@/utils/storage';
+  import { ACCESS_TOKEN } from '@/constants';
 
   defineProps({
     chatListVisable: {
@@ -26,6 +28,9 @@
   const messageUi = useMessage();
 
   const emit = defineEmits(['update:chatListVisable']);
+
+  const token = storage.get(ACCESS_TOKEN, '');
+  console.log(token);
 
   const temperature = ref(0.5);
   const popoverParamRef = ref<PopoverInst | null>(null);
@@ -398,6 +403,9 @@
               action="/api/file/upload"
               accept=".txt,.pdf,.doc,.docx"
               :show-file-list="false"
+              :with-credentials="true"
+              :headers="{ Authorization: `Bearer ${token}` }"
+              :data="{ conversationId }"
               @before-upload="beforeUpload"
             >
               <n-button>上传文件</n-button>
