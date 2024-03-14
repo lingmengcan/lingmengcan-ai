@@ -126,7 +126,6 @@ export class ChatService {
     basePath: string,
     openAIApiKey: string,
   ) {
-
     //根据内容回答问题
     // Instantiate your model and prompt.
     const llm = new ChatOpenAI({ openAIApiKey, temperature, streaming: true }, { basePath });

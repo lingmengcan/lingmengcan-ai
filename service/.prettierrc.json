@@ -13,6 +13,5 @@
   "proseWrap": "never",
   "requirePragma": false,
   "insertPragma": false,
-  "htmlWhitespaceSensitivity": "ignore",
-  "endOfLine": "auto"
+  "htmlWhitespaceSensitivity": "ignore"
 }

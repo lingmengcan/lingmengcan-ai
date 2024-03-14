@@ -14,6 +14,10 @@ export class Message {
   @Column({ type: 'varchar', name: 'conversation_id', length: 36 })
   conversationId: string;
 
+  @Column({ type: 'varchar', name: 'file_id', length: 36 })
+  @IsNotEmpty()
+  fileId: string;
+
   @Column({ type: 'text', name: 'message_text' })
   messageText: string;
 

@@ -14,6 +14,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiTags } from '@nestjs/swagger';
 import { Express } from 'express';
+import { extname } from 'path';
 
 @ApiTags('file') // 添加 接口标签 装饰器
 @Controller('file')
@@ -35,7 +36,18 @@ export class FileController {
   ) {
     const userName = req.user.userName;
     console.log(file);
+    const fileType = extname(file.filename);
     // 处理文件保存逻辑
-    return successJson(await this.fileService.refactorVectorStore(dto, userName, file));
+    // 添加文件信息到数据库
+    return successJson(
+      await this.fileService.addFile(
+        dto.conversationId,
+        file.originalname,
+        file.size,
+        fileType,
+        file.path,
+        userName,
+      ),
+    );
   }
 }

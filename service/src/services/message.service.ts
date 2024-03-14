@@ -39,10 +39,11 @@ export class MessageService {
     });
 
     // 按聊天问题记录排序
-    const res = messages.reduce((acc, humanMessage) => {
-      if (humanMessage.sender === 'Human') {
-        acc.push(humanMessage);
-        const aiMessages = messages.filter((msg) => msg.previousId === humanMessage.messageId);
+    const res = messages.reduce((acc, item) => {
+      if (item.sender === 'Human' || item.sender === 'System') {
+        acc.push(item);
+
+        const aiMessages = messages.filter((msg) => msg.previousId === item.messageId);
 
         if (aiMessages?.length > 0) {
           acc.push(...aiMessages);
@@ -67,11 +68,13 @@ export class MessageService {
     entity.messageId = messageId;
     entity.previousId = message.previousId;
     entity.conversationId = message.conversationId;
+    entity.fileId = message.fileId;
     entity.messageText = message.messageText;
     entity.sender = message.sender;
     entity.completed = message.completed;
     entity.status = message.status;
     entity.createdAt = new Date();
+
     return this.repository.save(entity);
   }
 

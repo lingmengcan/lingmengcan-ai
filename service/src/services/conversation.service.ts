@@ -31,12 +31,11 @@ export class ConversationService {
       .getOne();
 
     // 按聊天问题记录排序
-    conversation.messages = conversation.messages.reduce((acc, humanMessage) => {
-      if (humanMessage.sender === 'Human') {
-        acc.push(humanMessage);
-        const aiMessages = conversation.messages.filter(
-          (msg) => msg.previousId === humanMessage.messageId,
-        );
+    conversation.messages = conversation.messages.reduce((acc, item) => {
+      if (item.sender === 'Human' || item.sender === 'System') {
+        acc.push(item);
+
+        const aiMessages = conversation.messages.filter((msg) => msg.previousId === item.messageId);
 
         if (aiMessages?.length > 0) {
           acc.push(...aiMessages);

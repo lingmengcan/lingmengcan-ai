@@ -10,6 +10,7 @@ import dayjs from 'dayjs';
 import { File } from '@/entities/file.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ServeStaticModule } from '@nestjs/serve-static';
+import { MessageModule } from './message.module';
 
 @Module({
   imports: [
@@ -42,6 +43,8 @@ import { ServeStaticModule } from '@nestjs/serve-static';
       // Tell NestJS to serve the files under ~/upload-files/
       serveRoot: '/upload-files/',
     }),
+    ConfigModule,
+    MessageModule,
   ],
   controllers: [FileController],
   providers: [FileService],
