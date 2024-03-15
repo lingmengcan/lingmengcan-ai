@@ -400,7 +400,7 @@
         <div class="gap-3 mx-2 mt-6 stretch last:mb-3 md:mx-4 md:last:mb-6 lg:mx-auto lg:max-w-3xl">
           <div class="mb-1">
             <n-upload
-              action="/api/file/upload"
+              action="/api/file/chat"
               accept=".txt,.pdf,.doc,.docx"
               :show-file-list="false"
               :with-credentials="true"

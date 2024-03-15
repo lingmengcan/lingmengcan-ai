@@ -9,12 +9,14 @@ import {
   Body,
   Request,
   UseGuards,
+  Res,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiTags } from '@nestjs/swagger';
 import { Express } from 'express';
 import { extname } from 'path';
+import { Response } from 'express';
 
 @ApiTags('file') // 添加 接口标签 装饰器
 @Controller('file')
@@ -49,5 +51,36 @@ export class FileController {
         userName,
       ),
     );
+  }
+
+  /**
+   * upload
+   *
+   * @returns
+   */
+  @UseGuards(AuthGuard('jwt'))
+  @UseInterceptors(FileInterceptor('file'))
+  @Post('chat')
+  async file(
+    @Body() dto: FileDto,
+    @Request() req: any,
+    @UploadedFile() file: Express.Multer.File,
+    @Res() res: Response,
+  ) {
+    res.setHeader('Content-Type', 'text/plain');
+    res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('Connection', 'keep-alive');
+    res.setHeader('Transfer-Encoding', 'chunked');
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+
+    const userName = req.user.userName;
+    console.log(file);
+
+    const stream = await this.fileService.chatfile(userName, dto, file);
+
+    for await (const chunk of stream) {
+      res.write(chunk);
+    }
+    res.end();
   }
 }

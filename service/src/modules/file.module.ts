@@ -11,6 +11,7 @@ import { File } from '@/entities/file.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { MessageModule } from './message.module';
+import { ChatModule } from './chat.module';
 
 @Module({
   imports: [
@@ -45,6 +46,7 @@ import { MessageModule } from './message.module';
     }),
     ConfigModule,
     MessageModule,
+    ChatModule,
   ],
   controllers: [FileController],
   providers: [FileService],

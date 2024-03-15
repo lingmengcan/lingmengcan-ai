@@ -14,13 +14,15 @@ import { StringOutputParser } from '@langchain/core/output_parsers';
 import { ChatOpenAI } from '@langchain/openai';
 import { ChatMessageHistory } from '@langchain/community/stores/message/in_memory';
 import { AIMessage, HumanMessage } from '@langchain/core/messages';
+import { Chroma } from '@langchain/community/vectorstores/chroma';
+import { VectorStore } from '@langchain/core/vectorstores';
 
 @Injectable()
 export class ChatService {
   constructor(
     private readonly messageService: MessageService,
     private readonly conversationService: ConversationService,
-    private configService: ConfigService,
+    private readonly configService: ConfigService,
   ) {}
 
   //自由对话
@@ -122,17 +124,22 @@ export class ChatService {
   async chatfileOpenAi(
     message: string,
     temperature: number,
-    messageHistory: ChatMessageHistory,
     basePath: string,
     openAIApiKey: string,
+    vectorStore: VectorStore,
   ) {
+    console.log('3');
+    const result = await vectorStore.similaritySearch(message, 1);
+    console.log('4', result);
+
+    // const fileSourceStr = result[0].metadata.source;
+
     //根据内容回答问题
     // Instantiate your model and prompt.
     const llm = new ChatOpenAI({ openAIApiKey, temperature, streaming: true }, { basePath });
     const prompt = ChatPromptTemplate.fromMessages([
-      new MessagesPlaceholder('history'),
       SystemMessagePromptTemplate.fromTemplate(
-        `基于已知内容, 回答用户问题。如果无法从中得到答案，请说'没有足够的相关信息'。已知内容:`,
+        `基于已知内容, 回答用户问题。如果无法从中得到答案，请说'没有足够的相关信息'已知内容:${result[0].pageContent}`,
       ),
       HumanMessagePromptTemplate.fromTemplate('{input}'),
     ]);
@@ -142,7 +149,7 @@ export class ChatService {
     const chain = prompt.pipe(llm).pipe(outputParser);
 
     const stream = await chain.stream({
-      history: await messageHistory.getMessages(),
+      // history: await messageHistory.getMessages(),
       input: message,
     });
 

@@ -20,7 +20,7 @@ export class ChatController {
   ) {}
 
   /**
-   * Glm对话
+   * 对话
    */
   @UseGuards(AuthGuard('jwt'))
   @Post('')
@@ -34,6 +34,7 @@ export class ChatController {
     res.setHeader('Connection', 'keep-alive');
     res.setHeader('Transfer-Encoding', 'chunked');
     res.setHeader('X-Content-Type-Options', 'nosniff');
+
     const { message, temperature, llm } = dto;
     const stream = await this.chatService.chatLlm(message, temperature, llm);
     for await (const chunk of stream) {
@@ -52,6 +53,37 @@ export class ChatController {
     // });
     // return httpResponse;
   }
+
+  // /**
+  //  * upload
+  //  *
+  //  * @returns
+  //  */
+  // @UseGuards(AuthGuard('jwt'))
+  // @UseInterceptors(FileInterceptor('file'))
+  // @Post('file')
+  // async file(
+  //   @Body() dto: FileDto,
+  //   @Request() req: any,
+  //   @UploadedFile() file: Express.Multer.File,
+  //   @Res() res: Response,
+  // ) {
+  //   res.setHeader('Content-Type', 'text/plain');
+  //   res.setHeader('Cache-Control', 'no-cache');
+  //   res.setHeader('Connection', 'keep-alive');
+  //   res.setHeader('Transfer-Encoding', 'chunked');
+  //   res.setHeader('X-Content-Type-Options', 'nosniff');
+
+  //   const userName = req.user.userName;
+  //   console.log(file);
+
+  //   const stream = await this.chatService.chatfile(userName, dto, file);
+
+  //   for await (const chunk of stream) {
+  //     res.write(chunk);
+  //   }
+  //   res.end();
+  // }
 
   @UseGuards(AuthGuard('jwt'))
   @Post('regenerate')
