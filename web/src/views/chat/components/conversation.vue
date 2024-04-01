@@ -242,6 +242,10 @@
     return true;
   }
 
+  async function afterUploaded({ file, event }: { file: UploadFileInfo; event?: ProgressEvent }) {
+    // 定义允许的文件类型数组
+  }
+
   // 自动拉出提示词
   const promptOptions = computed(() => {
     if (prompt.value.startsWith('/')) {
@@ -400,13 +404,14 @@
         <div class="gap-3 mx-2 mt-6 stretch last:mb-3 md:mx-4 md:last:mb-6 lg:mx-auto lg:max-w-3xl">
           <div class="mb-1">
             <n-upload
-              action="/api/file/chat"
+              action="/api/file/upload"
               accept=".txt,.pdf,.doc,.docx"
               :show-file-list="false"
               :with-credentials="true"
               :headers="{ Authorization: `Bearer ${token}` }"
               :data="{ conversationId }"
               @before-upload="beforeUpload"
+              @finish="afterUploaded"
             >
               <n-button>上传文件</n-button>
             </n-upload>

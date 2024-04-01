@@ -74,13 +74,14 @@ export class FileController {
     res.setHeader('X-Content-Type-Options', 'nosniff');
 
     const userName = req.user.userName;
-    console.log(file);
 
     const stream = await this.fileService.chatfile(userName, dto, file);
 
-    for await (const chunk of stream) {
-      res.write(chunk);
-    }
-    res.end();
+    return successJson(stream);
+
+    // for await (const chunk of stream) {
+    //   res.write(chunk);
+    // }
+    // res.end();
   }
 }

@@ -14,8 +14,8 @@ import { StringOutputParser } from '@langchain/core/output_parsers';
 import { ChatOpenAI } from '@langchain/openai';
 import { ChatMessageHistory } from '@langchain/community/stores/message/in_memory';
 import { AIMessage, HumanMessage } from '@langchain/core/messages';
-import { Chroma } from '@langchain/community/vectorstores/chroma';
 import { VectorStore } from '@langchain/core/vectorstores';
+import { LLMChain } from 'langchain/chains';
 
 @Injectable()
 export class ChatService {
@@ -128,9 +128,9 @@ export class ChatService {
     openAIApiKey: string,
     vectorStore: VectorStore,
   ) {
-    console.log('3');
     const result = await vectorStore.similaritySearch(message, 1);
-    console.log('4', result);
+
+    console.log(result);
 
     // const fileSourceStr = result[0].metadata.source;
 
@@ -144,15 +144,26 @@ export class ChatService {
       HumanMessagePromptTemplate.fromTemplate('{input}'),
     ]);
 
-    const outputParser = new StringOutputParser();
-
-    const chain = prompt.pipe(llm).pipe(outputParser);
-
-    const stream = await chain.stream({
-      // history: await messageHistory.getMessages(),
+    const chain = new LLMChain({
+      prompt,
+      llm,
+    });
+    const response = await chain.call({
       input: message,
     });
+    return {
+      response,
+    };
 
-    return stream;
+    // const outputParser = new StringOutputParser();
+
+    // const chain = prompt.pipe(llm).pipe(outputParser);
+
+    // const stream = await chain.stream({
+    //   // history: await messageHistory.getMessages(),
+    //   input: message,
+    // });
+
+    // return stream;
   }
 }

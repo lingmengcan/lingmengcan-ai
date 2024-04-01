@@ -5,7 +5,6 @@ import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter';
 import { Chroma } from '@langchain/community/vectorstores/chroma';
 import { OpenAIEmbeddings } from '@langchain/openai';
 
-import { MemoryVectorStore } from 'langchain/vectorstores/memory';
 import { v4 as uuidv4 } from 'uuid';
 import { File } from '@/entities/file.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -60,8 +59,7 @@ export class FileService {
 
     const docs = await loader.loadAndSplit(textsplitter);
 
-    console.log(docs);
-
+    const modelName = 'bge-large-zh-v1.5';
     // Load the docs into the vector store
     // 加载向量存储库
     const vectorStore = await Chroma.fromDocuments(
@@ -85,7 +83,7 @@ export class FileService {
   async chatfile(userName: string, dto: FileDto, file: Express.Multer.File) {
     let basePath = '';
     let openAIApiKey = 'EMPTY';
-    const llm: string = 'ChatGLM3';
+    const llm: string = 'gpt-3.5-turbo';
     switch (llm) {
       case 'ChatGLM2':
         // const apiUrl = this.configService.get<string>('llms.chatglm_6b_server_url');
@@ -112,11 +110,15 @@ export class FileService {
       userName,
     );
 
-    console.log(1);
-
     const vectorStore = await this.refactorVectorStore(fileType, file.path, basePath, openAIApiKey);
-    console.log(2);
-    return this.chatService.chatfileOpenAi('格式', 0.5, basePath, openAIApiKey, vectorStore);
+
+    return this.chatService.chatfileOpenAi(
+      '输出文档摘要',
+      0.5,
+      basePath,
+      openAIApiKey,
+      vectorStore,
+    );
   }
 
   // //文档问答
