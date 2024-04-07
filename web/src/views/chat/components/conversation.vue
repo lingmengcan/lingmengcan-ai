@@ -14,7 +14,7 @@
   } from '@vicons/ionicons5';
   import MessageComponent from './message.vue';
   import PromptComponent from './prompt.vue';
-  import { PopoverInst, UploadFileInfo, useMessage } from 'naive-ui';
+  import { PopoverInst, UploadFileInfo } from 'naive-ui';
   import { usePromptStore } from '@/store/modules/prompt';
   import storage from '@/utils/storage';
   import { ACCESS_TOKEN } from '@/constants';
@@ -25,7 +25,6 @@
       default: true,
     },
   });
-  const messageUi = useMessage();
 
   const emit = defineEmits(['update:chatListVisable']);
 
@@ -88,18 +87,16 @@
     if (loading.value) return;
 
     if (conversationId.value) {
-      onConversation();
+      onConversation(prompt.value);
     } else {
       chatStore.addConversation(temperature.value, selectedLlm.value).then(() => {
         conversationId.value = chatStore.activeId!;
-        onConversation();
+        onConversation(prompt.value);
       });
     }
   }
 
-  async function onConversation() {
-    const message = prompt.value;
-
+  async function onConversation(message: string, fileId: string = '') {
     if (!message || message.trim() === '') return;
 
     // 问题入库
@@ -107,17 +104,23 @@
       conversationId: conversationId.value,
       messageText: message,
       sender: 'Human',
+      fileId,
       status: 0,
       completed: 1,
     };
 
     const question = await chatStore.addChatByConversationId(newChat);
 
+    if (fileId && question) {
+      question.messageText = '输出文档摘要';
+    }
+
     // 创建回答
     answer.value = await chatStore.addChatByConversationId({
       conversationId: conversationId.value,
       previousId: question?.messageId,
       messageText: '',
+      fileId,
       sender: 'Assistant',
       status: 0,
       completed: 0,
@@ -224,26 +227,15 @@
     popoverParamRef.value?.setShow(false);
   }
 
-  async function beforeUpload(data: { file: UploadFileInfo; fileList: UploadFileInfo[] }) {
-    // 定义允许的文件类型数组
-    const allowedTypes = [
-      'application/pdf',
-      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-      'text/plain',
-    ];
-
-    const fileType = data.file.file?.type;
-
-    // 检查文件类型是否在允许的类型数组中
-    if (!fileType || !allowedTypes.includes(fileType)) {
-      messageUi.error('只能上传txt/pdf/docx文件，请重新上传');
-      return false;
-    }
-    return true;
-  }
-
   async function afterUploaded({ file, event }: { file: UploadFileInfo; event?: ProgressEvent }) {
     // 定义允许的文件类型数组
+    // messageUi.success((event?.target as XMLHttpRequest).response);
+    const res = JSON.parse((event?.target as XMLHttpRequest).response);
+    if (res?.code === 0) {
+      const fileId = res.data;
+      const message = file.name;
+      onConversation(message, fileId);
+    }
   }
 
   // 自动拉出提示词
@@ -410,7 +402,6 @@
               :with-credentials="true"
               :headers="{ Authorization: `Bearer ${token}` }"
               :data="{ conversationId }"
-              @before-upload="beforeUpload"
               @finish="afterUploaded"
             >
               <n-button>上传文件</n-button>

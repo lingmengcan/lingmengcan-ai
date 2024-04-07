@@ -11,11 +11,11 @@ import {
   SystemMessagePromptTemplate,
 } from '@langchain/core/prompts';
 import { StringOutputParser } from '@langchain/core/output_parsers';
-import { ChatOpenAI } from '@langchain/openai';
+import { ChatOpenAI, OpenAIEmbeddings } from '@langchain/openai';
 import { ChatMessageHistory } from '@langchain/community/stores/message/in_memory';
 import { AIMessage, HumanMessage } from '@langchain/core/messages';
 import { VectorStore } from '@langchain/core/vectorstores';
-import { LLMChain } from 'langchain/chains';
+import { Chroma } from '@langchain/community/vectorstores/chroma';
 
 @Injectable()
 export class ChatService {
@@ -56,7 +56,8 @@ export class ChatService {
     const messageHistory = new ChatMessageHistory();
 
     conversation.messages.forEach((item) => {
-      if (item.createdAt < new Date(message.createdAt)) {
+      // 获取历史消息，如果消息时间小于当前消息，并且文件id相同，则认为是历史消息，当时文件回答时，只获取当前文件的消息
+      if (item.createdAt < new Date(message.createdAt) && message.fileId === item.fileId) {
         if (item.sender === 'Human') {
           messageHistory.addMessage(new HumanMessage(item.messageText));
         } else if (item.sender === 'Assistant') {
@@ -82,13 +83,33 @@ export class ChatService {
         break;
     }
 
-    return this.chatOpenAi(
-      message.messageText,
-      temperature,
-      messageHistory,
-      basePath,
-      openAIApiKey,
-    );
+    if (message.fileId) {
+      console.log(1);
+      const vectorStore = await Chroma.fromExistingCollection(
+        new OpenAIEmbeddings({ openAIApiKey }, { basePath }),
+        {
+          collectionName: message.fileId,
+          url: 'http://localhost:9000',
+        },
+      );
+
+      return this.chatfileOpenAi(
+        message.messageText,
+        temperature,
+        messageHistory,
+        basePath,
+        openAIApiKey,
+        vectorStore,
+      );
+    } else {
+      return this.chatOpenAi(
+        message.messageText,
+        temperature,
+        messageHistory,
+        basePath,
+        openAIApiKey,
+      );
+    }
   }
 
   //自由对话
@@ -124,16 +145,16 @@ export class ChatService {
   async chatfileOpenAi(
     message: string,
     temperature: number,
+    messageHistory: ChatMessageHistory,
     basePath: string,
     openAIApiKey: string,
     vectorStore: VectorStore,
   ) {
+    console.log(2);
     const result = await vectorStore.similaritySearch(message, 1);
 
-    console.log(result);
-
     // const fileSourceStr = result[0].metadata.source;
-
+    console.log(result);
     //根据内容回答问题
     // Instantiate your model and prompt.
     const llm = new ChatOpenAI({ openAIApiKey, temperature, streaming: true }, { basePath });
@@ -141,29 +162,19 @@ export class ChatService {
       SystemMessagePromptTemplate.fromTemplate(
         `基于已知内容, 回答用户问题。如果无法从中得到答案，请说'没有足够的相关信息'已知内容:${result[0].pageContent}`,
       ),
+      new MessagesPlaceholder('history'),
       HumanMessagePromptTemplate.fromTemplate('{input}'),
     ]);
 
-    const chain = new LLMChain({
-      prompt,
-      llm,
-    });
-    const response = await chain.call({
+    const outputParser = new StringOutputParser();
+
+    const chain = prompt.pipe(llm).pipe(outputParser);
+
+    const stream = await chain.stream({
+      history: await messageHistory.getMessages(),
       input: message,
     });
-    return {
-      response,
-    };
 
-    // const outputParser = new StringOutputParser();
-
-    // const chain = prompt.pipe(llm).pipe(outputParser);
-
-    // const stream = await chain.stream({
-    //   // history: await messageHistory.getMessages(),
-    //   input: message,
-    // });
-
-    // return stream;
+    return stream;
   }
 }

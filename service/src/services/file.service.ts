@@ -11,7 +11,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
 import { DocumentLoader } from 'langchain/dist/document_loaders/base';
 import { ConfigService } from '@nestjs/config';
-import { Message } from '@/entities/message.entity';
 import { MessageService } from './message.service';
 import { extname } from 'path';
 import { ChatService } from './chat.service';
@@ -29,6 +28,7 @@ export class FileService {
 
   //上传文件向量化
   async refactorVectorStore(
+    fileId: string,
     fileType: string,
     filePath: string,
     basePath: string,
@@ -60,23 +60,18 @@ export class FileService {
     const docs = await loader.loadAndSplit(textsplitter);
 
     const modelName = 'bge-large-zh-v1.5';
+
     // Load the docs into the vector store
     // 加载向量存储库
-    const vectorStore = await Chroma.fromDocuments(
-      docs,
-      new OpenAIEmbeddings({ openAIApiKey }, { basePath }),
-      {
-        collectionName: 'a-test-collection',
-        url: 'http://localhost:9000',
-      },
-    );
+    await Chroma.fromDocuments(docs, new OpenAIEmbeddings({ openAIApiKey }, { basePath }), {
+      collectionName: fileId,
+      url: 'http://localhost:9000',
+    });
 
     // const vectorStore = await MemoryVectorStore.fromDocuments(
     //   docs,
-    //   new AlibabaTongyiEmbeddings({}),
+    //   new OpenAIEmbeddings({ openAIApiKey }, { basePath }),
     // );
-
-    return vectorStore;
   }
 
   // 读取文档
@@ -101,7 +96,7 @@ export class FileService {
 
     const fileType = extname(file.filename);
     // 上传文件
-    await this.addFile(
+    const fileId = await this.addFile(
       dto.conversationId,
       file.originalname,
       file.size,
@@ -110,15 +105,17 @@ export class FileService {
       userName,
     );
 
-    const vectorStore = await this.refactorVectorStore(fileType, file.path, basePath, openAIApiKey);
+    await this.refactorVectorStore(fileId, fileType, file.path, basePath, openAIApiKey);
 
-    return this.chatService.chatfileOpenAi(
-      '输出文档摘要',
-      0.5,
-      basePath,
-      openAIApiKey,
-      vectorStore,
-    );
+    return fileId;
+
+    // return this.chatService.chatfileOpenAi(
+    //   '输出文档摘要',
+    //   0.5,
+    //   basePath,
+    //   openAIApiKey,
+    //   vectorStore,
+    // );
   }
 
   // //文档问答
@@ -193,40 +190,41 @@ export class FileService {
     entity.createdUser = username;
     entity.createdAt = new Date();
     entity.updatedAt = new Date();
-    // return this.repository.save(entity);
+    this.repository.save(entity);
 
-    // Transactions 启动
-    /// create a new query runner
-    const queryRunner = this.dataSource.createQueryRunner();
+    // // Transactions 启动
+    // /// create a new query runner
+    // const queryRunner = this.dataSource.createQueryRunner();
 
-    // establish real database connection using our new query runner
-    await queryRunner.connect();
+    // // establish real database connection using our new query runner
+    // await queryRunner.connect();
 
-    // lets now open a new transaction:
-    await queryRunner.startTransaction();
+    // // lets now open a new transaction:
+    // await queryRunner.startTransaction();
 
-    try {
-      // execute some operations on this transaction:
-      await queryRunner.manager.save(entity);
+    // try {
+    //   // execute some operations on this transaction:
+    //   await queryRunner.manager.save(entity);
 
-      const message = new Message();
-      message.conversationId = conversationId;
-      message.fileId = fileId;
-      message.messageText = fileName;
-      message.sender = 'System';
-      message.completed = 1;
-      message.status = 0;
+    //   const message = new Message();
+    //   message.conversationId = conversationId;
+    //   message.fileId = fileId;
+    //   message.messageText = fileName;
+    //   message.sender = 'System';
+    //   message.completed = 1;
+    //   message.status = 0;
 
-      this.messageService.addMessage(message);
+    //   this.messageService.addMessage(message);
 
-      // commit transaction now:
-      await queryRunner.commitTransaction();
-    } catch (err) {
-      // since we have errors let's rollback changes we made
-      await queryRunner.rollbackTransaction();
-    } finally {
-      // you need to release query runner which is manually created:
-      await queryRunner.release();
-    }
+    //   // commit transaction now:
+    //   await queryRunner.commitTransaction();
+    // } catch (err) {
+    //   // since we have errors let's rollback changes we made
+    //   await queryRunner.rollbackTransaction();
+    // } finally {
+    //   // you need to release query runner which is manually created:
+    //   await queryRunner.release();
+    // }
+    return fileId;
   }
 }

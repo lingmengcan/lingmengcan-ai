@@ -15,7 +15,6 @@ import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiTags } from '@nestjs/swagger';
 import { Express } from 'express';
-import { extname } from 'path';
 import { Response } from 'express';
 
 @ApiTags('file') // 添加 接口标签 装饰器
@@ -37,20 +36,11 @@ export class FileController {
     @UploadedFile() file: Express.Multer.File,
   ) {
     const userName = req.user.userName;
-    console.log(file);
-    const fileType = extname(file.filename);
-    // 处理文件保存逻辑
-    // 添加文件信息到数据库
-    return successJson(
-      await this.fileService.addFile(
-        dto.conversationId,
-        file.originalname,
-        file.size,
-        fileType,
-        file.path,
-        userName,
-      ),
-    );
+
+    const fileId = await this.fileService.chatfile(userName, dto, file);
+
+    console.log(fileId);
+    return successJson(fileId);
   }
 
   /**
@@ -77,11 +67,9 @@ export class FileController {
 
     const stream = await this.fileService.chatfile(userName, dto, file);
 
-    return successJson(stream);
-
-    // for await (const chunk of stream) {
-    //   res.write(chunk);
-    // }
-    // res.end();
+    for await (const chunk of stream) {
+      res.write(chunk);
+    }
+    res.end();
   }
 }
