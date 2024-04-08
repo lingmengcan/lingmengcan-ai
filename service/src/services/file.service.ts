@@ -63,10 +63,14 @@ export class FileService {
 
     // Load the docs into the vector store
     // 加载向量存储库
-    await Chroma.fromDocuments(docs, new OpenAIEmbeddings({ openAIApiKey }, { basePath }), {
-      collectionName: fileId,
-      url: 'http://localhost:9000',
-    });
+    await Chroma.fromDocuments(
+      docs,
+      new OpenAIEmbeddings({ openAIApiKey, modelName }, { basePath }),
+      {
+        collectionName: fileId,
+        url: this.configService.get<string>('chromadb.db'),
+      },
+    );
 
     // const vectorStore = await MemoryVectorStore.fromDocuments(
     //   docs,
@@ -78,7 +82,7 @@ export class FileService {
   async chatfile(userName: string, dto: FileDto, file: Express.Multer.File) {
     let basePath = '';
     let openAIApiKey = 'EMPTY';
-    const llm: string = 'gpt-3.5-turbo';
+    const llm: string = 'ChatGLM3';
     switch (llm) {
       case 'ChatGLM2':
         // const apiUrl = this.configService.get<string>('llms.chatglm_6b_server_url');
@@ -108,60 +112,7 @@ export class FileService {
     await this.refactorVectorStore(fileId, fileType, file.path, basePath, openAIApiKey);
 
     return fileId;
-
-    // return this.chatService.chatfileOpenAi(
-    //   '输出文档摘要',
-    //   0.5,
-    //   basePath,
-    //   openAIApiKey,
-    //   vectorStore,
-    // );
   }
-
-  // //文档问答
-  // async chatfileOpenAi(
-  //   message: string,
-  //   temperature: number,
-  //   basePath: string,
-  //   openAIApiKey: string,
-  //   vectorStore: VectorStore,
-  // ) {
-  //   console.log('3');
-  //   const result = await vectorStore.similaritySearch(message, 1);
-  //   console.log('4', result);
-
-  //   // const fileSourceStr = result[0].metadata.source;
-
-  //   //根据内容回答问题
-  //   // Instantiate your model and prompt.
-  //   const llm = new ChatOpenAI({ openAIApiKey, temperature, streaming: true }, { basePath });
-  //   const prompt = ChatPromptTemplate.fromMessages([
-  //     SystemMessagePromptTemplate.fromTemplate(
-  //       `基于已知内容, 回答用户问题。如果无法从中得到答案，请说'没有足够的相关信息'已知内容:${result[0].pageContent}`,
-  //     ),
-  //     HumanMessagePromptTemplate.fromTemplate('{input}'),
-  //   ]);
-
-  //   // const chain2 = new LLMChain({
-  //   //   prompt,
-  //   //   llm,
-  //   // });
-  //   // const response = await chain2.call({
-  //   //   text: message,
-  //   // });
-
-  //   // console.log(response);
-  //   const outputParser = new StringOutputParser();
-
-  //   const chain = prompt.pipe(llm).pipe(outputParser);
-
-  //   const stream = await chain.stream({
-  //     // history: await messageHistory.getMessages(),
-  //     input: message,
-  //   });
-
-  //   return stream;
-  // }
 
   /**
    * 新增
@@ -192,39 +143,6 @@ export class FileService {
     entity.updatedAt = new Date();
     this.repository.save(entity);
 
-    // // Transactions 启动
-    // /// create a new query runner
-    // const queryRunner = this.dataSource.createQueryRunner();
-
-    // // establish real database connection using our new query runner
-    // await queryRunner.connect();
-
-    // // lets now open a new transaction:
-    // await queryRunner.startTransaction();
-
-    // try {
-    //   // execute some operations on this transaction:
-    //   await queryRunner.manager.save(entity);
-
-    //   const message = new Message();
-    //   message.conversationId = conversationId;
-    //   message.fileId = fileId;
-    //   message.messageText = fileName;
-    //   message.sender = 'System';
-    //   message.completed = 1;
-    //   message.status = 0;
-
-    //   this.messageService.addMessage(message);
-
-    //   // commit transaction now:
-    //   await queryRunner.commitTransaction();
-    // } catch (err) {
-    //   // since we have errors let's rollback changes we made
-    //   await queryRunner.rollbackTransaction();
-    // } finally {
-    //   // you need to release query runner which is manually created:
-    //   await queryRunner.release();
-    // }
     return fileId;
   }
 }

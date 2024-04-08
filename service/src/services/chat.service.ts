@@ -84,12 +84,12 @@ export class ChatService {
     }
 
     if (message.fileId) {
-      console.log(1);
+      const modelName = 'bge-large-zh-v1.5';
       const vectorStore = await Chroma.fromExistingCollection(
-        new OpenAIEmbeddings({ openAIApiKey }, { basePath }),
+        new OpenAIEmbeddings({ openAIApiKey, modelName }, { basePath }),
         {
           collectionName: message.fileId,
-          url: 'http://localhost:9000',
+          url: this.configService.get<string>('chromadb.db'),
         },
       );
 
