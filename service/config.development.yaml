@@ -8,13 +8,19 @@ mariadb:
   port: 3306
   database: 'lingmengcan-ai'
   username: 'lingmengcan'
-  password: '123456'
+  password: '1234556'
   charset: 'utf8'
 
 mongodb:
   db: 'mongodb://localhost:27017/lingmengcan'
 
+chromadb:
+  db: 'http://localhost:9000'
+
+files:
+  destination: 'upload-files'
+
 llms:
-  chatglm3_6b_server_url: 'http://127.0.0.1:8000/v1/'   
+  chatglm3_6b_server_url: 'http://127.0.0.1:8000/v1/'
   openai_proxy_url: 'https://oai.hconeai.com/v1' # https://api.openai.com/v1
-  openai_api_key: 'sk-lingmengcan'
+  openai_api_key: 'sk-123456'

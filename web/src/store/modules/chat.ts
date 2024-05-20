@@ -135,7 +135,7 @@ export const useChatStore = defineStore('chat-store', {
     },
 
     async reloadRoute(conversationId?: string | undefined) {
-      this.setConversationList();
+      // this.setConversationList();
 
       await router.push({ name: 'chat', params: { conversationId } });
     },

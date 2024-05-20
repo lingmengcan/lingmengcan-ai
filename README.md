@@ -1,9 +1,9 @@
 # 大模型AI应用平台 lingmengcan-ai
 
-lingmengcan-ai 是一个基于大模型的ai系统，目前提供对话和后台角色管理。使用的技术栈，包括Vue 3、Naive UI和Tailwind CSS构建UI层，以及NestJS、LangChainJS和MySQL为服务层;该项目是一个可以实现 __完全本地化__推理的知识库增强方案, 重点解决数据安全保护，私域化部署的企业痛点。
+lingmengcan-ai 是一个基于大模型的ai系统，目前提供对话和后台角色管理。使用的技术栈，包括Vue 3、Naive UI和Tailwind CSS构建UI层，以及NestJS、LangChainJS和MySQL为服务层; 该项目是一个可以实现 __完全本地化__推理的知识库增强方案,同时提供AIGC功能, 重点解决数据安全保护，私域化部署的企业痛点。
 
 ## 特点
-- **大模型**: 使用openai或者本地本地部署ChatGLM3 (https://github.com/THUDM/ChatGLM3) ，用openai api的格式统一所有本地模型
+- **大模型**: 使用openai(ChatGPT)或者本地本地部署ChatGLM3 (https://github.com/THUDM/ChatGLM3) ，用openai api的格式统一所有本地模型
 - **对话**: 支持与大型语言模型进行高效、自然的对话交互。
 - **角色管理**: 包含一个完整的后台角色管理模块，便于用户管理和权限控制。
 - **AI画图功能**: 后续完善。

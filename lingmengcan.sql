@@ -11,7 +11,7 @@
  Target Server Version : 80200 (8.2.0)
  File Encoding         : 65001
 
- Date: 22/02/2024 14:38:50
+ Date: 15/03/2024 18:51:51
 */
 
 SET NAMES utf8mb4;
@@ -36,7 +36,11 @@ CREATE TABLE `conversation`  (
 -- ----------------------------
 -- Records of conversation
 -- ----------------------------
- 
+INSERT INTO `conversation` VALUES ('29e9b787-f7df-4c79-9b0c-f9ecf98e8d45', '知识库1', 'admin', 'ChatGLM3', 0.5, 0, '2024-02-22 16:53:35', '2024-03-15 15:35:09');
+INSERT INTO `conversation` VALUES ('619323ff-2df3-4485-9c97-cb2f08a67c6d', '新建对话', 'admin', 'ChatGLM3', 0.5, 0, '2024-03-08 17:04:37', '2024-03-08 17:04:37');
+INSERT INTO `conversation` VALUES ('6f2ba2df-4001-45d3-a2b6-9ec88cbfb455', '新建对话', 'admin', 'ChatGLM3', 0.5, 0, '2024-03-08 17:04:35', '2024-03-08 17:04:35');
+INSERT INTO `conversation` VALUES ('72c02f31-89a3-4c80-b8ba-458924648b2f', '新建对话1', 'admin', 'ChatGLM3', 0.5, 0, '2024-02-22 14:44:50', '2024-02-22 14:45:39');
+
 -- ----------------------------
 -- Table structure for dict
 -- ----------------------------
@@ -69,6 +73,31 @@ INSERT INTO `dict` VALUES (7, 'SYS_SEX', '0', '女', 2, 0, '女', 'admin', 'admi
 INSERT INTO `dict` VALUES (8, 'SYS_SEX', '2', '未知', 3, 0, '未知', 'admin', 'admin', '2024-01-08 11:10:56', '2024-01-08 11:10:56');
 
 -- ----------------------------
+-- Table structure for file
+-- ----------------------------
+DROP TABLE IF EXISTS `file`;
+CREATE TABLE `file`  (
+  `file_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `conversation_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `file_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `file_type` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `file_size` bigint NOT NULL,
+  `path` varchar(1024) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `status` tinyint(1) NOT NULL,
+  `created_user` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `created_at` datetime NOT NULL,
+  `updated_at` datetime NOT NULL,
+  PRIMARY KEY (`file_id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of file
+-- ----------------------------
+INSERT INTO `file` VALUES ('01e7042e-e468-4c63-b4ba-3a5949300751', '29e9b787-f7df-4c79-9b0c-f9ecf98e8d45', 't.txt', '.txt', 1741, 'upload-files\\2024-03-15\\fc8044cd-d811-4121-a27c-6a5ae8f541a8.txt', 0, 'admin', '2024-03-15 16:25:08', '2024-03-15 16:25:08');
+INSERT INTO `file` VALUES ('7874c71a-4ffb-46dd-8330-1dac3e20b18a', '29e9b787-f7df-4c79-9b0c-f9ecf98e8d45', 't.txt', '.txt', 1741, 'upload-files\\2024-03-15\\b42d9391-7789-4634-b927-a52efe994d69.txt', 0, 'admin', '2024-03-15 16:21:14', '2024-03-15 16:21:14');
+INSERT INTO `file` VALUES ('f7f03136-03e9-46b1-8995-4b80fa2df00b', '29e9b787-f7df-4c79-9b0c-f9ecf98e8d45', 't.txt', '.txt', 1741, 'upload-files\\2024-03-14\\11e36dae-862a-433e-b7a5-de1a0d8e13de.txt', 0, 'admin', '2024-03-14 19:41:45', '2024-03-14 19:41:45');
+
+-- ----------------------------
 -- Table structure for menu
 -- ----------------------------
 DROP TABLE IF EXISTS `menu`;
@@ -94,7 +123,7 @@ CREATE TABLE `menu`  (
   `created_at` datetime NOT NULL,
   `updated_at` datetime NOT NULL,
   PRIMARY KEY (`menu_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 39 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 40 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of menu
@@ -133,6 +162,7 @@ INSERT INTO `menu` VALUES (35, 11, '字典查询', 'dict_query', '', '', '', '',
 INSERT INTO `menu` VALUES (36, 11, '字典新增', '', '', '', '', '', 'system_dict_add', 'action', 0, 0, '', 2, 0, '', 'admin', 'admin', '2024-01-08 10:49:10', '2024-01-08 10:49:21');
 INSERT INTO `menu` VALUES (37, 11, '字典修改', '', '', '', '', '', 'system_dict_edit', 'action', 0, 0, '', 3, 0, '', 'admin', 'admin', '2024-01-08 10:49:42', '2024-01-08 10:49:48');
 INSERT INTO `menu` VALUES (38, 11, '字典删除', '', '', '', '', '', 'system_dict_delete', 'action', 0, 0, '', 0, 0, '', 'admin', 'admin', '2024-01-08 10:52:23', '2024-01-08 10:52:23');
+INSERT INTO `menu` VALUES (39, 3, '文件上传', '', '', '', '', '', 'chat_upload_file', 'action', 0, 0, '', 3, 0, '', 'admin', 'admin', '2024-03-08 15:50:53', '2024-03-08 15:52:26');
 
 -- ----------------------------
 -- Table structure for message
@@ -142,6 +172,7 @@ CREATE TABLE `message`  (
   `message_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
   `previous_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL DEFAULT '',
   `conversation_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `file_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL DEFAULT '',
   `message_text` text CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
   `sender` enum('Human','Assistant','System') CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
   `completed` tinyint(1) NOT NULL DEFAULT 1,
@@ -153,6 +184,24 @@ CREATE TABLE `message`  (
 -- ----------------------------
 -- Records of message
 -- ----------------------------
+INSERT INTO `message` VALUES ('06e30ca2-8a6a-4a1b-bdf1-61c383be347e', 'b02f1171-0a5d-47d7-bfae-0b5eac8f5dc8', '29e9b787-f7df-4c79-9b0c-f9ecf98e8d45', '', '\n 我是一个名为 ChatGLM3-6B 的人工智能助手，是基于清华大学 KEG 实验室和智谱 AI 公司于 2023 年共同训练的语言模型开发的。我的任务是针对用户的问题和要求提供适当的答复和支持。', 'Assistant', 1, 0, '2024-02-22 16:53:43');
+INSERT INTO `message` VALUES ('09087f36-c1e5-4d70-8541-b562366389b3', '', '72c02f31-89a3-4c80-b8ba-458924648b2f', '', 'hi', 'Human', 1, 0, '2024-02-22 14:44:50');
+INSERT INTO `message` VALUES ('14a9a486-2682-4b21-b1b1-8f9daafa86cb', '', '72c02f31-89a3-4c80-b8ba-458924648b2f', '', '你是？', 'Human', 1, 0, '2024-02-22 14:45:09');
+INSERT INTO `message` VALUES ('3621cc71-23c2-4676-9709-2d588b970258', '14a9a486-2682-4b21-b1b1-8f9daafa86cb', '72c02f31-89a3-4c80-b8ba-458924648b2f', '', '\n 你好！我是一个人工智能助手，我可以回答你各种问题，帮助你解决问题，有什么需要我帮忙的吗？', 'Assistant', 1, 0, '2024-02-22 14:45:13');
+INSERT INTO `message` VALUES ('4eb25cda-61ca-45b5-89a4-04c87bef08aa', '', '29e9b787-f7df-4c79-9b0c-f9ecf98e8d45', '7874c71a-4ffb-46dd-8330-1dac3e20b18a', 't.txt', 'System', 1, 0, '2024-03-15 16:21:14');
+INSERT INTO `message` VALUES ('548d6b1f-3e16-45c5-8a01-f59b9ff1303a', '', '72c02f31-89a3-4c80-b8ba-458924648b2f', '', '哪个团队开发的', 'Human', 1, 0, '2024-02-22 14:45:21');
+INSERT INTO `message` VALUES ('64037aad-3e53-4c12-957f-3ba8ca8d83f2', '', '619323ff-2df3-4485-9c97-cb2f08a67c6d', '', 'hi', 'Human', 1, 0, '2024-03-15 16:16:56');
+INSERT INTO `message` VALUES ('755ce299-4381-477d-add7-8c32901ec7b5', '64037aad-3e53-4c12-957f-3ba8ca8d83f2', '619323ff-2df3-4485-9c97-cb2f08a67c6d', '', '\n Hello! How can I help you today?', 'Assistant', 1, 0, '2024-03-15 16:16:59');
+INSERT INTO `message` VALUES ('8aa1c3c0-9d59-44d8-a668-1e3431859829', '', '29e9b787-f7df-4c79-9b0c-f9ecf98e8d45', 'f7f03136-03e9-46b1-8995-4b80fa2df00b', 't.txt', 'System', 1, 0, '2024-03-14 19:41:45');
+INSERT INTO `message` VALUES ('9de97dce-5280-4f9f-a5bc-ff539226af1b', '', '619323ff-2df3-4485-9c97-cb2f08a67c6d', '', '你是？', 'Human', 1, 0, '2024-03-15 16:17:09');
+INSERT INTO `message` VALUES ('b02f1171-0a5d-47d7-bfae-0b5eac8f5dc8', '', '29e9b787-f7df-4c79-9b0c-f9ecf98e8d45', '', '你是？', 'Human', 1, 0, '2024-02-22 16:53:35');
+INSERT INTO `message` VALUES ('b11ef214-26a9-418f-a689-a482351fab32', '09087f36-c1e5-4d70-8541-b562366389b3', '72c02f31-89a3-4c80-b8ba-458924648b2f', '', '\n Hello! How can I assist you today?', 'Assistant', 1, 0, '2024-02-22 14:44:53');
+INSERT INTO `message` VALUES ('c3c131d8-ff47-477e-bd91-2439336ebf5a', '548d6b1f-3e16-45c5-8a01-f59b9ff1303a', '72c02f31-89a3-4c80-b8ba-458924648b2f', '', '\n 我是由清华大学 KEG 实验室和智谱 AI 共同开发而成。', 'Assistant', 1, 0, '2024-02-22 14:45:24');
+INSERT INTO `message` VALUES ('d372b19b-56d4-4e44-81b8-11e1ab7bbae4', '9de97dce-5280-4f9f-a5bc-ff539226af1b', '619323ff-2df3-4485-9c97-cb2f08a67c6d', '', '\n I am an AI assistant named ChatGLM3-6B, which is developed based on the language model jointly trained by Tsinghua University KEG Lab and Zhipu AI Company in 2023. My job is to provide appropriate answers and support to users\' questions and requests.', 'Assistant', 1, 0, '2024-03-15 16:17:18');
+INSERT INTO `message` VALUES ('da5285e7-79ad-4ae2-a086-a84487f10b20', '', '29e9b787-f7df-4c79-9b0c-f9ecf98e8d45', '01e7042e-e468-4c63-b4ba-3a5949300751', 't.txt', 'System', 1, 0, '2024-03-15 16:25:08');
+INSERT INTO `message` VALUES ('e0e4bbb4-d95d-46c9-bd4e-d61488b6c295', '', '619323ff-2df3-4485-9c97-cb2f08a67c6d', '', 'hi', 'Human', 1, 0, '2024-03-15 16:16:26');
+INSERT INTO `message` VALUES ('e545c1fd-f6f2-4232-8722-7dbf3faaf18a', 'e0e4bbb4-d95d-46c9-bd4e-d61488b6c295', '619323ff-2df3-4485-9c97-cb2f08a67c6d', '', '', 'Assistant', 0, 0, '2024-03-15 16:16:26');
+INSERT INTO `message` VALUES ('f03cef9e-e345-4429-bed6-d273c7d0fd49', '', '29e9b787-f7df-4c79-9b0c-f9ecf98e8d45', '063c0126-665b-45e7-88d9-9fffae43b92f', 'Fin-AIGC产品简介与AI辅助编程使用分享.pdf', 'System', 1, 0, '2024-03-13 15:40:58');
 
 -- ----------------------------
 -- Table structure for prompt
@@ -243,6 +292,7 @@ INSERT INTO `role_menu` VALUES (1, 35);
 INSERT INTO `role_menu` VALUES (1, 36);
 INSERT INTO `role_menu` VALUES (1, 37);
 INSERT INTO `role_menu` VALUES (1, 38);
+INSERT INTO `role_menu` VALUES (1, 39);
 INSERT INTO `role_menu` VALUES (2, 12);
 
 -- ----------------------------

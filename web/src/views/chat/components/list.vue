@@ -6,17 +6,16 @@
     CloseOutline,
     CheckmarkOutline,
   } from '@vicons/ionicons5';
-  import { computed } from 'vue';
+  import { computed, onMounted } from 'vue';
   import { useChatStore } from '@/store/modules/chat';
   import { Conversation } from '@/models/chat';
 
   const chatStore = useChatStore();
 
+  // const conversationList = ref([]);
+
   const conversationList = computed(() => {
     const list = chatStore.conversationList;
-    if (list.length === 0) {
-      chatStore.setConversationList();
-    }
     return list;
   });
 
@@ -42,6 +41,10 @@
   function isActive(conversationId: string | undefined) {
     return chatStore.activeId === conversationId;
   }
+
+  onMounted(async () => {
+    chatStore.setConversationList();
+  });
 </script>
 
 <template>
@@ -52,12 +55,12 @@
           <n-input
             v-if="item.isEdit"
             v-model:value="item.conversationName"
-            class="w-full h-11 items-center"
+            class="items-center w-full h-11"
           >
             <template #suffix>
               <n-icon
                 size="14"
-                class="mr-1 text-blue-800 hover:text-gray-500 cursor-pointer"
+                class="mr-1 text-blue-800 cursor-pointer hover:text-gray-500"
                 @click="handleEdit(item, false, $event)"
               >
                 <CheckmarkOutline />
@@ -65,7 +68,7 @@
 
               <n-icon
                 size="14"
-                class="text-blue-800 hover:text-gray-500 cursor-pointer"
+                class="text-blue-800 cursor-pointer hover:text-gray-500"
                 @click="item.isEdit = false"
               >
                 <CloseOutline />
@@ -94,7 +97,7 @@
             <div v-if="isActive(item.conversationId)" class="flex">
               <n-icon
                 size="14"
-                class="mr-1 text-blue-800 hover:text-gray-500 cursor-pointer"
+                class="mr-1 text-blue-800 cursor-pointer hover:text-gray-500"
                 @click="handleEdit(item, true, $event)"
               >
                 <PencilOutline />
@@ -102,7 +105,7 @@
 
               <n-popconfirm placement="top" @positive-click="handleDelete(item, $event)">
                 <template #trigger>
-                  <n-icon size="14" class="text-blue-800 hover:text-gray-500 cursor-pointer">
+                  <n-icon size="14" class="text-blue-800 cursor-pointer hover:text-gray-500">
                     <TrashOutline />
                   </n-icon>
                 </template>

@@ -20,7 +20,7 @@ export class ChatController {
   ) {}
 
   /**
-   * Glm对话
+   * 对话
    */
   @UseGuards(AuthGuard('jwt'))
   @Post('')
@@ -34,8 +34,8 @@ export class ChatController {
     res.setHeader('Connection', 'keep-alive');
     res.setHeader('Transfer-Encoding', 'chunked');
     res.setHeader('X-Content-Type-Options', 'nosniff');
-    const { message, temperature, llm } = dto;
-    const stream = await this.chatService.chatLlm(message, temperature, llm);
+
+    const stream = await this.chatService.chat(dto);
     for await (const chunk of stream) {
       res.write(chunk);
     }
@@ -70,7 +70,6 @@ export class ChatController {
       res.write(chunk);
     }
     res.end();
-    // return successJson(await this.chatService.regenerate(dto));
   }
 
   /**

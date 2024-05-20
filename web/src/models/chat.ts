@@ -19,6 +19,7 @@ export interface Message {
   messageId?: string;
   previousId?: string;
   conversationId: string;
+  fileId?: string;
   messageText: string;
   status: number;
   sender: string;

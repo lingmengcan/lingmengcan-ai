@@ -14,8 +14,10 @@
   } from '@vicons/ionicons5';
   import MessageComponent from './message.vue';
   import PromptComponent from './prompt.vue';
-  import { PopoverInst } from 'naive-ui';
+  import { PopoverInst, UploadFileInfo } from 'naive-ui';
   import { usePromptStore } from '@/store/modules/prompt';
+  import storage from '@/utils/storage';
+  import { ACCESS_TOKEN } from '@/constants';
 
   defineProps({
     chatListVisable: {
@@ -25,6 +27,9 @@
   });
 
   const emit = defineEmits(['update:chatListVisable']);
+
+  const token = storage.get(ACCESS_TOKEN, '');
+  console.log(token);
 
   const temperature = ref(0.5);
   const popoverParamRef = ref<PopoverInst | null>(null);
@@ -82,18 +87,16 @@
     if (loading.value) return;
 
     if (conversationId.value) {
-      onConversation();
+      onConversation(prompt.value);
     } else {
       chatStore.addConversation(temperature.value, selectedLlm.value).then(() => {
         conversationId.value = chatStore.activeId!;
-        onConversation();
+        onConversation(prompt.value);
       });
     }
   }
 
-  async function onConversation() {
-    const message = prompt.value;
-
+  async function onConversation(message: string, fileId: string = '') {
     if (!message || message.trim() === '') return;
 
     // 问题入库
@@ -101,17 +104,23 @@
       conversationId: conversationId.value,
       messageText: message,
       sender: 'Human',
+      fileId,
       status: 0,
       completed: 1,
     };
 
     const question = await chatStore.addChatByConversationId(newChat);
 
+    if (fileId && question) {
+      question.messageText = '输出文档摘要';
+    }
+
     // 创建回答
     answer.value = await chatStore.addChatByConversationId({
       conversationId: conversationId.value,
       previousId: question?.messageId,
       messageText: '',
+      fileId,
       sender: 'Assistant',
       status: 0,
       completed: 0,
@@ -216,6 +225,17 @@
 
   function handleSetting() {
     popoverParamRef.value?.setShow(false);
+  }
+
+  async function afterUploaded({ file, event }: { file: UploadFileInfo; event?: ProgressEvent }) {
+    // 定义允许的文件类型数组
+    // messageUi.success((event?.target as XMLHttpRequest).response);
+    const res = JSON.parse((event?.target as XMLHttpRequest).response);
+    if (res?.code === 0) {
+      const fileId = res.data;
+      const message = file.name;
+      onConversation(message, fileId);
+    }
   }
 
   // 自动拉出提示词
@@ -339,7 +359,7 @@
       </div>
     </div>
     <div class="flex flex-col justify-center flex-auto overflow-hidden">
-      <div id="scrollRef" ref="scrollRef" class="p-1 h-screen overflow-x-hidden">
+      <div id="scrollRef" ref="scrollRef" class="h-screen p-1 overflow-x-hidden">
         <template v-if="!conversation?.messages?.length">
           <div
             class="flex flex-col justify-center h-full items-center mx-auto space-y-4 max-w-[600px]"
@@ -373,9 +393,21 @@
       <div
         class="w-full pb-2 border-transparent bg-gradient-to-b from-transparent via-white/50 to-white"
       >
-        <div
-          class="stretch flex flex-row gap-3 last:mb-3 mx-2 mt-6 md:mx-4 md:last:mb-6 lg:mx-auto lg:max-w-3xl"
-        >
+        <div class="gap-3 mx-2 mt-6 stretch last:mb-3 md:mx-4 md:last:mb-6 lg:mx-auto lg:max-w-3xl">
+          <div class="mb-1">
+            <n-upload
+              action="/api/file/upload"
+              accept=".txt,.pdf,.doc,.docx"
+              :show-file-list="false"
+              :with-credentials="true"
+              :headers="{ Authorization: `Bearer ${token}` }"
+              :data="{ conversationId, llm: selectedLlm }"
+              @finish="afterUploaded"
+            >
+              <n-button>上传文件</n-button>
+            </n-upload>
+          </div>
+
           <n-auto-complete v-model:value="prompt" :options="promptOptions">
             <template #default="{ handleInput, handleBlur, handleFocus }">
               <n-input

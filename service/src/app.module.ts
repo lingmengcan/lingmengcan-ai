@@ -13,6 +13,7 @@ import { RoleModule } from './modules/role.module';
 import { ChatModule } from './modules/chat.module';
 import { PromptModule } from './modules/prompt.module';
 import { DictModule } from './modules/dict.module';
+import { FileModule } from './modules/file.module';
 
 @Module({
   imports: [
@@ -20,6 +21,22 @@ import { DictModule } from './modules/dict.module';
       isGlobal: true,
       load: [configuration],
     }),
+    // MulterModule.registerAsync({
+    //   useFactory() {
+    //     return {
+    //       storage: diskStorage({
+    //         //文件储存位置
+    //         destination: 'upload-files',
+    //         //文件名定制
+    //         filename: (req, file, callback) => {
+    //           const path = Date.now() + '-' + uuidv4() + extname(file.originalname);
+    //           callback(null, path);
+    //         },
+    //       }),
+    //     };
+    //   },
+    // }),
+
     TypeOrmModule.forRootAsync({
       useFactory: (configService: ConfigService) => ({
         type: 'mysql',
@@ -41,6 +58,7 @@ import { DictModule } from './modules/dict.module';
     ChatModule,
     PromptModule,
     DictModule,
+    FileModule,
   ],
   controllers: [AppController],
   providers: [AppService],
