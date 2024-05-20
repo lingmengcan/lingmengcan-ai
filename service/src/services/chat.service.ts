@@ -68,6 +68,8 @@ export class ChatService {
 
     let basePath = '';
     let openAIApiKey = 'EMPTY';
+    let modelName = '';
+
     switch (llm) {
       case 'ChatGLM2':
         // const apiUrl = this.configService.get<string>('llms.chatglm_6b_server_url');
@@ -76,15 +78,16 @@ export class ChatService {
         break;
       case 'ChatGLM3':
         basePath = this.configService.get<string>('llms.chatglm3_6b_server_url');
+        modelName = 'bge-large-zh-v1.5';
         break;
       case 'gpt-3.5-turbo':
         basePath = this.configService.get<string>('llms.openai_proxy_url');
         openAIApiKey = this.configService.get<string>('llms.openai_api_key');
+        modelName = 'text-embedding-3-small';
         break;
     }
 
     if (message.fileId) {
-      const modelName = 'bge-large-zh-v1.5';
       const vectorStore = await Chroma.fromExistingCollection(
         new OpenAIEmbeddings({ openAIApiKey, modelName }, { basePath }),
         {

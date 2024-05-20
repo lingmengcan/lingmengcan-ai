@@ -6,4 +6,7 @@ import { IsNotEmpty } from 'class-validator';
 export class FileDto {
   @IsNotEmpty()
   conversationId: string;
+
+  @IsNotEmpty()
+  llm: string;
 }

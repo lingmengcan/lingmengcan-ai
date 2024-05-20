@@ -401,7 +401,7 @@
               :show-file-list="false"
               :with-credentials="true"
               :headers="{ Authorization: `Bearer ${token}` }"
-              :data="{ conversationId }"
+              :data="{ conversationId, llm: selectedLlm }"
               @finish="afterUploaded"
             >
               <n-button>上传文件</n-button>

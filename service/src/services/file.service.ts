@@ -33,6 +33,7 @@ export class FileService {
     filePath: string,
     basePath: string,
     openAIApiKey: string,
+    modelName: string,
   ) {
     let loader: DocumentLoader;
 
@@ -59,8 +60,6 @@ export class FileService {
 
     const docs = await loader.loadAndSplit(textsplitter);
 
-    const modelName = 'bge-large-zh-v1.5';
-
     // Load the docs into the vector store
     // 加载向量存储库
     await Chroma.fromDocuments(
@@ -82,7 +81,8 @@ export class FileService {
   async chatfile(userName: string, dto: FileDto, file: Express.Multer.File) {
     let basePath = '';
     let openAIApiKey = 'EMPTY';
-    const llm: string = 'ChatGLM3';
+    let modelName = '';
+    const llm: string = dto.llm;
     switch (llm) {
       case 'ChatGLM2':
         // const apiUrl = this.configService.get<string>('llms.chatglm_6b_server_url');
@@ -91,10 +91,12 @@ export class FileService {
         break;
       case 'ChatGLM3':
         basePath = this.configService.get<string>('llms.chatglm3_6b_server_url');
+        modelName = 'bge-large-zh-v1.5';
         break;
       case 'gpt-3.5-turbo':
         basePath = this.configService.get<string>('llms.openai_proxy_url');
         openAIApiKey = this.configService.get<string>('llms.openai_api_key');
+        modelName = 'text-embedding-3-small';
         break;
     }
 
@@ -109,7 +111,7 @@ export class FileService {
       userName,
     );
 
-    await this.refactorVectorStore(fileId, fileType, file.path, basePath, openAIApiKey);
+    await this.refactorVectorStore(fileId, fileType, file.path, basePath, openAIApiKey, modelName);
 
     return fileId;
   }
