@@ -1,6 +1,6 @@
 <template>
   <div
-    class="flex items-center justify-between p-0 w-full h-16 shadow-md transition-all duration-200 z-10"
+    class="z-10 flex items-center justify-between w-full h-16 p-0 transition-all duration-200 shadow-md"
   >
     <!--顶部菜单-->
     <!--左侧菜单-->
@@ -39,7 +39,7 @@
     <div class="flex items-center mr-5">
       <!--切换全屏-->
       <div
-        class="flex items-center h-16 px-3 text-center cursor-pointer transition-all duration-200 ease-in-out"
+        class="flex items-center h-16 px-3 text-center transition-all duration-200 ease-in-out cursor-pointer"
       >
         <n-tooltip placement="bottom" class="hover:bg-gray-200">
           <template #trigger>
@@ -52,7 +52,7 @@
       </div>
       <!-- 个人中心 -->
       <div
-        class="inline-block h-16 text-center cursor-pointer transition-all duration-200 ease-in-out"
+        class="inline-block h-16 text-center transition-all duration-200 ease-in-out cursor-pointer"
       >
         <n-dropdown trigger="hover" :options="avatarOptions" @select="avatarSelect">
           <div class="flex items-center h-16 px-1 hover:bg-gray-200">
