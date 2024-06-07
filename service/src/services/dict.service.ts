@@ -85,6 +85,24 @@ export class DictService {
   }
 
   /**
+   * 字典管理列表
+   *
+   * @param dictType
+   * @returns
+   */
+  async findListByType(dictType: string) {
+    let qb = this.repository.createQueryBuilder('Dict').andWhere('Dict.status != -1');
+
+    qb = qb.andWhere('Dict.dictType like :value', {
+      value: `${dictType}`,
+    });
+
+    qb.orderBy({ 'Dict.dictType': 'ASC', 'Dict.sort': 'ASC' });
+
+    return qb.getMany();
+  }
+
+  /**
    * 修改用户状态
    *
    * @param dict 用户信息

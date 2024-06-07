@@ -83,7 +83,7 @@
   <div
     class="flex flex-col h-screen overflow-auto bg-cover bg-no-repeat bg-[url('@/assets/images/login_bg.png')] place-items-center justify-center"
   >
-    <div class="absolute flex-grow max-w-md px-3 mx-auto bg-white rounded-lg shadowlg">
+    <div class="absolute flex-grow max-w-md px-5 mx-auto bg-white rounded-lg shadowlg">
       <div class="pt-2 pb-5 text-center">
         <div>
           <img src="@/assets/images/full-logo.png" alt="" />

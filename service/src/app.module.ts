@@ -14,6 +14,7 @@ import { ChatModule } from './modules/chat.module';
 import { PromptModule } from './modules/prompt.module';
 import { DictModule } from './modules/dict.module';
 import { FileModule } from './modules/file.module';
+import { ModelModule } from './modules/model.module';
 
 @Module({
   imports: [
@@ -59,6 +60,7 @@ import { FileModule } from './modules/file.module';
     PromptModule,
     DictModule,
     FileModule,
+    ModelModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -1,33 +1,47 @@
 <template>
   <n-card :bordered="false">
-    <n-form ref="formRef" inline label-placement="left" label-width="auto" :model="queryFormData">
+    <n-form
+      ref="formRef"
+      inline
+      label-placement="left"
+      label-width="auto"
+      :model="queryFormData"
+      :show-feedback="false"
+    >
       <n-grid :cols="24" :x-gap="24">
         <n-form-item-gi :span="5" path="modelName">
-          <n-input v-model:value="modelName" placeholder="请输入模型名称" />
+          <n-input v-model:value="queryFormData.modelName" placeholder="请输入模型名称" />
         </n-form-item-gi>
-        <n-form-item-gi :span="5" path="modelCategory">
-          <n-select
-            v-model:value="modelCategory"
-            :options="categoryOptions"
-            placeholder="请选择模型分类"
+        <n-form-item-gi :span="5" path="modelType">
+          <selectDict
+            v-model:value="queryFormData.modelType"
+            :multiple="true"
+            dict-type="MODEL_TYPE"
           />
         </n-form-item-gi>
-        <n-form-item-gi :span="6">
+        <n-form-item-gi :span="8">
           <n-space>
             <n-button @click="clearQuery">重置</n-button>
-            <n-button v-permission="['system_dict_query']" type="primary" @click="handleQuery">
+            <n-button v-permission="['llm_model_index']" type="primary" @click="handleQuery">
               查询
             </n-button>
           </n-space>
         </n-form-item-gi>
+        <n-gi :span="6">
+          <div class="float-right">
+            <n-button v-permission="['llm_model_index']" type="primary" @click="handleAdd">
+              录入模型
+            </n-button>
+          </div>
+        </n-gi>
       </n-grid>
     </n-form>
   </n-card>
   <n-grid :x-gap="12" :y-gap="12" cols="4" class="my-3 overflow-auto">
-    <n-grid-item v-for="model in models" :key="model.name">
+    <n-grid-item v-for="model in modelsData" :key="model.modelId">
       <n-card
         class="w-full h-full mb-4"
-        :title="model.name"
+        :title="model.modelName"
         :segmented="{
           footer: true,
         }"
@@ -42,107 +56,184 @@
   </n-grid>
   <n-pagination
     v-model:page="page"
+    :page-size="pageSize"
+    :item-count="itemCount"
     class="justify-end"
-    :page-count="pageCount"
     show-quick-jumper
     show-size-picker
+    @update:page="handlePageChange"
   >
-    <template #prefix="{ itemCount }">共 {{ itemCount }} 条数据</template>
+    <template #prefix="{}">共 {{ itemCount }} 条数据</template>
   </n-pagination>
+
+  <!-- 新增修改模型 -->
+  <n-drawer v-model:show="showDrawer" :width="599">
+    <n-drawer-content :title="drawerTitle" closable>
+      <n-form
+        ref="drawerFormRef"
+        label-placement="left"
+        label-width="auto"
+        :model="drawerFormData"
+        :rules="drawerRules"
+      >
+        <n-form-item label="模型名称" path="modelName">
+          <n-input v-model:value="drawerFormData.modelName" placeholder="输入模型名称" />
+        </n-form-item>
+        <n-form-item label="描述" name="description">
+          <n-input
+            v-model:value="drawerFormData.description"
+            type="textarea"
+            placeholder="请输入模型描述"
+          />
+        </n-form-item>
+        <n-form-item label="模型类型" path="modelType">
+          <selectDict
+            v-model:dict-code="drawerFormData.modelType"
+            v-model:dict-name="drawerFormData.modelTypeName"
+            dict-type="MODEL_TYPE"
+          />
+        </n-form-item>
+        <n-form-item label="排序" path="sort">
+          <n-input-number v-model:value="drawerFormData.sort" :min="0" />
+        </n-form-item>
+        <n-form-item label="状态" name="status">
+          <selectDict v-model:value="drawerFormData.status" dict-type="SYS_STATUS" />
+        </n-form-item>
+      </n-form>
+      <template #footer>
+        <n-space>
+          <n-button type="primary" attr-type="button" @click="handleAddandEdit">确定</n-button>
+        </n-space>
+      </template>
+    </n-drawer-content>
+  </n-drawer>
 </template>
 
 <script setup lang="ts">
-  import { ref } from 'vue';
+  import { onMounted, ref } from 'vue';
+  import selectDict from '@/components/select/select-dict.vue';
+  import { addModel, editModel, getModelList } from '@/api/llm/model';
+  import { Model } from '@/models/model';
+  import { FormInst, useDialog, useMessage } from 'naive-ui';
+  import { RowData } from 'naive-ui/es/data-table/src/interface';
 
-  interface Model {
-    name: string;
-    description: string;
-  }
+  const message = useMessage();
+  const dialog = useDialog();
 
-  const modelName = ref<string>('');
-  const modelCategory = ref<number | null>(null);
-  const categoryOptions = ref<{ label: string; value: number }[]>([
-    { label: 'Category 1', value: 1 },
-    { label: 'Category 2', value: 2 },
-  ]);
+  const queryFormData = ref({
+    modelName: '',
+    modelType: '',
+  });
 
-  const models = ref<Model[]>([
-    {
-      name: 'Baichuan3-Turbo-128k',
-      description: '百川智能: 针对企业高频场景优化，效果大幅提升。上下文长度128K',
-    },
-    {
-      name: 'Baichuan3-Turbo',
-      description: '百川智能: 针对企业高频场景优化，效果大幅提升。上下文长度32K',
-    },
-    {
-      name: 'Baichuan4',
-      description: '百川智能大模型：SuperCLUE评测，模型能力国内第一。上下文长度：32K',
-    },
-    {
-      name: 'deepseek-chat',
-      description: '中国的深度求索（DeepSeek）公司开发的人工智能助手DeepSeek Chat',
-    },
-    {
-      name: 'aspire-acge-large',
-      description:
-        'aspire-acge-large-zh-online是一个由知己站（AcFun）和GecePie Lab开发的大型中文预训练语言模型，用于中文自然语言处理任务的性能和效果。',
-    },
-    {
-      name: 'moonshot-v1-128k',
-      description:
-        'MoonshotAI，一个多功能的人工智能助手，旨在提供信息查询、日常对话、翻译、日程管理等服务。',
-    },
-    {
-      name: 'moonshot-v1-32k',
-      description:
-        '由Moonshot Corp开发的人工智能助手，可以执行多种任务，比如信息查询、生活建议、新闻更新、商业咨询等，旨在提供一般性的帮助和信息。',
-    },
-    {
-      name: 'moonshot-v1-8k',
-      description: '由Moonshot Corp开发的人工智能助手，以帮助用户回答问题，提供建议和解决问题。',
-    },
-    {
-      name: 'HY-Fin-70-v2.2.2',
-      description: '混元金融大模型，一个由腾讯云和腾讯讯飞IT开发的智能金融助手。',
-    },
-    {
-      name: 'wenxinyiyan4',
-      description:
-        '文心一言模型，可以完成的任务包括知识问答、文本创作、知识推理、数学计算、代码理解与编写、作文、翻译等。',
-    },
-    {
-      name: 'hunyuan-13B',
-      description:
-        '腾讯公司开发的大型语言模型混元大模型（Hunyuan），主要功能是通过丰富的语义理解和计算能力，为用户提供高质量的服务。',
-    },
-    {
-      name: 'hunyuan',
-      description:
-        '基于腾讯目前的最大型语言模型-混元大模型（Hunyuan），可以回答各种类型的问题，也可以处理多种金融任务。',
-    },
-    {
-      name: 'gpt-35-turbo',
-      description: '由OpenAI开发的，基于GPT-3的模型。设计来帮助用户回答问题，提供建议和解决问题。',
-    },
-    {
-      name: 'gpt-4',
-      description: 'GPT-4（Generative Pretrained Transformer 4）是一种自然语言处理（NLP）AI模型。',
-    },
-    { name: 'baichuan13b', description: '由百川智能的工程师们开发和维护的。' },
-  ]);
-
+  const modelsData = ref<Model[]>([]);
   const page = ref<number>(1);
-  const pageCount = ref<number>(2);
+  const pageSize = ref<number>(10);
+  const itemCount = ref(0);
+
+  const showDrawer = ref(false);
+  const drawerTitle = ref('');
+
+  const formRef = ref<FormInst | null>(null);
+  const drawerFormRef = ref<FormInst | null>(null);
+
+  // 新增/修改弹窗数据初始化
+  const modelInitData: Model = {
+    modelId: '',
+    modelName: '',
+    modelType: null,
+    modelTypeName: '',
+    sort: 0,
+    status: 0,
+    description: '',
+  };
+  const drawerFormData = ref(modelInitData);
+
+  const drawerRules = {
+    modelName: { required: true, message: '模型名称必填', trigger: 'blur' },
+    description: { required: true, message: '模型描述必填', trigger: 'blur' },
+    modelType: { required: true, message: '模型类型必填', trigger: 'blur' },
+    sort: { type: 'number', required: true, message: '排序必填', trigger: 'blur' },
+    status: { required: true, message: '状态必填', trigger: 'blur' },
+  };
+
+  // 绑定表格数据
+  const query = async (currentPage: number, currentPageSize = 10) => {
+    try {
+      const requestData = {
+        ...queryFormData.value,
+        page: currentPage,
+        pageSize: currentPageSize,
+      };
+
+      const res = await getModelList(requestData);
+      if (res?.code === 0) {
+        modelsData.value = res.data?.list;
+        page.value = currentPage;
+        pageSize.value = currentPageSize;
+        itemCount.value = res.data.count;
+      }
+    } catch (err) {
+      modelsData.value = [];
+    }
+  };
 
   const handleQuery = () => {
-    console.log('Searching for:', modelName.value, modelCategory.value);
+    console.log('Searching for:', 1);
   };
 
-  const clearQuery = () => {
-    modelName.value = '';
-    modelCategory.value = null;
+  const clearQuery = () => {};
+
+  const handlePageChange = (currentPage: number) => {
+    query(currentPage, pageSize.value);
   };
+
+  // 新增
+  const handleAdd = async () => {
+    drawerTitle.value = '录入模型';
+    showDrawer.value = true;
+
+    drawerFormData.value = { ...modelInitData };
+  };
+
+  // 修改字典
+  const handleEdit = async (row: RowData) => {
+    drawerTitle.value = '修改模型';
+    showDrawer.value = true;
+
+    // 赋值
+    Object.assign(drawerFormData.value, row);
+  };
+
+  const handleAddandEdit = (e: MouseEvent) => {
+    e.preventDefault();
+    const messageReactive = message.loading('处理中', {
+      duration: 0,
+    });
+    drawerFormRef.value?.validate(async (errors) => {
+      if (!errors) {
+        const requestData: Model = drawerFormData.value;
+
+        const res = drawerFormData.value.modelId
+          ? await editModel(requestData)
+          : await addModel(requestData);
+
+        if (res?.code === 0) {
+          showDrawer.value = false;
+          drawerFormData.value = { ...modelInitData };
+          query(page.value, pageSize.value);
+        }
+      } else {
+        console.log(errors);
+        message.error('验证不通过');
+      }
+
+      messageReactive.destroy();
+    });
+  };
+
+  onMounted(async () => {
+    query(page.value, pageSize.value);
+  });
 </script>
 
 <style scoped>

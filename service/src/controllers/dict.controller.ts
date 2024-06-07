@@ -24,6 +24,18 @@ export class DictController {
   }
 
   /**
+   * 字典类型的子列表
+   *
+   * @param dto
+   * @returns
+   */
+  @UseGuards(AuthGuard('jwt'))
+  @Post('list-by-type')
+  async findListByType(@Body('dictType') dictType: string) {
+    return successJson(await this.dictService.findListByType(dictType));
+  }
+
+  /**
    * 变更状态
    *
    * @param dict
