@@ -32,7 +32,7 @@
       </n-layout-header>
 
       <n-layout-content>
-        <div class="h-screen p-2.5 pt-[74px] bg-slate-200">
+        <div class="h-screen p-2.5 pt-[74px] bg-slate-200 overflow-auto">
           <MainContent />
         </div>
       </n-layout-content>

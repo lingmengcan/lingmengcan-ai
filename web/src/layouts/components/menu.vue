@@ -25,20 +25,18 @@
   const router = useRouter();
   const asyncRouteStore = useAsyncRouteStore();
   const menus = ref<any[]>([]);
-  const selectedKeys = ref<string>(currentRoute.name as string);
+  const selectedKeys = ref(currentRoute.name);
 
   // 获取当前打开的子菜单
-  const matched = currentRoute.matched;
-  const getOpenKeys = matched && matched.length ? matched.map((item) => item.name) : [];
+  const openKeys = ref(currentRoute.matched.map((item) => item.name));
 
-  const openKeys = ref(getOpenKeys);
-
-  const getSelectedKeys = computed(() => unref(selectedKeys));
+  const getSelectedKeys = computed(() => selectedKeys.value);
 
   // 跟随页面路由变化，切换菜单选中状态
   watch(
     () => currentRoute.fullPath,
     () => {
+      updateKeys();
       updateMenu();
     },
   );
@@ -57,18 +55,16 @@
       }
     } else {
       const parentKey = openKeys.value.shift();
+
       const items = dataMenus.find((item) => item.key === parentKey);
+
       menus.value = items ? items.children : [];
     }
-
-    updateSelectedKeys();
   }
 
-  function updateSelectedKeys() {
-    const matched = currentRoute.matched;
-    openKeys.value = matched.map((item) => item.name);
-
-    selectedKeys.value = currentRoute.name as string;
+  function updateKeys() {
+    openKeys.value = currentRoute.matched.map((item) => item.name);
+    selectedKeys.value = currentRoute.name;
   }
 
   // 点击菜单
