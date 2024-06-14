@@ -38,16 +38,18 @@
     </n-form>
   </n-card>
   <n-grid :x-gap="12" :y-gap="12" cols="4" class="my-3 overflow-auto">
-    <n-grid-item v-for="model in modelsData" :key="model.modelId">
+    <n-grid-item v-for="item in modelsData" :key="item.modelId">
       <n-card
-        class="w-full h-full mb-4"
-        :title="model.modelName"
+        footer-style="padding: 10px;"
+        class="w-full h-full"
+        :title="item.modelName"
         :segmented="{
           footer: true,
         }"
         hoverable
+        @click="handleEdit(item)"
       >
-        <div>{{ model.description }}</div>
+        <div>{{ item.description }}</div>
         <template #footer>
           <div class="text-center">调试</div>
         </template>
@@ -88,16 +90,35 @@
         </n-form-item>
         <n-form-item label="模型类型" path="modelType">
           <selectDict
-            v-model:dict-code="drawerFormData.modelType"
+            v-model:value="drawerFormData.modelType"
             v-model:dict-name="drawerFormData.modelTypeName"
             dict-type="MODEL_TYPE"
+          />
+        </n-form-item>
+        <n-form-item label="描述" name="description">
+          <n-input
+            v-model:value="drawerFormData.description"
+            type="textarea"
+            placeholder="请输入模型描述"
+          />
+        </n-form-item>
+        <n-form-item label="base url" name="baseUrl">
+          <n-input v-model:value="drawerFormData.baseUrl" placeholder="请输入模型描述" />
+        </n-form-item>
+        <n-form-item label="api key" name="apiKey">
+          <n-input v-model:value="drawerFormData.apiKey" placeholder="请输入模型描述" />
+        </n-form-item>
+        <n-form-item label="默认embedding模型" name="defaultEmbeddingModel">
+          <selectModel
+            v-model:value="drawerFormData.defaultEmbeddingModel"
+            model-type="EMBEDDING_MODEL"
           />
         </n-form-item>
         <n-form-item label="排序" path="sort">
           <n-input-number v-model:value="drawerFormData.sort" :min="0" />
         </n-form-item>
         <n-form-item label="状态" name="status">
-          <selectDict v-model:value="drawerFormData.status" dict-type="SYS_STATUS" />
+          <selectDict v-model:dict-code="drawerFormData.status" dict-type="SYS_STATUS" />
         </n-form-item>
       </n-form>
       <template #footer>
@@ -114,11 +135,10 @@
   import selectDict from '@/components/select/select-dict.vue';
   import { addModel, editModel, getModelList } from '@/api/llm/model';
   import { Model } from '@/models/model';
-  import { FormInst, useDialog, useMessage } from 'naive-ui';
-  import { RowData } from 'naive-ui/es/data-table/src/interface';
+  import { FormInst, useMessage } from 'naive-ui';
+  import selectModel from '@/components/select/select-model.vue';
 
   const message = useMessage();
-  const dialog = useDialog();
 
   const queryFormData = ref({
     modelName: '',
@@ -140,8 +160,11 @@
   const modelInitData: Model = {
     modelId: '',
     modelName: '',
-    modelType: null,
+    modelType: undefined,
     modelTypeName: '',
+    baseUrl: '',
+    apiKey: '',
+    defaultEmbeddingModel: '',
     sort: 0,
     status: 0,
     description: '',
@@ -178,10 +201,16 @@
   };
 
   const handleQuery = () => {
-    console.log('Searching for:', 1);
+    query(page.value, pageSize.value);
   };
 
-  const clearQuery = () => {};
+  const clearQuery = () => {
+    queryFormData.value = {
+      modelName: '',
+      modelType: '',
+    };
+    query(page.value, pageSize.value);
+  };
 
   const handlePageChange = (currentPage: number) => {
     query(currentPage, pageSize.value);
@@ -196,12 +225,13 @@
   };
 
   // 修改字典
-  const handleEdit = async (row: RowData) => {
+  const handleEdit = async (item: Model) => {
     drawerTitle.value = '修改模型';
     showDrawer.value = true;
 
     // 赋值
-    Object.assign(drawerFormData.value, row);
+    // 创建一个新的对象，包含 modelInitData 的属性和 item 的属性
+    drawerFormData.value = { ...modelInitData, ...item };
   };
 
   const handleAddandEdit = (e: MouseEvent) => {

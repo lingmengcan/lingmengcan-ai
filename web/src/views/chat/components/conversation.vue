@@ -18,6 +18,7 @@
   import { usePromptStore } from '@/store/modules/prompt';
   import storage from '@/utils/storage';
   import { ACCESS_TOKEN } from '@/constants';
+  import selectModel from '@/components/select/select-model.vue';
 
   defineProps({
     chatListVisable: {
@@ -51,17 +52,6 @@
   const { scrollRef, scrollToBottom, scrollToBottomIfAtBottom } = useScroll();
 
   const selectedLlm = ref('ChatGLM3');
-
-  const llmOptions = [
-    {
-      label: 'ChatGLM3',
-      value: 'ChatGLM3',
-    },
-    {
-      label: 'gpt-3.5-turbo',
-      value: 'gpt-3.5-turbo',
-    },
-  ];
 
   function handleStop() {
     if (loading.value) {
@@ -301,11 +291,10 @@
         <div
           class="relative z-0 w-52 h-[40px] mr-9 bg-gray-200 rounded-sm text-neutral-800 text-sm flex items-center"
         >
-          <n-select
-            v-model:value="selectedLlm"
-            :bordered="false"
-            :options="llmOptions"
+          <selectModel
+            v-model:modelName="selectedLlm"
             class="llm-select"
+            model-type="GENERAL_MODEL"
           />
           <n-popover ref="popoverParamRef" trigger="click" placement="bottom-end" width="400">
             <template #trigger>

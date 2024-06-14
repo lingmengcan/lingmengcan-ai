@@ -6,7 +6,7 @@ export class Model {
   @PrimaryGeneratedColumn({ type: 'bigint', name: 'model_id', unsigned: true })
   modelId: string;
 
-  @Column('varchar', { name: 'model_name', length: 32 })
+  @Column('varchar', { name: 'model_name', length: 128 })
   modelName: string;
 
   @Column('varchar', { name: 'model_type', length: 32 })
@@ -14,6 +14,15 @@ export class Model {
 
   @Column('varchar', { name: 'model_type_name', length: 32 })
   modelTypeName: string;
+
+  @Column('varchar', { name: 'base_url', length: 512 })
+  baseUrl: string;
+
+  @Column('varchar', { name: 'api_key', length: 128 })
+  apiKey: string;
+
+  @Column('varchar', { name: 'default_embedding_model', length: 128 })
+  defaultEmbeddingModel: string;
 
   @Column('int', { name: 'sort' })
   sort: number;
