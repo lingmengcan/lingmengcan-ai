@@ -4,9 +4,10 @@ import { Module } from '@nestjs/common';
 import { ConversationModule } from './conversation.module';
 import { MessageModule } from './message.module';
 import { ConfigModule } from '@nestjs/config';
+import { ModelModule } from './model.module';
 
 @Module({
-  imports: [ConfigModule, ConversationModule, MessageModule],
+  imports: [ConfigModule, ConversationModule, MessageModule, ModelModule],
   controllers: [ChatController],
   providers: [ChatService],
   exports: [ChatService],

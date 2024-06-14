@@ -344,7 +344,8 @@
     showDrawer.value = true;
 
     // 赋值
-    Object.assign(drawerFormData.value, row);
+    // 创建一个新的对象，包含 modelInitData 的属性和 item 的属性
+    drawerFormData.value = { ...userInitData, ...row };
   };
 
   const handleAddandEdit = (e: MouseEvent) => {

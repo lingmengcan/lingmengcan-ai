@@ -2,8 +2,11 @@
 export interface Model {
   modelId: string;
   modelName: string;
-  modelType: string | null;
+  modelType?: string;
   modelTypeName?: string;
+  baseUrl?: string;
+  apiKey?: string;
+  defaultEmbeddingModel?: string;
   sort: number;
   status: number | null;
   description?: string;

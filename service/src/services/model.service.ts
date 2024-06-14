@@ -29,14 +29,19 @@ export class ModelService {
     });
   }
 
-  findByModelName(modelname: string): Promise<Model> {
+  /**
+   * 获取实体
+   * @param modelName
+   * @returns
+   */
+  findByModelName(modelName: string): Promise<Model> {
     return this.repository.findOne({
-      where: { modelName: modelname, status: 0 },
+      where: { modelName: modelName, status: 0 },
     });
   }
 
   /**
-   * 字典管理列表
+   * 管理列表
    *
    * @param modelDto
    * @returns
@@ -57,8 +62,9 @@ export class ModelService {
     }
 
     if (modelType) {
-      qb = qb.andWhere('Model.modelType like :value', {
-        value: '%' + modelType + '%',
+      // const modelTypeArr = modelType.split(',');
+      qb = qb.andWhere('Model.modelType IN (:...value)', {
+        value: modelType,
       });
     }
 
@@ -68,7 +74,7 @@ export class ModelService {
       });
     }
 
-    qb.orderBy({ 'Model.modelType': 'ASC', 'Model.sort': 'ASC' });
+    qb.orderBy({ 'Model.modelType': 'DESC', 'Model.sort': 'ASC' });
 
     const [list, count] = await qb.skip(skip).take(take).getManyAndCount();
     return {
@@ -77,6 +83,26 @@ export class ModelService {
       pageSize,
       count,
     };
+  }
+
+  /**
+   * 列表
+   *
+   * @param modelType
+   * @returns
+   */
+  async findListByType(modelType: string) {
+    let qb = this.repository.createQueryBuilder('Model').andWhere('Model.status = 0');
+
+    if (modelType) {
+      qb = qb.andWhere('Model.modelType = :value', {
+        value: modelType,
+      });
+    }
+
+    qb.orderBy({ 'Model.sort': 'ASC' });
+
+    return qb.getMany();
   }
 
   /**
@@ -104,6 +130,9 @@ export class ModelService {
     entity.modelName = model.modelName;
     entity.modelTypeName = model.modelTypeName;
     entity.modelType = model.modelType;
+    entity.baseUrl = model.baseUrl;
+    entity.apiKey = model.apiKey;
+    entity.defaultEmbeddingModel = model.defaultEmbeddingModel;
     entity.sort = model.sort;
     entity.status = model.status;
     entity.description = model.description;
@@ -126,6 +155,9 @@ export class ModelService {
     entity.modelName = model.modelName;
     entity.modelTypeName = model.modelTypeName;
     entity.modelType = model.modelType;
+    entity.baseUrl = model.baseUrl;
+    entity.apiKey = model.apiKey;
+    entity.defaultEmbeddingModel = model.defaultEmbeddingModel;
     entity.sort = model.sort;
     entity.status = model.status;
     entity.description = model.description ?? '';

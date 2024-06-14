@@ -24,6 +24,18 @@ export class ModelController {
   }
 
   /**
+   * model列表
+   *
+   * @param dto
+   * @returns
+   */
+  @UseGuards(AuthGuard('jwt'))
+  @Post('list-by-type')
+  async findListByType(@Body('modelType') modelType: string) {
+    return successJson(await this.modelService.findListByType(modelType));
+  }
+
+  /**
    * 变更状态
    *
    * @param model

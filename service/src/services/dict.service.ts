@@ -85,19 +85,19 @@ export class DictService {
   }
 
   /**
-   * 字典管理列表
+   * 字典列表
    *
    * @param dictType
    * @returns
    */
   async findListByType(dictType: string) {
-    let qb = this.repository.createQueryBuilder('Dict').andWhere('Dict.status != -1');
+    let qb = this.repository.createQueryBuilder('Dict').andWhere('Dict.status = 0');
 
-    qb = qb.andWhere('Dict.dictType like :value', {
+    qb = qb.andWhere('Dict.dictType = :value', {
       value: `${dictType}`,
     });
 
-    qb.orderBy({ 'Dict.dictType': 'ASC', 'Dict.sort': 'ASC' });
+    // qb.orderBy({ 'Dict.sort': 'ASC' });
 
     return qb.getMany();
   }

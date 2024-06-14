@@ -17,7 +17,7 @@ export class Conversation {
   @Column('float', { name: 'temperature' })
   temperature: number;
 
-  @Column('varchar', { name: 'llm', length: 32 })
+  @Column('varchar', { name: 'llm', length: 128 })
   llm: string;
 
   @Column('tinyint', {
