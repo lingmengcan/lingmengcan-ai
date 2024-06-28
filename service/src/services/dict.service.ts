@@ -90,14 +90,21 @@ export class DictService {
    * @param dictType
    * @returns
    */
-  async findListByType(dictType: string) {
+  async findListByType(dictType: string | string[]) {
     let qb = this.repository.createQueryBuilder('Dict').andWhere('Dict.status = 0');
 
-    qb = qb.andWhere('Dict.dictType = :value', {
-      value: `${dictType}`,
-    });
+    if (dictType) {
+      // 将单个字符串转换为数组
+      const modelTypeArray = Array.isArray(dictType) ? dictType : [dictType];
 
-    // qb.orderBy({ 'Dict.sort': 'ASC' });
+      // 仅在数组不为空时添加查询条件
+      if (modelTypeArray.length > 0) {
+        qb = qb.andWhere('Dict.dictType IN (:...value)', {
+          value: modelTypeArray,
+        });
+      }
+    }
+    qb.orderBy({ 'Dict.dictType': 'ASC', 'Dict.sort': 'ASC' });
 
     return qb.getMany();
   }

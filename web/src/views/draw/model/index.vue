@@ -13,7 +13,7 @@
           <n-input v-model:value="queryFormData.modelName" placeholder="请输入模型名称" />
         </n-form-item-gi>
         <n-form-item-gi :span="5" path="modelType">
-          <selectDict v-model:dict-code="queryFormData.modelType" :multiple="true" dict-type="LLM_TYPE" />
+          <selectDict v-model:dict-code="queryFormData.modelType" :multiple="true" dict-type="DIFFUSION_MODEL_TYPE" />
         </n-form-item-gi>
         <n-form-item-gi :span="8">
           <n-space>
@@ -73,24 +73,43 @@
         <n-form-item label="模型名称" path="modelName">
           <n-input v-model:value="drawerFormData.modelName" placeholder="输入模型名称" />
         </n-form-item>
-        <n-form-item label="描述" name="description">
-          <n-input v-model:value="drawerFormData.description" type="textarea" placeholder="请输入模型描述" />
-        </n-form-item>
         <n-form-item label="模型类型" path="modelType">
           <selectDict
             v-model:dict-code="drawerFormData.modelType"
             v-model:dict-name="drawerFormData.modelTypeName"
-            dict-type="LLM_TYPE"
+            dict-type="DIFFUSION_MODEL_TYPE"
           />
         </n-form-item>
-        <n-form-item label="base url" name="baseUrl">
-          <n-input v-model:value="drawerFormData.baseUrl" placeholder="请输入模型api url" />
+        <n-form-item label="所属基础模型" name="BaseModelId">
+          <selectModel v-model:model-name="drawerFormData.baseModelId" model-type="DIFFUSION_MODEL" />
         </n-form-item>
-        <n-form-item label="api key" name="apiKey">
-          <n-input v-model:value="drawerFormData.apiKey" placeholder="请输入模型api key" />
+        <n-form-item label="模型标签" name="tags">
+          <selectDict
+            v-model:dict-code="drawerFormData.tags"
+            :multiple="true"
+            :dict-type="['DIFFUSION_TAGS', 'TOPIC', 'STYLE']"
+          />
         </n-form-item>
-        <n-form-item label="默认embedding模型" name="defaultEmbeddingModel">
-          <selectModel v-model:model-name="drawerFormData.defaultEmbeddingModel" model-type="EMBEDDING_LLM" />
+        <n-form-item label="模型描述" name="description">
+          <n-input v-model:value="drawerFormData.description" type="textarea" placeholder="请输入模型描述" />
+        </n-form-item>
+        <n-form-item label="模型封面" name="modelCover">
+          <n-upload
+            accept=".png,.jpeg,.jpg"
+            action="/api/file/upload-image"
+            @finish="afterUploaded"
+            :with-credentials="true"
+            :headers="{ Authorization: `Bearer ${token}` }"
+          >
+            <n-upload-dragger>
+              <div class="pb-1">
+                <n-icon size="30" :depth="3">
+                  <AddCircleOutline />
+                </n-icon>
+              </div>
+              <n-text>点击或者拖动文件到该区域来上传</n-text>
+            </n-upload-dragger>
+          </n-upload>
         </n-form-item>
         <n-form-item label="状态" name="status">
           <selectDict v-model:dict-code="drawerFormData.status" dict-type="SYS_STATUS" />
@@ -107,20 +126,25 @@
 
 <script setup lang="ts">
   import { onMounted, ref } from 'vue';
+  import { AddCircleOutline } from '@vicons/ionicons5';
   import selectDict from '@/components/select/select-dict.vue';
-  import { addLlm, editLlm, getLlmList } from '@/api/llm/model';
-  import { Llm } from '@/models/llm';
-  import { FormInst, useMessage } from 'naive-ui';
+  import { addDiffusionModel, editDiffusionModel, getDiffusionModelList } from '@/api/draw/model';
+  import { DiffusionModel } from '@/models/diffusion-model';
+  import { FormInst, useMessage, UploadFileInfo } from 'naive-ui';
   import selectModel from '@/components/select/select-model.vue';
+  import storage from '@/utils/storage';
+  import { ACCESS_TOKEN } from '@/constants';
 
   const message = useMessage();
+
+  const token = storage.get(ACCESS_TOKEN, '');
 
   const queryFormData = ref({
     modelName: '',
     modelType: '',
   });
 
-  const modelsData = ref<Llm[]>([]);
+  const modelsData = ref<DiffusionModel[]>([]);
   const page = ref<number>(1);
   const pageSize = ref<number>(10);
   const itemCount = ref(0);
@@ -132,16 +156,16 @@
   const drawerFormRef = ref<FormInst | null>(null);
 
   // 新增/修改弹窗数据初始化
-  const modelInitData: Llm = {
+  const modelInitData: DiffusionModel = {
     modelId: '',
+    baseModelId: '',
     modelName: '',
     modelType: undefined,
     modelTypeName: '',
-    baseUrl: '',
-    apiKey: '',
-    defaultEmbeddingModel: '',
+    modelCover: '',
     status: '0',
     description: '',
+    tags: [],
   };
   const drawerFormData = ref(modelInitData);
 
@@ -162,7 +186,7 @@
         pageSize: currentPageSize,
       };
 
-      const res = await getLlmList(requestData);
+      const res = await getDiffusionModelList(requestData);
       if (res?.code === 0) {
         modelsData.value = res.data?.list;
         page.value = currentPage;
@@ -199,7 +223,7 @@
   };
 
   // 修改字典
-  const handleEdit = async (item: Llm) => {
+  const handleEdit = async (item: DiffusionModel) => {
     drawerTitle.value = '修改模型';
     showDrawer.value = true;
 
@@ -208,6 +232,15 @@
     drawerFormData.value = { ...modelInitData, ...item, status: item.status.toString() };
   };
 
+  function afterUploaded({ file, event }: { file: UploadFileInfo; event?: ProgressEvent }) {
+    // 定义允许的文件类型数组
+    const res = JSON.parse((event?.target as XMLHttpRequest).response);
+    if (res?.code === 0) {
+      const filePath = res.data;
+      console.log(file.name, filePath);
+    }
+  }
+
   const handleAddandEdit = (e: MouseEvent) => {
     e.preventDefault();
     const messageReactive = message.loading('处理中', {
@@ -215,9 +248,11 @@
     });
     drawerFormRef.value?.validate(async (errors) => {
       if (!errors) {
-        const requestData: Llm = drawerFormData.value;
+        const requestData: DiffusionModel = drawerFormData.value;
 
-        const res = drawerFormData.value.modelId ? await editLlm(requestData) : await addLlm(requestData);
+        const res = drawerFormData.value.modelId
+          ? await editDiffusionModel(requestData)
+          : await addDiffusionModel(requestData);
 
         if (res?.code === 0) {
           showDrawer.value = false;

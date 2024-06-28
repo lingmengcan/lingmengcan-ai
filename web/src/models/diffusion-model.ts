@@ -1,24 +1,23 @@
 // 用户model
-export interface Model {
+export interface DiffusionModel {
   modelId: string;
+  baseModelId: string;
   modelName: string;
   modelType?: string;
   modelTypeName?: string;
-  baseUrl?: string;
-  apiKey?: string;
-  defaultEmbeddingModel?: string;
-  sort: number;
-  status: number | null;
+  modelCover?: string;
+  status: string;
   description?: string;
   createdUser?: string;
   updatedUser?: string;
   createdAt?: string;
   updatedAt?: string;
+  tags?: string[];
 }
 
 // 列表对象
-export interface ModelList {
-  list: Model[];
+export interface DiffusionModelList {
+  list: DiffusionModel[];
   page: number;
   pageSize: number;
   count: number;
@@ -27,7 +26,7 @@ export interface ModelList {
 /**
  * 查询对象
  */
-export interface ModelParams {
+export interface DiffusionModelParams {
   modelName: string;
   modelType: string;
   page: number;

@@ -30,7 +30,6 @@
   const emit = defineEmits(['update:chatListVisable']);
 
   const token = storage.get(ACCESS_TOKEN, '');
-  console.log(token);
 
   const temperature = ref(0.5);
   const popoverParamRef = ref<PopoverInst | null>(null);
@@ -217,7 +216,7 @@
     popoverParamRef.value?.setShow(false);
   }
 
-  async function afterUploaded({ file, event }: { file: UploadFileInfo; event?: ProgressEvent }) {
+  function afterUploaded({ file, event }: { file: UploadFileInfo; event?: ProgressEvent }) {
     // 定义允许的文件类型数组
     // messageUi.success((event?.target as XMLHttpRequest).response);
     const res = JSON.parse((event?.target as XMLHttpRequest).response);
@@ -237,9 +236,7 @@
       }
 
       return promptList
-        .filter((item: Prompt) =>
-          item.content.toLowerCase().includes(prompt.value.substring(1).toLowerCase()),
-        )
+        .filter((item: Prompt) => item.content.toLowerCase().includes(prompt.value.substring(1).toLowerCase()))
         .map((prompt: Prompt) => {
           return {
             label: prompt.content,
@@ -288,14 +285,8 @@
           </template>
         </n-button>
 
-        <div
-          class="relative z-0 w-52 h-[40px] mr-9 bg-gray-200 rounded-sm text-neutral-800 text-sm flex items-center"
-        >
-          <selectModel
-            v-model:modelName="selectedLlm"
-            class="llm-select"
-            model-type="GENERAL_MODEL"
-          />
+        <div class="relative z-0 w-52 h-[40px] mr-9 bg-gray-200 rounded-sm text-neutral-800 text-sm flex items-center">
+          <selectModel v-model:modelName="selectedLlm" class="llm-select" model-type="GENERAL_LLM" />
           <n-popover ref="popoverParamRef" trigger="click" placement="bottom-end" width="400">
             <template #trigger>
               <n-button :bordered="false" class="action-button action-button-border-l">
@@ -350,12 +341,8 @@
     <div class="flex flex-col justify-center flex-auto overflow-hidden">
       <div id="scrollRef" ref="scrollRef" class="h-screen p-1 overflow-x-hidden">
         <template v-if="!conversation?.messages?.length">
-          <div
-            class="flex flex-col justify-center h-full items-center mx-auto space-y-4 max-w-[600px]"
-          >
-            <div class="text-4xl font-semibold text-center text-gray-800">
-              你好，我是一个智能对话系统
-            </div>
+          <div class="flex flex-col justify-center h-full items-center mx-auto space-y-4 max-w-[600px]">
+            <div class="text-4xl font-semibold text-center text-gray-800">你好，我是一个智能对话系统</div>
             <div class="text-base text-center text-gray-500">
               作为你的智能伙伴，可以回答问题、查找资料、提供建议和执行简单操作，帮助你更高效地获取所需信息并提供支持。
             </div>
@@ -379,9 +366,7 @@
           </div>
         </template>
       </div>
-      <div
-        class="w-full pb-2 border-transparent bg-gradient-to-b from-transparent via-white/50 to-white"
-      >
+      <div class="w-full pb-2 border-transparent bg-gradient-to-b from-transparent via-white/50 to-white">
         <div class="gap-3 mx-2 mt-6 stretch last:mb-3 md:mx-4 md:last:mb-6 lg:mx-auto lg:max-w-3xl">
           <div class="mb-1">
             <n-upload
@@ -414,12 +399,7 @@
                 @keypress="handleEnter"
               >
                 <template #suffix>
-                  <n-button
-                    :bordered="false"
-                    :loading="loading"
-                    style="width: 20px"
-                    @click="handleSubmit"
-                  >
+                  <n-button :bordered="false" :loading="loading" style="width: 20px" @click="handleSubmit">
                     <template #icon>
                       <n-icon size="16">
                         <PaperPlaneOutline />

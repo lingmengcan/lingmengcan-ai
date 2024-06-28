@@ -1,5 +1,5 @@
-import { ModelListDto } from '@/dtos/model.dto';
-import { Model } from '@/entities/model.entity';
+import { DiffusionModelListDto } from '@/dtos/model.dto';
+import { DiffusionModel } from '@/entities/diffusion-model.entity';
 import { isNullOrUndefined } from '@/utils';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -7,10 +7,10 @@ import { DataSource, Repository } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
-export class ModelService {
+export class DiffusionModelService {
   constructor(
-    @InjectRepository(Model)
-    private repository: Repository<Model>,
+    @InjectRepository(DiffusionModel)
+    private repository: Repository<DiffusionModel>,
     private dataSource: DataSource,
   ) {}
 
@@ -19,11 +19,11 @@ export class ModelService {
    * @param id
    * @returns
    */
-  findOne(id: string): Promise<Model> {
+  findOne(id: string): Promise<DiffusionModel> {
     return this.repository.findOneBy({ modelId: id });
   }
 
-  findByModelId(modelId: string): Promise<Model> {
+  findByModelId(modelId: string): Promise<DiffusionModel> {
     return this.repository.findOne({
       where: { modelId, status: 0 },
     });
@@ -34,7 +34,7 @@ export class ModelService {
    * @param modelName
    * @returns
    */
-  findByModelName(modelName: string): Promise<Model> {
+  findByModelName(modelName: string): Promise<DiffusionModel> {
     return this.repository.findOne({
       where: { modelName: modelName, status: 0 },
     });
@@ -43,38 +43,45 @@ export class ModelService {
   /**
    * 管理列表
    *
-   * @param modelDto
+   * @param dto
    * @returns
    */
-  async findAll(modelDto: ModelListDto) {
-    const { modelName, modelType, status, page, pageSize } = modelDto;
+  async findAll(dto: DiffusionModelListDto) {
+    const { modelName, modelType, status, page, pageSize } = dto;
     // 默认首页
     const skip = page && pageSize ? (page - 1) * pageSize : 0;
 
     // 默认20条数据
     const take = pageSize ? pageSize : 20;
-    let qb = this.repository.createQueryBuilder('Model').andWhere('Model.status != -1');
+    let qb = this.repository
+      .createQueryBuilder('DiffusionModel')
+      .andWhere('DiffusionModel.status != -1');
 
     if (modelName) {
-      qb = qb.andWhere('Model.modelName like :value', {
+      qb = qb.andWhere('DiffusionModel.modelName like :value', {
         value: '%' + modelName + '%',
       });
     }
 
     if (modelType) {
-      // const modelTypeArr = modelType.split(',');
-      qb = qb.andWhere('Model.modelType IN (:...value)', {
-        value: modelType,
-      });
+      // 将单个字符串转换为数组
+      const modelTypeArray = Array.isArray(modelType) ? modelType : [modelType];
+
+      // 仅在数组不为空时添加查询条件
+      if (modelTypeArray.length > 0) {
+        qb = qb.andWhere('DiffusionModel.modelType IN (:...value)', {
+          value: modelTypeArray,
+        });
+      }
     }
 
     if (!isNullOrUndefined(status)) {
-      qb = qb.andWhere('Model.status = :value', {
+      qb = qb.andWhere('DiffusionModel.status = :value', {
         value: status,
       });
     }
 
-    qb.orderBy({ 'Model.modelType': 'DESC', 'Model.sort': 'ASC' });
+    qb.orderBy({ 'DiffusionModel.modelType': 'DESC', 'DiffusionModel.modelName': 'ASC' });
 
     const [list, count] = await qb.skip(skip).take(take).getManyAndCount();
     return {
@@ -92,15 +99,17 @@ export class ModelService {
    * @returns
    */
   async findListByType(modelType: string) {
-    let qb = this.repository.createQueryBuilder('Model').andWhere('Model.status = 0');
+    let qb = this.repository
+      .createQueryBuilder('DiffusionModel')
+      .andWhere('DiffusionModel.status = 0');
 
     if (modelType) {
-      qb = qb.andWhere('Model.modelType = :value', {
+      qb = qb.andWhere('DiffusionModel.modelType = :value', {
         value: modelType,
       });
     }
 
-    qb.orderBy({ 'Model.sort': 'ASC' });
+    qb.orderBy({ 'DiffusionModel.modelName': 'ASC' });
 
     return qb.getMany();
   }
@@ -111,7 +120,7 @@ export class ModelService {
    * @param model 信息
    * @return 结果
    */
-  async updateStatus(model: Model) {
+  async updateStatus(model: DiffusionModel) {
     const entity = await this.findOne(model.modelId);
     entity.status = model.status;
     entity.updatedUser = model.updatedUser;
@@ -125,15 +134,13 @@ export class ModelService {
    * @param model 用户信息
    * @return 结果
    */
-  async updateModel(model: Model) {
+  async updateModel(model: DiffusionModel) {
     const entity = await this.findOne(model.modelId);
+    entity.baseModelId = model.baseModelId;
     entity.modelName = model.modelName;
     entity.modelTypeName = model.modelTypeName;
     entity.modelType = model.modelType;
-    entity.baseUrl = model.baseUrl;
-    entity.apiKey = model.apiKey;
-    entity.defaultEmbeddingModel = model.defaultEmbeddingModel;
-    entity.sort = model.sort;
+    entity.modelCover = model.modelCover;
     entity.status = model.status;
     entity.description = model.description;
     entity.updatedUser = model.updatedUser;
@@ -147,20 +154,18 @@ export class ModelService {
    * @param model 信息
    * @return 结果
    */
-  async addModel(model: Model) {
+  async addModel(model: DiffusionModel) {
     const modelId = uuidv4();
 
-    const entity = new Model();
+    const entity = new DiffusionModel();
     entity.modelId = modelId;
+    entity.baseModelId = model.baseModelId;
     entity.modelName = model.modelName;
     entity.modelTypeName = model.modelTypeName;
     entity.modelType = model.modelType;
-    entity.baseUrl = model.baseUrl;
-    entity.apiKey = model.apiKey;
-    entity.defaultEmbeddingModel = model.defaultEmbeddingModel;
-    entity.sort = model.sort;
+    entity.modelCover = model.modelCover;
     entity.status = model.status;
-    entity.description = model.description ?? '';
+    entity.description = model.description;
     entity.createdUser = model.createdUser;
     entity.updatedUser = model.updatedUser;
     entity.createdAt = new Date();

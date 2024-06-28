@@ -12,6 +12,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { MessageModule } from './message.module';
 import { ChatModule } from './chat.module';
+import { ModelModule } from './model.module';
 
 @Module({
   imports: [
@@ -47,6 +48,7 @@ import { ChatModule } from './chat.module';
     ConfigModule,
     MessageModule,
     ChatModule,
+    ModelModule,
   ],
   controllers: [FileController],
   providers: [FileService],

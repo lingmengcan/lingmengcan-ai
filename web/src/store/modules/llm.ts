@@ -1,23 +1,22 @@
 import { defineStore } from 'pinia';
 import { store } from '@/store';
-import { Model } from '@/models/model';
+import { Llm } from '@/models/llm';
 import { ResultEnum } from '@/constants';
-import { getModelListByType } from '@/api/llm/model';
+import { getLlmListByType } from '@/api/llm/model';
 
-export const useModelStore = defineStore({
+export const useLlmStore = defineStore({
   id: 'app-model',
-  state: (): Model => ({
+  state: (): Llm => ({
     modelId: '',
     modelName: '',
     modelType: '',
-    sort: 0,
-    status: 0,
+    status: '0',
   }),
 
   actions: {
     // 按字典类型获取所有子字典列表
-    async getModelListByType(modelType: string) {
-      const res = await getModelListByType(modelType);
+    async getLlmListByType(modelType: string) {
+      const res = await getLlmListByType(modelType);
 
       if (res && res.code === ResultEnum.SUCCESS) {
         return res.data;
@@ -28,6 +27,6 @@ export const useModelStore = defineStore({
 });
 
 // Need to be used outside the setup
-export function useModel() {
-  return useModelStore(store);
+export function useLlm() {
+  return useLlmStore(store);
 }

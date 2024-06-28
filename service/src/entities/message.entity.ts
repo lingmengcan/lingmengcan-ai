@@ -29,7 +29,7 @@ export class Message {
 
   @Column('tinyint', {
     name: 'status',
-    comment: '1 deleted, 0 normal，1 deactivated',
+    comment: '1 deleted, 0 normal, 1 deactivated',
   })
   @IsNotEmpty()
   status: number;

@@ -1,22 +1,25 @@
 import { IsNotEmpty } from 'class-validator';
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity('dict')
-export class Dict {
-  @PrimaryGeneratedColumn({ type: 'bigint', name: 'dict_id', unsigned: true })
-  dictId: string;
+@Entity('diffusion_model')
+export class DiffusionModel {
+  @PrimaryGeneratedColumn({ type: 'bigint', name: 'model_id', unsigned: true })
+  modelId: string;
 
-  @Column('varchar', { name: 'dict_name', length: 32 })
-  dictName: string;
+  @Column({ type: 'bigint', name: 'base_model_id' })
+  baseModelId: string;
 
-  @Column('varchar', { name: 'dict_code', length: 32 })
-  dictCode: string;
+  @Column('varchar', { name: 'model_name', length: 128 })
+  modelName: string;
 
-  @Column('varchar', { name: 'dict_type', length: 32 })
-  dictType: string;
+  @Column('varchar', { name: 'model_type', length: 32 })
+  modelType: string;
 
-  @Column('int', { name: 'sort' })
-  sort: number;
+  @Column('varchar', { name: 'model_type_name', length: 32 })
+  modelTypeName: string;
+
+  @Column('varchar', { name: 'model_cover', length: 255 })
+  modelCover: string;
 
   @Column('tinyint', {
     name: 'status',

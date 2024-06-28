@@ -1,7 +1,7 @@
 import './styles/tailwind.css';
 
 import { createApp } from 'vue';
-import { setupDirectives, setupNaive, setupNaiveDiscreteApi } from '@/plugins';
+import { setupDirectives, setupNaiveDiscreteApi } from '@/plugins';
 
 import App from './App.vue';
 
@@ -15,7 +15,7 @@ async function bootstrap() {
   setupStore(app);
 
   // 注册全局常用的 naive-ui 组件
-  setupNaive(app);
+  // setupNaive(app);
   // 挂载 naive-ui 脱离上下文的 Api
   setupNaiveDiscreteApi();
 

@@ -1,8 +1,8 @@
 import { IsNotEmpty } from 'class-validator';
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity('model')
-export class Model {
+@Entity('llm')
+export class Llm {
   @PrimaryGeneratedColumn({ type: 'bigint', name: 'model_id', unsigned: true })
   modelId: string;
 
@@ -24,12 +24,9 @@ export class Model {
   @Column('varchar', { name: 'default_embedding_model', length: 128 })
   defaultEmbeddingModel: string;
 
-  @Column('int', { name: 'sort' })
-  sort: number;
-
   @Column('tinyint', {
     name: 'status',
-    comment: '-1 deleted, 0 normal，1 deactivated',
+    comment: '-1 deleted, 0 normal, 1 deactivated',
   })
   @IsNotEmpty()
   status: number;

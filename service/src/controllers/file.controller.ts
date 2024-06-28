@@ -37,7 +37,18 @@ export class FileController {
 
     const fileId = await this.fileService.chatfile(userName, dto, file);
 
-    console.log(fileId);
     return successJson(fileId);
+  }
+
+  /**
+   * upload
+   *
+   * @returns
+   */
+  @UseGuards(AuthGuard('jwt'))
+  @UseInterceptors(FileInterceptor('file'))
+  @Post('upload-image')
+  async uploadImage(@Request() req: any, @UploadedFile() file: Express.Multer.File) {
+    return successJson(file.path);
   }
 }

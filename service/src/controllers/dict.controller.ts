@@ -31,7 +31,7 @@ export class DictController {
    */
   @UseGuards(AuthGuard('jwt'))
   @Post('list-by-type')
-  async findListByType(@Body('dictType') dictType: string) {
+  async findListByType(@Body('dictType') dictType: string | string[]) {
     return successJson(await this.dictService.findListByType(dictType));
   }
 

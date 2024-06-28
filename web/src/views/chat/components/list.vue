@@ -1,11 +1,5 @@
 <script lang="ts" setup>
-  import {
-    ChatboxOutline,
-    TrashOutline,
-    PencilOutline,
-    CloseOutline,
-    CheckmarkOutline,
-  } from '@vicons/ionicons5';
+  import { ChatboxOutline, TrashOutline, PencilOutline, CloseOutline, CheckmarkOutline } from '@vicons/ionicons5';
   import { computed, onMounted } from 'vue';
   import { useChatStore } from '@/store/modules/chat';
   import { Conversation } from '@/models/chat';
@@ -52,11 +46,7 @@
     <div class="mt-4">
       <div class="flex flex-col w-full gap-4">
         <div v-for="(item, index) of conversationList" :key="index">
-          <n-input
-            v-if="item.isEdit"
-            v-model:value="item.conversationName"
-            class="items-center w-full h-11"
-          >
+          <n-input v-if="item.isEdit" v-model:value="item.conversationName" class="items-center w-full h-11">
             <template #suffix>
               <n-icon
                 size="14"
@@ -66,11 +56,7 @@
                 <CheckmarkOutline />
               </n-icon>
 
-              <n-icon
-                size="14"
-                class="text-blue-800 cursor-pointer hover:text-gray-500"
-                @click="item.isEdit = false"
-              >
+              <n-icon size="14" class="text-blue-800 cursor-pointer hover:text-gray-500" @click="item.isEdit = false">
                 <CloseOutline />
               </n-icon>
             </template>
