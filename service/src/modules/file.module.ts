@@ -22,9 +22,12 @@ import { ModelModule } from './model.module';
       useFactory(configService: ConfigService) {
         return {
           storage: diskStorage({
-            //文件储存位置
-            destination:
-              configService.get<string>('files.destination') + '/' + dayjs().format('YYYY-MM-DD'),
+            // 动态文件储存位置
+            destination: (req, file, callback) => {
+              const folderPath =
+                configService.get<string>('files.destination') + '/' + dayjs().format('YYYY-MM-DD');
+              callback(null, folderPath);
+            },
             //文件名定制
             filename: (req, file, callback) => {
               const path = uuidv4() + extname(file.originalname);

@@ -80,8 +80,8 @@
             dict-type="DIFFUSION_MODEL_TYPE"
           />
         </n-form-item>
-        <n-form-item label="所属基础模型" name="BaseModelId">
-          <selectModel v-model:model-name="drawerFormData.baseModelId" model-type="DIFFUSION_MODEL" />
+        <n-form-item label="所属基础模型" name="BaseModelId" v-if="drawerFormData.modelType !== 'BASE_MODEL'">
+          <selectDiffusion v-model:model-id="drawerFormData.baseModelId" model-type="BASE_MODEL" />
         </n-form-item>
         <n-form-item label="模型标签" name="tags">
           <selectDict
@@ -97,18 +97,14 @@
           <n-upload
             accept=".png,.jpeg,.jpg"
             action="/api/file/upload-image"
+            :max="1"
+            list-type="image-card"
+            :default-file-list="modelCoverRef"
             @finish="afterUploaded"
-            :with-credentials="true"
+            with-credentials
             :headers="{ Authorization: `Bearer ${token}` }"
           >
-            <n-upload-dragger>
-              <div class="pb-1">
-                <n-icon size="30" :depth="3">
-                  <AddCircleOutline />
-                </n-icon>
-              </div>
-              <n-text>点击或者拖动文件到该区域来上传</n-text>
-            </n-upload-dragger>
+            点击上传
           </n-upload>
         </n-form-item>
         <n-form-item label="状态" name="status">
@@ -126,12 +122,11 @@
 
 <script setup lang="ts">
   import { onMounted, ref } from 'vue';
-  import { AddCircleOutline } from '@vicons/ionicons5';
   import selectDict from '@/components/select/select-dict.vue';
   import { addDiffusionModel, editDiffusionModel, getDiffusionModelList } from '@/api/draw/model';
   import { DiffusionModel } from '@/models/diffusion-model';
   import { FormInst, useMessage, UploadFileInfo } from 'naive-ui';
-  import selectModel from '@/components/select/select-model.vue';
+  import selectDiffusion from '@/components/select/select-diffusion.vue';
   import storage from '@/utils/storage';
   import { ACCESS_TOKEN } from '@/constants';
 
@@ -158,7 +153,7 @@
   // 新增/修改弹窗数据初始化
   const modelInitData: DiffusionModel = {
     modelId: '',
-    baseModelId: '',
+    baseModelId: undefined,
     modelName: '',
     modelType: undefined,
     modelTypeName: '',
@@ -168,6 +163,7 @@
     tags: [],
   };
   const drawerFormData = ref(modelInitData);
+  const modelCoverRef = ref<UploadFileInfo[]>([]);
 
   const drawerRules = {
     modelName: { required: true, message: '模型名称必填', trigger: 'blur' },
@@ -220,6 +216,7 @@
     showDrawer.value = true;
 
     drawerFormData.value = { ...modelInitData };
+    modelCoverRef.value = [];
   };
 
   // 修改字典
@@ -230,6 +227,17 @@
     // 赋值
     // 创建一个新的对象，包含 modelInitData 的属性和 item 的属性
     drawerFormData.value = { ...modelInitData, ...item, status: item.status.toString() };
+
+    if (item.modelCover) {
+      modelCoverRef.value = [
+        {
+          id: '1',
+          name: '模型封面',
+          status: 'finished',
+          url: `${import.meta.env.VITE_APP_CDN_BASEURL}${item.modelCover}`,
+        },
+      ];
+    }
   };
 
   function afterUploaded({ file, event }: { file: UploadFileInfo; event?: ProgressEvent }) {
@@ -237,7 +245,9 @@
     const res = JSON.parse((event?.target as XMLHttpRequest).response);
     if (res?.code === 0) {
       const filePath = res.data;
-      console.log(file.name, filePath);
+
+      drawerFormData.value.modelCover = filePath;
+      console.log(file.fullPath);
     }
   }
 
@@ -249,6 +259,7 @@
     drawerFormRef.value?.validate(async (errors) => {
       if (!errors) {
         const requestData: DiffusionModel = drawerFormData.value;
+        console.log(requestData);
 
         const res = drawerFormData.value.modelId
           ? await editDiffusionModel(requestData)

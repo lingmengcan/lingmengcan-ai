@@ -4,7 +4,7 @@
       <div class="px-4">
         <span class="text-base">模型：</span>
         <n-tag>{{ modelName }}</n-tag>
-        <n-button type="info" class="float-right">切换</n-button>
+        <selectModel @selected="handleSelectedModel" />
       </div>
       <n-tabs size="large" justify-content="space-evenly" type="line" animated class="flex-1 overflow-hidden">
         <n-tab-pane name="txt2img" tab="文生图" class="flex flex-col h-full">
@@ -17,7 +17,13 @@
                       个性化生成
                       <span class="text-xs text-gray-400">LoRA</span>
                     </div>
-                    <n-select :options="modelOptions" />
+                    <selectLora :options="modelOptions">
+                      <template #default>
+                        <option value="option1">Option 1</option>
+                        <option value="option2">Option 2</option>
+                        <option value="option3" disabled>Option 3 (Disabled)</option>
+                      </template>
+                    </selectLora>
                   </div>
                 </n-form-item-gi>
                 <n-form-item-gi :span="6">
@@ -47,7 +53,7 @@
                   <div class="w-full">
                     <div class="pb-1">
                       生成数量
-                      <n-tag class="float-right" size="small">{{ count }}</n-tag>
+                      <n-tag class="float-right" size="small">{{ batchCount }}</n-tag>
                     </div>
                     <n-slider :min="1" :max="5" :step="1" />
                   </div>
@@ -76,8 +82,8 @@
                   <div class="w-full">
                     <div class="pb-1">
                       计算步数
-                      <span class="text-xs text-gray-400">Step</span>
-                      <n-tag class="float-right" size="small">{{ step }}</n-tag>
+                      <span class="text-xs text-gray-400">Steps</span>
+                      <n-tag class="float-right" size="small">{{ count }}</n-tag>
                     </div>
                     <n-slider :min="1" :max="5" :step="1" />
                   </div>
@@ -87,7 +93,7 @@
                     <div class="pb-1">
                       精准度
                       <span class="text-xs text-gray-400">CFG Scale</span>
-                      <n-tag class="float-right" size="small">{{ scale }}</n-tag>
+                      <n-tag class="float-right" size="small">{{ count }}</n-tag>
                     </div>
                     <n-slider :min="1" :max="5" :step="1" />
                   </div>
@@ -310,8 +316,10 @@
   </n-card>
 </template>
 
-<script setup>
+<script setup lang="ts">
   import { ref } from 'vue';
+  import selectModel from './components/select-model.vue';
+  import selectLora from './components/select-lora.vue';
 
   const modelName = ref('SD V1.5');
   const modelOptions = ref([{ label: 'Midjourney Model(5.2)', value: 'Midjourney Model(5.2)' }]);
@@ -324,18 +332,18 @@
     'nsfw, (worst quality:2), (low quality:2), (normal quality:2), lowers, monochrome, blurry, (wrong:2), (Mutated hands and fingers:1.5), text',
   );
 
-  const characterReference = ref(false);
-  const styleReference = ref(false);
+  const batchCount = ref(1);
+
+  const active = ref(false);
+  const show = ref(false);
   const styleSampler = ref(null);
   const styleOptions = ref([{ label: '无', value: null }]);
 
-  const useSeed = ref(false);
   const imageUrl = ref(null);
 
-  const generateImage = () => {
-    // Mock image generation
-    imageUrl.value = require('@/assets/4.jpeg');
-  };
+  function handleSelectedModel(item: string) {
+    modelName.value = item;
+  }
 </script>
 
 <style lang="less" scoped></style>

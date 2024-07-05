@@ -64,6 +64,7 @@ declare module 'vue' {
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SelectDict: typeof import('./src/components/select/select-dict.vue')['default']
+    SelectDiffusion: typeof import('./src/components/select/select-diffusion.vue')['default']
     SelectIcon: typeof import('./src/components/select/select-icon.vue')['default']
     SelectModel: typeof import('./src/components/select/select-model.vue')['default']
     SelectStatus: typeof import('./src/components/select/select-status.vue')['default']

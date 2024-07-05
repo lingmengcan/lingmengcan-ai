@@ -1,7 +1,7 @@
 // 用户model
 export interface DiffusionModel {
   modelId: string;
-  baseModelId: string;
+  baseModelId?: string;
   modelName: string;
   modelType?: string;
   modelTypeName?: string;

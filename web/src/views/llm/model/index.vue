@@ -139,7 +139,7 @@
     modelTypeName: '',
     baseUrl: '',
     apiKey: '',
-    defaultEmbeddingModel: '',
+    defaultEmbeddingModel: undefined,
     status: '0',
     description: '',
   };

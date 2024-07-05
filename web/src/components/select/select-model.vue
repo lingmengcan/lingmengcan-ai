@@ -36,4 +36,3 @@
 <template>
   <n-select :value="modelName" :options="options" @update:value="handleSelect" />
 </template>
-@/store/modules/llm
