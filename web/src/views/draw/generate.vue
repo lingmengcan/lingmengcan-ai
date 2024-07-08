@@ -55,27 +55,27 @@
                       生成数量
                       <n-tag class="float-right" size="small">{{ batchCount }}</n-tag>
                     </div>
-                    <n-slider :min="1" :max="5" :step="1" />
+                    <n-slider :min="1" :max="5" :step="1" v-model:value="batchCount" />
                   </div>
                 </n-form-item-gi>
-                <n-form-item-gi :span="6">
+                <n-form-item-gi :span="3">
                   <div class="w-full">
                     <div class="pb-1">
-                      尺寸
-                      <span class="text-xs text-gray-400">Size</span>
+                      宽度
+                      <span class="text-xs text-gray-400">Width</span>
+                      <n-tag class="float-right" size="small">{{ imageWidth }}</n-tag>
                     </div>
-                    <n-radio-group name="left-size">
-                      <n-radio-button value="small">512×512</n-radio-button>
-                      <n-radio-button value="medium">512×768</n-radio-button>
-                      <n-radio-button value="large">768×1152</n-radio-button>
-                      <n-radio-button value="large">1152×768</n-radio-button>
-                    </n-radio-group>
+                    <n-slider :min="64" :max="2048" :step="1" v-model:value="imageWidth" />
                   </div>
                 </n-form-item-gi>
-                <n-form-item-gi :span="6">
+                <n-form-item-gi :span="3">
                   <div class="w-full">
-                    <div class="pb-1">启用LCM加速</div>
-                    <n-select v-model:value="styleSampler" :options="styleOptions" />
+                    <div class="pb-1">
+                      高度
+                      <span class="text-xs text-gray-400">Height</span>
+                      <n-tag class="float-right" size="small">{{ imageHeight }}</n-tag>
+                    </div>
+                    <n-slider :min="64" :max="2048" :step="1" v-model:value="imageHeight" />
                   </div>
                 </n-form-item-gi>
                 <n-form-item-gi :span="3">
@@ -83,9 +83,9 @@
                     <div class="pb-1">
                       计算步数
                       <span class="text-xs text-gray-400">Steps</span>
-                      <n-tag class="float-right" size="small">{{ count }}</n-tag>
+                      <n-tag class="float-right" size="small">{{ steps }}</n-tag>
                     </div>
-                    <n-slider :min="1" :max="5" :step="1" />
+                    <n-slider :min="1" :max="99" :step="1" v-model:value="steps" />
                   </div>
                 </n-form-item-gi>
                 <n-form-item-gi :span="3">
@@ -93,9 +93,9 @@
                     <div class="pb-1">
                       精准度
                       <span class="text-xs text-gray-400">CFG Scale</span>
-                      <n-tag class="float-right" size="small">{{ count }}</n-tag>
+                      <n-tag class="float-right" size="small">{{ cfgScale }}</n-tag>
                     </div>
-                    <n-slider :min="1" :max="5" :step="1" />
+                    <n-slider :min="1" :max="30" :step="1" v-model:value="cfgScale" />
                   </div>
                 </n-form-item-gi>
                 <n-form-item-gi :span="3">
@@ -104,21 +104,24 @@
                       采样器
                       <span class="text-xs text-gray-400">Sampler</span>
                     </div>
-                    <n-select v-model:value="styleSampler" :options="styleOptions" />
+                    <selectDict v-model:dict-code="sampler" dict-type="SAMPLER" />
                   </div>
                 </n-form-item-gi>
                 <n-form-item-gi :span="3">
                   <div class="w-full">
                     <div class="pb-1">
                       使用指定种子
-                      <n-switch v-model:value="active" size="small" class="float-right" />
+                      <n-switch v-model:value="neededSeed" size="small" class="float-right">
+                        <template #checked>开</template>
+                        <template #unchecked>关</template>
+                      </n-switch>
                     </div>
-                    <n-input v-model:value="styleSampler" />
+                    <n-input v-model:value="seed" />
                   </div>
                 </n-form-item-gi>
                 <n-grid-item :span="6">
                   <n-collapse arrow-placement="right">
-                    <n-collapse-item title="ControlNet" name="1">
+                    <!-- <n-collapse-item title="ControlNet" name="1">
                       <div class="w-full">
                         <n-radio-group name="left-size">
                           <n-radio-button value="small">控制1</n-radio-button>
@@ -135,75 +138,10 @@
                         </div>
                         <n-select v-model:value="styleSampler" :options="styleOptions" />
                       </div>
-                    </n-collapse-item>
+                    </n-collapse-item> -->
                     <n-collapse-item title="高级设置" name="2">
                       <div class="w-full">
-                        <div class="pb-1">
-                          高分辨率
-                          <span class="text-xs text-gray-400">Upscale</span>
-                          <n-switch v-model:value="active" size="small" class="float-right" />
-                          <n-collapse-transition :show="show">
-                            <n-grid :cols="6" :x-gap="25">
-                              <n-form-item-gi :span="3">
-                                <div class="w-full">
-                                  <div class="pb-1">
-                                    宽度
-                                    <span class="text-xs text-gray-400">Width</span>
-                                    <n-tag class="float-right" size="small">{{ step }}</n-tag>
-                                  </div>
-                                  <n-slider :min="1" :max="3840" :step="1" />
-                                </div>
-                              </n-form-item-gi>
-                              <n-form-item-gi :span="3">
-                                <div class="w-full">
-                                  <div class="pb-1">
-                                    高度
-                                    <span class="text-xs text-gray-400">Height</span>
-                                    <n-tag class="float-right" size="small">{{ scale }}</n-tag>
-                                  </div>
-                                  <n-slider :min="1" :max="3840" :step="1" />
-                                </div>
-                              </n-form-item-gi>
-                              <n-form-item-gi :span="6">
-                                <div class="w-full">
-                                  <div class="pb-1">
-                                    裁剪以适应宽高比
-                                    <span class="text-xs text-gray-400">crop to fit</span>
-                                  </div>
-                                  <n-select v-model:value="styleSampler" :options="styleOptions" />
-                                </div>
-                              </n-form-item-gi>
-                              <n-form-item-gi :span="6">
-                                <div class="w-full">
-                                  <div class="pb-1">
-                                    高清算法1
-                                    <span class="text-xs text-gray-400">Upscaler 1</span>
-                                  </div>
-                                  <n-select v-model:value="styleSampler" :options="styleOptions" />
-                                </div>
-                              </n-form-item-gi>
-                              <n-form-item-gi :span="3">
-                                <div class="w-full">
-                                  <div class="pb-1">
-                                    高清算法2
-                                    <span class="text-xs text-gray-400">Upscaler 2</span>
-                                  </div>
-                                  <n-select v-model:value="styleSampler" :options="styleOptions" />
-                                </div>
-                              </n-form-item-gi>
-                              <n-form-item-gi :span="3">
-                                <div class="w-full">
-                                  <div class="pb-1">
-                                    算法2可见度
-                                    <n-tag class="float-right" size="small">{{ scale }}</n-tag>
-                                  </div>
-                                  <n-slider :min="0" :max="1" :step="0.01" />
-                                </div>
-                              </n-form-item-gi>
-                            </n-grid>
-                          </n-collapse-transition>
-                        </div>
-                        <div class="pb-1">
+                        <!-- <div class="pb-1">
                           面部修复
                           <span class="text-xs text-gray-400">Restore faces</span>
                           <n-switch v-model:value="active" size="small" class="float-right" />
@@ -239,21 +177,21 @@
                               </n-form-item-gi>
                             </n-grid>
                           </n-collapse-transition>
-                        </div>
+                        </div> -->
                         <div>
                           高分辨率修复
                           <span class="text-xs text-gray-400">Hires fix</span>
-                          <n-switch v-model:value="active" size="small" class="float-right" />
-                          <n-collapse-transition :show="show">
+                          <n-switch v-model:value="upscaleOpened" size="small" class="float-right" />
+                          <n-collapse-transition :show="upscaleOpened" class="pt-1">
                             <n-grid :cols="6" :x-gap="25">
                               <n-form-item-gi :span="3">
                                 <div class="w-full">
                                   <div class="pb-1">
                                     宽度
                                     <span class="text-xs text-gray-400">Width</span>
-                                    <n-tag class="float-right" size="small">{{ step }}</n-tag>
+                                    <n-tag class="float-right" size="small">{{ resizeWidth }}</n-tag>
                                   </div>
-                                  <n-slider :min="1" :max="3840" :step="1" />
+                                  <n-slider :min="512" :max="3840" :step="1" v-model:value="resizeWidth" />
                                 </div>
                               </n-form-item-gi>
                               <n-form-item-gi :span="3">
@@ -261,9 +199,11 @@
                                   <div class="pb-1">
                                     高度
                                     <span class="text-xs text-gray-400">Height</span>
-                                    <n-tag class="float-right" size="small">{{ scale }}</n-tag>
+                                    <n-tag class="float-right" size="small">
+                                      {{ resizeHeight }}
+                                    </n-tag>
                                   </div>
-                                  <n-slider :min="1" :max="3840" :step="1" />
+                                  <n-slider :min="512" :max="3840" :step="1" v-model:value="resizeHeight" />
                                 </div>
                               </n-form-item-gi>
                               <n-form-item-gi :span="6">
@@ -272,7 +212,7 @@
                                     高清化算法
                                     <span class="text-xs text-gray-400">Upscaler 1</span>
                                   </div>
-                                  <n-select v-model:value="styleSampler" :options="styleOptions" />
+                                  <selectDict v-model:dict-code="sampler" dict-type="SAMPLER" />
                                 </div>
                               </n-form-item-gi>
                               <n-form-item-gi :span="6">
@@ -280,9 +220,9 @@
                                   <div class="pb-1">
                                     高分辨率采样步数
                                     <span class="text-xs text-gray-400">Hires steps</span>
-                                    <n-tag class="float-right" size="small">{{ scale }}</n-tag>
+                                    <n-tag class="float-right" size="small">{{ hiresSteps }}</n-tag>
                                   </div>
-                                  <n-slider :min="0" :max="150" :step="1" />
+                                  <n-slider :min="0" :max="150" :step="1" v-model:value="hiresSteps" />
                                 </div>
                               </n-form-item-gi>
                               <n-form-item-gi :span="6">
@@ -290,9 +230,9 @@
                                   <div class="pb-1">
                                     重绘强度
                                     <span class="text-xs text-gray-400">Denoising strength</span>
-                                    <n-tag class="float-right" size="small">{{ scale }}</n-tag>
+                                    <n-tag class="float-right" size="small">{{ denoisingStrength }}</n-tag>
                                   </div>
-                                  <n-slider :min="0" :max="1" :step="0.01" />
+                                  <n-slider :min="0" :max="1" :step="0.1" v-model:value="denoisingStrength" />
                                 </div>
                               </n-form-item-gi>
                             </n-grid>
@@ -333,11 +273,19 @@
   );
 
   const batchCount = ref(1);
+  const imageWidth = ref(512);
+  const imageHeight = ref(512);
+  const steps = ref(20);
+  const cfgScale = ref(7);
+  const sampler = ref('k_dpmpp_2m_ karras');
+  const neededSeed = ref(false);
+  const seed = ref(-1);
+  const resizeWidth = ref(1024);
+  const resizeHeight = ref(1024);
+  const hiresSteps = ref(20);
+  const denoisingStrength = ref(0.7);
 
-  const active = ref(false);
-  const show = ref(false);
-  const styleSampler = ref(null);
-  const styleOptions = ref([{ label: '无', value: null }]);
+  const upscaleOpened = ref(false);
 
   const imageUrl = ref(null);
 
