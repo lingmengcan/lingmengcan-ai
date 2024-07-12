@@ -15,6 +15,7 @@ import { PromptModule } from './modules/prompt.module';
 import { DictModule } from './modules/dict.module';
 import { FileModule } from './modules/file.module';
 import { ModelModule } from './modules/model.module';
+import { MediaModule } from './modules/media.module';
 
 @Module({
   imports: [
@@ -46,6 +47,7 @@ import { ModelModule } from './modules/model.module';
     DictModule,
     FileModule,
     ModelModule,
+    MediaModule,
   ],
   controllers: [AppController],
   providers: [AppService],

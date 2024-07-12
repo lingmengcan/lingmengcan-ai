@@ -1,0 +1,57 @@
+export interface Txt2ImgParams {
+  prompt: string; // 文本提示，用于生成图像的主要输入
+  negativePrompt: string; // 否定提示，用于生成图像时需要避免的内容
+  styles: string[]; // 样式列表，可以包含多个样式
+  seed: number; // 随机种子，用于控制生成的随机性
+  subseed: number; // 子种子，用于进一步控制随机性
+  subseedStrength: number; // 子种子强度，控制子种子的影响力
+  seedResizeFromH: number; // 从指定高度调整种子
+  seedResizeFromW: number; // 从指定宽度调整种子
+  samplerName: string; // 采样器的名称
+  scheduler: string; // 调度器的名称
+  batchSize: number; // 每批次生成的图像数量
+  nIter: number; // 生成的迭代次数
+  steps: number; // 生成步骤数
+  cfgScale: number; // CFG比例，控制图像生成的一致性
+  width: number; // 图像宽度
+  height: number; // 图像高度
+  restoreFaces: boolean; // 是否恢复面部
+  tiling: boolean; // 是否平铺图像
+  doNotSaveSamples: boolean; // 是否保存样本
+  doNotSaveGrid: boolean; // 是否保存网格
+  eta: number; // eta参数，用于控制噪声
+  denoisingStrength: number; // 去噪强度
+  sMinUncond: number; // 无条件最小值
+  sChurn: number; // 涨落参数
+  sTmax: number; // 最大温度
+  sTmin: number; // 最小温度
+  sNoise: number; // 噪声参数
+  overrideSettings: Record<string, any>; // 覆盖设置，包含自定义的设置
+  overrideSettingsRestoreAfterwards: boolean; // 覆盖设置后是否恢复原有设置
+  refinerCheckpoint: string; // 精炼器检查点
+  refinerSwitchAt: number; // 精炼器切换点
+  disableExtraNetworks: boolean; // 是否禁用额外的网络
+  firstpassImage: string; // 第一阶段图像
+  comments: Record<string, any>; // 备注
+  enableHr: boolean; // 是否启用高分辨率
+  firstphaseWidth: number; // 第一阶段图像宽度
+  firstphaseHeight: number; // 第一阶段图像高度
+  hrScale: number; // 高分辨率缩放比例
+  hrUpscaler: string; // 高分辨率上采样器
+  hrSecondPassSteps: number; // 高分辨率第二阶段步骤数
+  hrResizeX: number; // 高分辨率调整后的宽度
+  hrResizeY: number; // 高分辨率调整后的高度
+  hrCheckpointName: string; // 高分辨率检查点名称
+  hrSamplerName: string; // 高分辨率采样器名称
+  hrScheduler: string; // 高分辨率调度器名称
+  hrPrompt: string; // 高分辨率提示
+  hrNegativePrompt: string; // 高分辨率否定提示
+  forceTaskId: string; // 强制任务ID
+  samplerIndex: string; // 采样器索引
+  scriptName: string; // 脚本名称
+  scriptArgs: []; // 脚本参数
+  sendImages: boolean; // 是否发送图像
+  saveImages: boolean; // 是否保存图像
+  alwaysonScripts: Record<string, any>; // 始终启用的脚本
+  infotext: string; // 信息文本
+}
