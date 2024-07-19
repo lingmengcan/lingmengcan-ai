@@ -4,7 +4,10 @@
       <div class="px-4">
         <span class="text-base">模型：</span>
         <n-tag>{{ modelName }}</n-tag>
-        <selectModel @selected="handleSelectedModel" />
+        <selectModel
+          v-model:model-name="txt2imgParams.override_settings.sd_model_checkpoint"
+          @selected="handleSelectedModel"
+        />
       </div>
       <n-tabs size="large" justify-content="space-evenly" type="line" animated class="flex-1 overflow-hidden">
         <n-tab-pane name="txt2img" tab="文生图" class="flex flex-col h-full">
@@ -41,7 +44,7 @@
                       <span class="text-xs text-gray-400">Negative Prompt</span>
                     </div>
                     <n-input
-                      v-model:value="txt2imgParams.negativePrompt"
+                      v-model:value="txt2imgParams.negative_prompt"
                       type="textarea"
                       rows="3"
                       placeholder="Enter negative prompt here..."
@@ -52,9 +55,9 @@
                   <div class="w-full">
                     <div class="pb-1">
                       生成数量
-                      <n-tag class="float-right" size="small">{{ txt2imgParams.batchSize }}</n-tag>
+                      <n-tag class="float-right" size="small">{{ txt2imgParams.batch_size }}</n-tag>
                     </div>
-                    <n-slider :min="1" :max="5" :step="1" v-model:value="txt2imgParams.batchSize" />
+                    <n-slider v-model:value="txt2imgParams.batch_size" :min="1" :max="5" :step="1" />
                   </div>
                 </n-form-item-gi>
                 <n-form-item-gi :span="3">
@@ -64,7 +67,7 @@
                       <span class="text-xs text-gray-400">Width</span>
                       <n-tag class="float-right" size="small">{{ txt2imgParams.width }}</n-tag>
                     </div>
-                    <n-slider :min="64" :max="2048" :step="1" v-model:value="txt2imgParams.width" />
+                    <n-slider v-model:value="txt2imgParams.width" :min="64" :max="2048" :step="1" />
                   </div>
                 </n-form-item-gi>
                 <n-form-item-gi :span="3">
@@ -74,7 +77,7 @@
                       <span class="text-xs text-gray-400">Height</span>
                       <n-tag class="float-right" size="small">{{ txt2imgParams.height }}</n-tag>
                     </div>
-                    <n-slider :min="64" :max="2048" :step="1" v-model:value="txt2imgParams.height" />
+                    <n-slider v-model:value="txt2imgParams.height" :min="64" :max="2048" :step="1" />
                   </div>
                 </n-form-item-gi>
                 <n-form-item-gi :span="3">
@@ -84,7 +87,7 @@
                       <span class="text-xs text-gray-400">Steps</span>
                       <n-tag class="float-right" size="small">{{ txt2imgParams.steps }}</n-tag>
                     </div>
-                    <n-slider :min="1" :max="99" :step="1" v-model:value="txt2imgParams.steps" />
+                    <n-slider v-model:value="txt2imgParams.steps" :min="1" :max="99" :step="1" />
                   </div>
                 </n-form-item-gi>
                 <n-form-item-gi :span="3">
@@ -92,9 +95,9 @@
                     <div class="pb-1">
                       精准度
                       <span class="text-xs text-gray-400">CFG Scale</span>
-                      <n-tag class="float-right" size="small">{{ txt2imgParams.cfgScale }}</n-tag>
+                      <n-tag class="float-right" size="small">{{ txt2imgParams.cfg_scale }}</n-tag>
                     </div>
-                    <n-slider :min="1" :max="30" :step="1" v-model:value="txt2imgParams.cfgScale" />
+                    <n-slider v-model:value="txt2imgParams.cfg_scale" :min="1" :max="30" :step="1" />
                   </div>
                 </n-form-item-gi>
                 <n-form-item-gi :span="3">
@@ -103,19 +106,17 @@
                       采样器
                       <span class="text-xs text-gray-400">Sampler</span>
                     </div>
-                    <selectDict v-model:dict-code="txt2imgParams.samplerIndex" dict-type="SAMPLER" />
+                    <selectDict
+                      v-model:dict-code="txt2imgParams.sampler_index"
+                      :dict-name="txt2imgParams.sampler_name"
+                      dict-type="SAMPLER"
+                    />
                   </div>
                 </n-form-item-gi>
                 <n-form-item-gi :span="3">
                   <div class="w-full">
-                    <div class="pb-1">
-                      使用指定种子
-                      <n-switch v-model:value="neededSeed" size="small" class="float-right">
-                        <template #checked>开</template>
-                        <template #unchecked>关</template>
-                      </n-switch>
-                    </div>
-                    <n-input v-model:value="txt2imgParams.seed" />
+                    <div class="pb-1">使用指定种子</div>
+                    <n-input-number v-model:value="txt2imgParams.seed" :show-button="false" />
                   </div>
                 </n-form-item-gi>
                 <n-grid-item :span="6">
@@ -180,17 +181,22 @@
                         <div>
                           高分辨率修复
                           <span class="text-xs text-gray-400">Hires fix</span>
-                          <n-switch v-model:value="txt2imgParams.enableHr" size="small" class="float-right" />
-                          <n-collapse-transition :show="txt2imgParams.enableHr" class="pt-1">
+                          <n-switch v-model:value="txt2imgParams.enable_hr" size="small" class="float-right" />
+                          <n-collapse-transition :show="txt2imgParams.enable_hr" class="pt-1">
                             <n-grid :cols="6" :x-gap="25">
                               <n-form-item-gi :span="3">
                                 <div class="w-full">
                                   <div class="pb-1">
                                     宽度
                                     <span class="text-xs text-gray-400">Width</span>
-                                    <n-tag class="float-right" size="small">{{ txt2imgParams.hrResizeX }}</n-tag>
+                                    <n-tag class="float-right" size="small">{{ txt2imgParams.hr_resize_x }}</n-tag>
                                   </div>
-                                  <n-slider :min="512" :max="3840" :step="1" v-model:value="txt2imgParams.hrResizeX" />
+                                  <n-slider
+                                    v-model:value="txt2imgParams.hr_resize_x"
+                                    :min="512"
+                                    :max="3840"
+                                    :step="1"
+                                  />
                                 </div>
                               </n-form-item-gi>
                               <n-form-item-gi :span="3">
@@ -199,10 +205,15 @@
                                     高度
                                     <span class="text-xs text-gray-400">Height</span>
                                     <n-tag class="float-right" size="small">
-                                      {{ txt2imgParams.hrResizeY }}
+                                      {{ txt2imgParams.hr_resize_y }}
                                     </n-tag>
                                   </div>
-                                  <n-slider :min="512" :max="3840" :step="1" v-model:value="txt2imgParams.hrResizeY" />
+                                  <n-slider
+                                    v-model:value="txt2imgParams.hr_resize_y"
+                                    :min="512"
+                                    :max="3840"
+                                    :step="1"
+                                  />
                                 </div>
                               </n-form-item-gi>
                               <n-form-item-gi :span="6">
@@ -211,7 +222,7 @@
                                     高清化算法
                                     <span class="text-xs text-gray-400">Upscaler 1</span>
                                   </div>
-                                  <selectDict v-model:dict-code="txt2imgParams.hrUpscaler" dict-type="SAMPLER" />
+                                  <selectDict v-model:dict-code="txt2imgParams.hr_upscaler" dict-type="SAMPLER" />
                                 </div>
                               </n-form-item-gi>
                               <n-form-item-gi :span="6">
@@ -220,14 +231,14 @@
                                     高分辨率采样步数
                                     <span class="text-xs text-gray-400">Hires steps</span>
                                     <n-tag class="float-right" size="small">
-                                      {{ txt2imgParams.hrSecondPassSteps }}
+                                      {{ txt2imgParams.hr_second_pass_steps }}
                                     </n-tag>
                                   </div>
                                   <n-slider
+                                    v-model:value="txt2imgParams.hr_second_pass_steps"
                                     :min="0"
                                     :max="150"
                                     :step="1"
-                                    v-model:value="txt2imgParams.hrSecondPassSteps"
                                   />
                                 </div>
                               </n-form-item-gi>
@@ -237,14 +248,14 @@
                                     重绘强度
                                     <span class="text-xs text-gray-400">Denoising strength</span>
                                     <n-tag class="float-right" size="small">
-                                      {{ txt2imgParams.denoisingStrength }}
+                                      {{ txt2imgParams.denoising_strength }}
                                     </n-tag>
                                   </div>
                                   <n-slider
+                                    v-model:value="txt2imgParams.denoising_strength"
                                     :min="0"
                                     :max="1"
                                     :step="0.1"
-                                    v-model:value="txt2imgParams.denoisingStrength"
                                   />
                                 </div>
                               </n-form-item-gi>
@@ -263,7 +274,7 @@
         <n-tab-pane name="2video" tab="视频生成" disabled>视频生成</n-tab-pane>
       </n-tabs>
       <div class="flex justify-center pt-3 border-t">
-        <n-button type="primary" @click="handleGenerate">生成图片</n-button>
+        <n-button type="primary" :loading="loading" @click="handleGenerate">生成图片</n-button>
       </div>
     </div>
   </div>
@@ -276,80 +287,61 @@
   import { ref, reactive } from 'vue';
   import selectModel from './components/select-model.vue';
   import selectLora from './components/select-lora.vue';
-  import { Txt2ImgParams } from '@/models/aigc';
-
-  const modelName = ref('SD V1.5');
+  import { Txt2ImgParams } from '@/models/draw';
+  import { txt2img } from '@/api/draw';
 
   // 新增/修改弹窗数据初始化
   const txt2imgParams: Txt2ImgParams = reactive({
     prompt:
       "Asian girl with delicate collarbones, looking at the audience and smiling. Her hair was slightly curly, and she breathed the warmth of the sun. Around her neck, there is a delicate necklace that matches the metal buckle of the tank top. The background of the picture is a blooming flower sea, which adds vitality to the whole work. The Asian girl's black hair glistened in the sun. The whole painting is full of life and artistic sense, unforgettable.",
-    negativePrompt:
+    negative_prompt:
       'nsfw, (worst quality:2), (low quality:2), (normal quality:2), lowers, monochrome, blurry, (wrong:2), (Mutated hands and fingers:1.5), text',
-    styles: [''], // 样式列表，可以包含多个样式
     seed: -1, // 随机种子，用于控制生成的随机性
-    subseed: -1, // 子种子，用于进一步控制随机性
-    subseedStrength: 0, // 子种子强度，控制子种子的影响力
-    seedResizeFromH: -1, // 从指定高度调整种子
-    seedResizeFromW: -1, // 从指定宽度调整种子
-    samplerName: '', // 采样器的名称
-    scheduler: '', // 调度器的名称
-    batchSize: 1, // 每批次生成的图像数量
-    nIter: 1, // 生成的迭代次数
+    sampler_name: 'DPM++ 2M', // 采样器的名称
+    batch_size: 1, // 每批次生成的图像数量
     steps: 20, // 生成步骤数
-    cfgScale: 7, // CFG比例，控制图像生成的一致性
+    cfg_scale: 7, // CFG比例，控制图像生成的一致性
     width: 512, // 图像宽度
     height: 512, // 图像高度
-    restoreFaces: true, // 是否恢复面部
-    tiling: true, // 是否平铺图像
-    doNotSaveSamples: false, // 是否保存样本
-    doNotSaveGrid: false, // 是否保存网格
-    eta: 0, // eta参数，用于控制噪声
-    denoisingStrength: 0.7, // 去噪强度
-    sMinUncond: 0, // 无条件最小值
-    sChurn: 0, // 涨落参数
-    sTmax: 0, // 最大温度
-    sTmin: 0, // 最小温度
-    sNoise: 0, // 噪声参数
-    overrideSettings: {}, // 覆盖设置，包含自定义的设置
-    overrideSettingsRestoreAfterwards: true, // 覆盖设置后是否恢复原有设置
-    refinerCheckpoint: '', // 精炼器检查点
-    refinerSwitchAt: 0, // 精炼器切换点
-    disableExtraNetworks: false, // 是否禁用额外的网络
-    firstpassImage: '', // 第一阶段图像
-    comments: {}, // 备注
-    enableHr: false, // 是否启用高分辨率
-    firstphaseWidth: 0, // 第一阶段图像宽度
-    firstphaseHeight: 0, // 第一阶段图像高度
-    hrScale: 2, // 高分辨率缩放比例
-    hrUpscaler: '', // 高分辨率上高清算法
-    hrSecondPassSteps: 0, // 高分辨率第二阶段步骤数
-    hrResizeX: 1024, // 高分辨率调整后的宽度
-    hrResizeY: 1024, // 高分辨率调整后的高度
-    hrCheckpointName: '', // 高分辨率检查点名称
-    hrSamplerName: '', // 高分辨率采样器名称
-    hrScheduler: '', // 高分辨率调度器名称
-    hrPrompt: '', // 高分辨率提示
-    hrNegativePrompt: '', // 高分辨率否定提示
-    forceTaskId: '', // 强制任务ID
-    samplerIndex: 'k_dpmpp_2m_ karras', // 采样方法
-    scriptName: '', // 脚本名称
-    scriptArgs: [], // lora 模型参数配置
-    sendImages: true, // 是否发送图像
-    saveImages: false, // 是否保存图像
-    alwaysonScripts: {}, // 始终启用的脚本
-    infotext: '', // 信息文本
+    denoising_strength: 0.7, // 去噪强度
+    override_settings: { sd_model_checkpoint: 'v1-5pruned-emaonly' }, // 覆盖设置，包含自定义的设置
+    enable_hr: false, // 是否启用高分辨率
+    hr_upscaler: '', // 高分辨率上高清算法
+    hr_second_pass_steps: 0, // 高分辨率第二阶段步骤数
+    hr_resize_x: 1024, // 高分辨率调整后的宽度
+    hr_resize_y: 1024, // 高分辨率调整后的高度
+    sampler_index: 'DPM++ 2M', // 采样方法
   });
 
-  const neededSeed = ref(false);
+  const modelName = ref('v1-5pruned-emaonly');
+
+  const loading = ref(false);
 
   const imageUrl = ref(null);
 
   function handleSelectedModel(item: string) {
+    txt2imgParams.override_settings.sd_model_checkpoint = item;
     modelName.value = item;
   }
 
-  function handleGenerate() {}
+  // function handleSelectedSampler(item: string) {
+  //   console.log(item);
+  //   txt2imgParams.sampler_index = item;
+  //   txt2imgParams.sampler_name = item;
+  // }
+
+  const handleGenerate = async () => {
+    loading.value = true;
+    const requestData = {
+      ...txt2imgParams,
+    };
+
+    const res = await txt2img(requestData);
+    if (res?.code === 0) {
+      console.log(res.data);
+      loading.value = false;
+    }
+  };
 </script>
 
 <style lang="less" scoped></style>

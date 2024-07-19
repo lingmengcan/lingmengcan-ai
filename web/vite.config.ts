@@ -43,6 +43,11 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ''),
       },
+      '/sdweb': {
+        target: 'http://localhost:7861',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/sdweb/, ''),
+      },
     },
   },
 });

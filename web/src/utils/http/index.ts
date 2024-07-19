@@ -1,7 +1,7 @@
 import { ACCESS_TOKEN, ResultEnum } from '@/constants';
-import DataStorage from './storage';
+import DataStorage from '@/utils/storage';
 import { useUserStore } from '@/store/modules/user';
-import HttpClient, { AxiosPlusConfig } from './axios/axiosplus';
+import AxiosPlus, { AxiosPlusConfig } from './axiosplus';
 
 export function useHttp(withToken = true) {
   const httpConfig: AxiosPlusConfig = {
@@ -11,10 +11,10 @@ export function useHttp(withToken = true) {
     },
   };
 
-  const request = new HttpClient(httpConfig);
+  const axiosPlus = new AxiosPlus(httpConfig);
 
   // request拦截器
-  request.getAxios().interceptors.request.use(
+  axiosPlus.getAxios().interceptors.request.use(
     (config) => {
       const token = DataStorage.get(ACCESS_TOKEN, '');
 
@@ -27,7 +27,7 @@ export function useHttp(withToken = true) {
   );
 
   // 响应拦截器
-  request.getAxios().interceptors.response.use(
+  axiosPlus.getAxios().interceptors.response.use(
     (response) => {
       const message = window['$message'];
 
@@ -89,7 +89,7 @@ export function useHttp(withToken = true) {
     },
   );
 
-  return request;
+  return axiosPlus;
 }
 
 export async function httpStream(url: string, data: any) {

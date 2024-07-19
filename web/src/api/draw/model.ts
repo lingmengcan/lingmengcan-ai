@@ -1,5 +1,5 @@
 import { DiffusionModel, DiffusionModelList, DiffusionModelParams } from '@/models/diffusion-model';
-import { Method } from '@/utils/axios/types';
+import { Method } from '@/utils/http/axiosplus';
 import http, { Result } from '@/utils/http';
 
 // 获取列表

@@ -1,5 +1,5 @@
 import { Llm, LlmList, LlmParams } from '@/models/llm';
-import { Method } from '@/utils/axios/types';
+import { Method } from '@/utils/http/axiosplus';
 import http, { Result } from '@/utils/http';
 
 // 获取列表

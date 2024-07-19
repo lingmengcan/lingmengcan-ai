@@ -146,7 +146,7 @@ export class LlmService {
   }
 
   /**
-   * 添加用户
+   * 添加模型
    *
    * @param model 信息
    * @return 结果

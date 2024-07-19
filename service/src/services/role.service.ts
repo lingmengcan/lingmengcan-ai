@@ -146,12 +146,7 @@ export class RoleService {
       menuIds.forEach((menuId) => {
         roleMenus.push({ roleId, menuId });
       });
-      await queryRunner.manager
-        .createQueryBuilder()
-        .insert()
-        .into(RoleMenu)
-        .values(roleMenus)
-        .execute();
+      await queryRunner.manager.createQueryBuilder().insert().into(RoleMenu).values(roleMenus).execute();
 
       // commit transaction now:
       await queryRunner.commitTransaction();

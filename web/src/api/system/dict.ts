@@ -1,5 +1,5 @@
 import { Dict, DictList, DictParams } from '@/models/dict';
-import { Method } from '@/utils/axios/types';
+import { Method } from '@/utils/http/axiosplus';
 import http, { Result } from '@/utils/http';
 
 // 获取列表

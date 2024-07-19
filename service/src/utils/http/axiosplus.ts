@@ -1,7 +1,5 @@
-import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
-import { ContentType, Method, RequestParams } from './types';
+import axios, { AxiosInstance, AxiosRequestConfig, HeadersDefaults } from 'axios';
 import qs from 'qs';
-import { Convert } from './json2model';
 
 export interface AxiosPlusConfig extends AxiosRequestConfig {
   defaultParams?: RequestParams;
@@ -37,7 +35,7 @@ export default class AxiosPlus {
   /**
    * @description: 设置通用header
    */
-  setHeader(headers: any): void {
+  setHeader(headers: HeadersDefaults): void {
     if (!this.axiosInstance) {
       return;
     }
@@ -59,7 +57,7 @@ export default class AxiosPlus {
     params?: RequestParams,
     contentType: ContentType = ContentType.json,
     optionsSource?: AxiosPlusConfig,
-  ) {
+  ): Promise<T> {
     const options: AxiosPlusConfig = Object.assign({}, this.axiosPlusConfig, optionsSource);
     const { headers } = options;
     if (headers) headers['Content-type'] = contentType;
@@ -85,7 +83,7 @@ export default class AxiosPlus {
       .then((res) => {
         const data: string = JSON.stringify(res.data);
         if (res.status >= 200 && res.status < 300) {
-          return Convert.jsonToModel(data) as T;
+          return this.jsonToModel(data) as T;
         } else {
           return Promise.reject(data);
         }
@@ -101,4 +99,37 @@ export default class AxiosPlus {
   private createAxios(config: AxiosPlusConfig): void {
     this.axiosInstance = axios.create(config);
   }
+
+  /**
+   * @description:  json转model
+   * @param {string} json
+   * @return {*}
+   */
+  public jsonToModel<T>(json: string): T {
+    return JSON.parse(json) as T;
+  }
 }
+
+export enum ContentType {
+  form = 'application/x-www-form-urlencoded',
+  json = 'application/json; charset=utf-8',
+  multipart = 'multipart/form-data',
+  stream = 'text/plain',
+}
+
+export enum Method {
+  GET = 'GET',
+  POST = 'POST',
+  PUT = 'PUT',
+  PATCH = 'PATCH',
+  DELETE = 'DELETE',
+}
+
+/**
+ * 网络请求参数
+ */
+export interface RequestParams {
+  [key: string]: any;
+}
+
+export type ResponseType = 'arraybuffer' | 'blob' | 'document' | 'json' | 'text' | 'stream';

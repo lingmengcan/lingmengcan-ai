@@ -19,3 +19,4 @@ chromadb:
 
 files:
   destination: 'upload-files'
+  aigc: 'aigc-files'

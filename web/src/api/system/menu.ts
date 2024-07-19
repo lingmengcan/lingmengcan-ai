@@ -1,5 +1,5 @@
 import { Menu, MenuParams, MenuRoute } from '@/models/menu';
-import { Method } from '@/utils/axios/types';
+import { Method } from '@/utils/http/axiosplus';
 import http, { Result } from '@/utils/http';
 
 /**
@@ -14,8 +14,7 @@ export const getMenuRoutes = () => {
 };
 
 // 获取菜单列表
-export const getMenuList = (data: MenuParams) =>
-  http.request<Result<Menu[]>>('menu/list', Method.POST, data);
+export const getMenuList = (data: MenuParams) => http.request<Result<Menu[]>>('menu/list', Method.POST, data);
 
 // 新增
 export const addMenu = (data: Menu) => http.request<Result<Menu>>('menu/add', Method.POST, data);
@@ -24,5 +23,4 @@ export const addMenu = (data: Menu) => http.request<Result<Menu>>('menu/add', Me
 export const editMenu = (data: Menu) => http.request<Result<Menu>>('menu/edit', Method.POST, data);
 
 // 删除
-export const deleteMenu = (menuId: string) =>
-  http.request<Result<Menu>>('menu/del', Method.POST, { menuId });
+export const deleteMenu = (menuId: string) => http.request<Result<Menu>>('menu/del', Method.POST, { menuId });
