@@ -43,11 +43,29 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ''),
       },
+      '/aigc-files': {
+        target: 'http://localhost:9999',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/aigc-files/, 'aigc-files'),
+      },
+      '/upload-files': {
+        target: 'http://localhost:9999',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/upload-files/, 'upload-files'),
+      },
       '/sdweb': {
         target: 'http://localhost:7861',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/sdweb/, ''),
       },
     },
+  },
+  esbuild: {
+    /** 打包时移除 console.log */
+    pure: ['console.log'],
+    /** 打包时移除 debugger */
+    drop: ['debugger'],
+    /** 打包时移除所有注释 */
+    legalComments: 'none',
   },
 });

@@ -80,7 +80,7 @@
             dict-type="DIFFUSION_MODEL_TYPE"
           />
         </n-form-item>
-        <n-form-item label="所属基础模型" name="BaseModelId" v-if="drawerFormData.modelType !== 'BASE_MODEL'">
+        <n-form-item v-if="drawerFormData.modelType !== 'BASE_MODEL'" label="所属基础模型" name="BaseModelId">
           <selectDiffusion v-model:model-id="drawerFormData.baseModelId" model-type="BASE_MODEL" />
         </n-form-item>
         <n-form-item label="模型标签" name="tags">
@@ -100,9 +100,9 @@
             :max="1"
             list-type="image-card"
             :default-file-list="modelCoverRef"
-            @finish="afterUploaded"
             with-credentials
             :headers="{ Authorization: `Bearer ${token}` }"
+            @finish="afterUploaded"
           >
             点击上传
           </n-upload>

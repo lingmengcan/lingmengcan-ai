@@ -17,7 +17,6 @@ import { AIMessage, HumanMessage } from '@langchain/core/messages';
 import { VectorStore } from '@langchain/core/vectorstores';
 import { Chroma } from '@langchain/community/vectorstores/chroma';
 import { LlmService } from './llm.service';
-import { HttpsProxyAgent } from 'https-proxy-agent';
 
 @Injectable()
 export class ChatService {
@@ -45,9 +44,7 @@ export class ChatService {
 
   // 调用大模型对话
   async chatLlm(message: Message, temperature: number, llm: string) {
-    const conversation = await this.conversationService.findByConversationId(
-      message.conversationId,
-    );
+    const conversation = await this.conversationService.findByConversationId(message.conversationId);
 
     // 变更大模型后更新
     if (temperature !== conversation.temperature || llm !== conversation.llm) {
@@ -94,13 +91,7 @@ export class ChatService {
         vectorStore,
       );
     } else {
-      return this.chatOpenAi(
-        message.messageText,
-        temperature,
-        messageHistory,
-        model.baseUrl,
-        model.apiKey,
-      );
+      return this.chatOpenAi(message.messageText, temperature, messageHistory, model.baseUrl, model.apiKey);
     }
   }
 
@@ -112,8 +103,6 @@ export class ChatService {
     basePath: string,
     openAIApiKey: string,
   ) {
-    // const proxyAgent = new HttpsProxyAgent('http://127.0.0.1:8899');
-
     //根据内容回答问题
     // Instantiate your model and prompt.
     const llm = new ChatOpenAI({ openAIApiKey, temperature, streaming: true }, { basePath });

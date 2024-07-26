@@ -274,28 +274,48 @@
         <n-tab-pane name="2video" tab="视频生成" disabled>视频生成</n-tab-pane>
       </n-tabs>
       <div class="flex justify-center pt-3 border-t">
-        <n-button type="primary" :loading="loading" @click="handleGenerate">生成图片</n-button>
+        <n-button type="primary" :loading="generating" @click="handleGenerate">生成图片</n-button>
       </div>
     </div>
+
+    <n-infinite-scroll class="flex-1 pl-5" :distance="10" @load="handleLoad">
+      <div v-masonry transition-duration="0.3s" :gutter="12">
+        <template v-if="generating">
+          <div
+            v-for="num in txt2imgParams.batch_size"
+            :key="num"
+            v-masonry-tile
+            class="flex items-center justify-center w-64 h-64 mb-3 bg-white rounded-md opacity-50"
+          >
+            <n-spin size="large" />
+          </div>
+        </template>
+
+        <div v-for="image in images" :key="image.mediaId" v-masonry-tile class="w-64 masonry-item">
+          <n-image :src="image.filePath" class="w-full mb-3 rounded-md" />
+        </div>
+      </div>
+      <div v-if="scrolling" class="flex items-center justify-center">
+        <n-spin size="small" />
+        加载中...
+      </div>
+      <div v-if="noMore" class="flex items-center justify-center">没有更多了</div>
+    </n-infinite-scroll>
   </div>
-  <n-card v-if="imageUrl">
-    <img :src="imageUrl" alt="Generated Image" style="max-width: 100%" />
-  </n-card>
 </template>
 
 <script setup lang="ts">
-  import { ref, reactive } from 'vue';
+  import { ref, reactive, onMounted, computed } from 'vue';
   import selectModel from './components/select-model.vue';
   import selectLora from './components/select-lora.vue';
-  import { Txt2ImgParams } from '@/models/draw';
-  import { txt2img } from '@/api/draw';
+  import { Media, Txt2ImgParams } from '@/models/draw';
+  import { getMediaList, txt2img } from '@/api/draw';
 
   // 新增/修改弹窗数据初始化
-  const txt2imgParams: Txt2ImgParams = reactive({
-    prompt:
-      "Asian girl with delicate collarbones, looking at the audience and smiling. Her hair was slightly curly, and she breathed the warmth of the sun. Around her neck, there is a delicate necklace that matches the metal buckle of the tank top. The background of the picture is a blooming flower sea, which adds vitality to the whole work. The Asian girl's black hair glistened in the sun. The whole painting is full of life and artistic sense, unforgettable.",
+  const txt2imgParams = reactive<Txt2ImgParams>({
+    prompt: 'masterpiece, best quality, Winter, snow, forest, sun slanting, dark clouds',
     negative_prompt:
-      'nsfw, (worst quality:2), (low quality:2), (normal quality:2), lowers, monochrome, blurry, (wrong:2), (Mutated hands and fingers:1.5), text',
+      'sfw, (worst quality:2), (low quality:2), (normal quality:2), lowers, monochrome, blurry, (wrong:2), (Mutated hands and fingers:1.5), text',
     seed: -1, // 随机种子，用于控制生成的随机性
     sampler_name: 'DPM++ 2M', // 采样器的名称
     batch_size: 1, // 每批次生成的图像数量
@@ -315,33 +335,73 @@
 
   const modelName = ref('v1-5pruned-emaonly');
 
-  const loading = ref(false);
+  const generating = ref(false);
 
-  const imageUrl = ref(null);
+  // 定义图片数组
+  const images = ref<Media[]>([]);
+  const page = ref<number>(1);
+  const pageSize = ref<number>(10);
+  const itemCount = ref(0);
+  const scrolling = ref(false);
+
+  const noMore = computed(() => pageSize.value * page.value > itemCount.value);
+  // 获取所有图片
+  const getImages = async (currentPage: number, currentPageSize = 10) => {
+    try {
+      const requestData = {
+        mediaType: 'image',
+        status: 'completed',
+        page: currentPage,
+        pageSize: currentPageSize,
+      };
+
+      const res = await getMediaList(requestData);
+
+      if (res?.code === 0) {
+        if (currentPage === 1) {
+          images.value = res.data?.list;
+        } else {
+          images.value.push(...res.data?.list);
+        }
+
+        page.value = currentPage;
+        pageSize.value = currentPageSize;
+        itemCount.value = res.data.count;
+      }
+    } catch (err) {
+      images.value = [];
+    }
+  };
 
   function handleSelectedModel(item: string) {
     txt2imgParams.override_settings.sd_model_checkpoint = item;
     modelName.value = item;
   }
 
-  // function handleSelectedSampler(item: string) {
-  //   console.log(item);
-  //   txt2imgParams.sampler_index = item;
-  //   txt2imgParams.sampler_name = item;
-  // }
-
   const handleGenerate = async () => {
-    loading.value = true;
+    generating.value = true;
     const requestData = {
       ...txt2imgParams,
     };
 
     const res = await txt2img(requestData);
+
     if (res?.code === 0) {
-      console.log(res.data);
-      loading.value = false;
+      generating.value = false;
+      await getImages(page.value, pageSize.value);
     }
   };
+
+  const handleLoad = async () => {
+    if (scrolling.value || noMore.value) return;
+    scrolling.value = true;
+    await getImages(page.value + 1, pageSize.value);
+    scrolling.value = false;
+  };
+
+  onMounted(async () => {
+    await getImages(page.value, pageSize.value);
+  });
 </script>
 
 <style lang="less" scoped></style>

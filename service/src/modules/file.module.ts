@@ -24,8 +24,7 @@ import { ModelModule } from './model.module';
           storage: diskStorage({
             // 动态文件储存位置
             destination: (req, file, callback) => {
-              const folderPath =
-                configService.get<string>('files.destination') + '/' + dayjs().format('YYYY-MM-DD');
+              const folderPath = configService.get<string>('files.destination') + '/' + dayjs().format('YYYY-MM-DD');
               callback(null, folderPath);
             },
             //文件名定制

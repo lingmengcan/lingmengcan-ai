@@ -7,9 +7,13 @@ import App from './App.vue';
 
 import router, { setupRouter } from './router';
 import { setupStore } from '@/store';
+import { VueMasonryPlugin } from 'vue-masonry';
 
 async function bootstrap() {
   const app = createApp(App);
+
+  // 瀑布流
+  app.use(VueMasonryPlugin);
 
   // 挂载状态管理
   setupStore(app);

@@ -6,6 +6,7 @@ import { Controller, UseGuards, Request, Post, Body } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiTags } from '@nestjs/swagger';
 
+@UseGuards(AuthGuard('jwt'))
 @ApiTags('dict') // 添加 接口标签 装饰器
 @Controller('dict')
 export class DictController {

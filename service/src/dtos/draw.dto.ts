@@ -1,3 +1,5 @@
+import { IsNotEmpty } from 'class-validator';
+
 export interface Txt2ImgDto {
   prompt: string; // 文本提示，用于生成图像的主要输入
   negative_prompt: string; // 否定提示，用于生成图像时需要避免的内容
@@ -60,4 +62,19 @@ export interface Txt2ImgResponse {
   images: string[];
   parameters: Record<string, unknown>;
   info: string;
+}
+
+/**
+ * 列表
+ */
+export class MediaListDto {
+  mediaType: string;
+
+  status: string;
+
+  @IsNotEmpty()
+  page: number;
+
+  @IsNotEmpty()
+  pageSize: number;
 }
