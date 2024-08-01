@@ -1,6 +1,6 @@
 # A AI Application Platform: Lingmengcan AI
 
-- <a href="./Readme.md">中文</a> ｜ <a href="./Readme.en-US.md">English</a>
+- <a href="./README.md">中文</a> ｜ <a href="./README.en-US.md">English</a>
 
 Lingmengcan AI is an AI system based on large models.Currently, it provides functions such as large language model dialogue, model management, text-to-image generation, and background role management. The technology stack used includes Stable Diffusion, OpenAI, ChatGPT, LangChainJS as the AI layer, Vue 3, Naive UI, and Tailwind CSS for the UI layer, and NestJS, LangChainJS, and MySQL for the service layer, with ChromaDB as the vector database. This project is a knowledge base enhancement solution that can achieve **fully localized** reasoning and also provides AIGC functions, focusing on solving the pain points of enterprises regarding data security protection and private domain deployment.
 
