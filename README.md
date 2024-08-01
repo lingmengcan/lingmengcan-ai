@@ -7,7 +7,7 @@ lingmengcan-ai 是一个基于大模型的 ai 系统，目前提供大语言模�
 - **大模型**: 使用 openai(ChatGPT)或者本地本地部署 ChatGLM3 (https://github.com/THUDM/ChatGLM3) ，用 openai api 的格式统一所有本地模型。
 - **对话**: 支持与大型语言模型进行高效、自然的对话交互。
 - **角色管理**: 包含一个完整的后台角色管理模块，便于用户管理和权限控制。
-- **AI 画图功能**: 本地本地部署 stable diffusion webui（https://github.com/AUTOMATIC1111/stable-diffusion-webui）。并打开api模式。
+- **AI 画图功能**: 本地本地部署 stable diffusion webui（https://github.com/AUTOMATIC1111/stable-diffusion-webui），并打开api模式。
 - **推理和训练**: 后续完善。
 - **私域化部署**: 支持完全本地化部署，无需依赖公网网络。
 
