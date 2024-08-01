@@ -1,4 +1,4 @@
-// 用户model
+// 字典
 export interface Dict {
   dictId: string;
   dictName: string;

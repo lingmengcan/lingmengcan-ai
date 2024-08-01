@@ -12,6 +12,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { MessageModule } from './message.module';
 import { ChatModule } from './chat.module';
+import { ModelModule } from './model.module';
+import fs from 'fs';
 
 @Module({
   imports: [
@@ -21,9 +23,15 @@ import { ChatModule } from './chat.module';
       useFactory(configService: ConfigService) {
         return {
           storage: diskStorage({
-            //文件储存位置
-            destination:
-              configService.get<string>('files.destination') + '/' + dayjs().format('YYYY-MM-DD'),
+            // 动态文件储存位置
+            destination: (req, file, callback) => {
+              const folderPath = configService.get<string>('files.destination') + '/' + dayjs().format('YYYY-MM-DD');
+              // 自动创建目录，如果不存在
+              if (!fs.existsSync(folderPath)) {
+                fs.mkdirSync(folderPath, { recursive: true });
+              }
+              callback(null, folderPath);
+            },
             //文件名定制
             filename: (req, file, callback) => {
               const path = uuidv4() + extname(file.originalname);
@@ -47,6 +55,7 @@ import { ChatModule } from './chat.module';
     ConfigModule,
     MessageModule,
     ChatModule,
+    ModelModule,
   ],
   controllers: [FileController],
   providers: [FileService],

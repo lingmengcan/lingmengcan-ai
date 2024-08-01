@@ -1,21 +1,25 @@
 import './styles/tailwind.css';
 
 import { createApp } from 'vue';
-import { setupDirectives, setupNaive, setupNaiveDiscreteApi } from '@/plugins';
+import { setupDirectives, setupNaiveDiscreteApi } from '@/plugins';
 
 import App from './App.vue';
 
 import router, { setupRouter } from './router';
 import { setupStore } from '@/store';
+import { VueMasonryPlugin } from 'vue-masonry';
 
 async function bootstrap() {
   const app = createApp(App);
+
+  // 瀑布流
+  app.use(VueMasonryPlugin);
 
   // 挂载状态管理
   setupStore(app);
 
   // 注册全局常用的 naive-ui 组件
-  setupNaive(app);
+  // setupNaive(app);
   // 挂载 naive-ui 脱离上下文的 Api
   setupNaiveDiscreteApi();
 

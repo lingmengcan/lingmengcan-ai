@@ -16,12 +16,12 @@ import { ChatMessageHistory } from '@langchain/community/stores/message/in_memor
 import { AIMessage, HumanMessage } from '@langchain/core/messages';
 import { VectorStore } from '@langchain/core/vectorstores';
 import { Chroma } from '@langchain/community/vectorstores/chroma';
-import { ModelService } from './model.service';
+import { LlmService } from './llm.service';
 
 @Injectable()
 export class ChatService {
   constructor(
-    private readonly modelService: ModelService,
+    private readonly llmService: LlmService,
     private readonly messageService: MessageService,
     private readonly conversationService: ConversationService,
     private readonly configService: ConfigService,
@@ -44,9 +44,7 @@ export class ChatService {
 
   // 调用大模型对话
   async chatLlm(message: Message, temperature: number, llm: string) {
-    const conversation = await this.conversationService.findByConversationId(
-      message.conversationId,
-    );
+    const conversation = await this.conversationService.findByConversationId(message.conversationId);
 
     // 变更大模型后更新
     if (temperature !== conversation.temperature || llm !== conversation.llm) {
@@ -55,8 +53,8 @@ export class ChatService {
       this.conversationService.updateConversation(conversation);
     }
 
-    // 获取问题
-    const model = await this.modelService.findByModelName(llm);
+    // 获取模型信息
+    const model = await this.llmService.findByModelName(llm);
 
     // This is where you will store your chat history.
     const messageHistory = new ChatMessageHistory();
@@ -71,23 +69,6 @@ export class ChatService {
         }
       }
     });
-
-    // switch (llm) {
-    //   case 'ChatGLM2':
-    //     // const apiUrl = this.configService.get<string>('llms.chatglm_6b_server_url');
-    //     // const res = new ChatglmService();
-    //     // return res.chat(apiUrl, message.messageText, messageHistory, temperature);
-    //     break;
-    //   case 'ChatGLM3':
-    //     basePath = this.configService.get<string>('llms.chatglm3_6b_server_url');
-    //     modelName = 'bge-large-zh-v1.5';
-    //     break;
-    //   case 'gpt-3.5-turbo':
-    //     basePath = this.configService.get<string>('llms.openai_proxy_url');
-    //     openAIApiKey = this.configService.get<string>('llms.openai_api_key');
-    //     modelName = 'text-embedding-3-small';
-    //     break;
-    // }
 
     if (message.fileId) {
       const vectorStore = await Chroma.fromExistingCollection(
@@ -110,13 +91,7 @@ export class ChatService {
         vectorStore,
       );
     } else {
-      return this.chatOpenAi(
-        message.messageText,
-        temperature,
-        messageHistory,
-        model.baseUrl,
-        model.apiKey,
-      );
+      return this.chatOpenAi(message.messageText, temperature, messageHistory, model.baseUrl, model.apiKey);
     }
   }
 
@@ -160,8 +135,6 @@ export class ChatService {
   ) {
     const result = await vectorStore.similaritySearch(message, 1);
 
-    // const fileSourceStr = result[0].metadata.source;
-    console.log(result);
     //根据内容回答问题
     // Instantiate your model and prompt.
     const llm = new ChatOpenAI({ openAIApiKey, temperature, streaming: true }, { basePath });

@@ -83,7 +83,6 @@ export function createRouterGuards(router: Router) {
   router.afterEach((to, _, failure) => {
     document.title = (to?.meta?.title as string) || document.title;
     if (isNavigationFailure(failure)) {
-      //console.log('failed navigation', failure)
     }
     const asyncRouteStore = useAsyncRoute();
     // 在这里设置需要缓存的组件名称

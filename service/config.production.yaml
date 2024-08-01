@@ -3,7 +3,7 @@ http:
   port: 9999
   prefix: 'api'
 
-mariadb:
+mysql:
   host: 'localhost'
   port: 3306
   database: 'lingmengcan-ai'
@@ -19,8 +19,7 @@ chromadb:
 
 files:
   destination: 'upload-files'
+  aigc: 'aigc-files'
 
-llms:
-  chatglm3_6b_server_url: 'http://127.0.0.1:8000/v1/'
-  openai_proxy_url: 'https://oai.hconeai.com/v1' # https://api.openai.com/v1
-  openai_api_key: 'sk-123456'
+stablediffusion:
+  apiUrl: 'http://localhost:7861'

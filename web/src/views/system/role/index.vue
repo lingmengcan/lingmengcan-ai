@@ -14,9 +14,7 @@
         <n-form-item-gi :span="6">
           <n-space>
             <n-button @click="clearQuery">重置</n-button>
-            <n-button v-permission="['system_role_query']" type="primary" @click="handleQuery">
-              查询
-            </n-button>
+            <n-button v-permission="['system_role_query']" type="primary" @click="handleQuery">查询</n-button>
           </n-space>
         </n-form-item-gi>
       </n-grid>
@@ -80,11 +78,7 @@
           </n-radio-group>
         </n-form-item>
         <n-form-item label="描述" name="description">
-          <n-input
-            v-model:value="drawerFormData.description"
-            type="textarea"
-            placeholder="请输入角色描述"
-          />
+          <n-input v-model:value="drawerFormData.description" type="textarea" placeholder="请输入角色描述" />
         </n-form-item>
       </n-form>
       <template #footer>
@@ -120,35 +114,20 @@
         <n-button type="info" ghost icon-placement="left" @click="checkedAllHandle">
           全部{{ checkedAll ? '取消' : '选择' }}
         </n-button>
-        <n-button type="primary" :table-loading="formBtnLoading" @click="confirmMenuForm">
-          提交
-        </n-button>
+        <n-button type="primary" :table-loading="formBtnLoading" @click="confirmMenuForm">提交</n-button>
       </n-space>
     </template>
   </n-modal>
 </template>
 
 <script lang="ts" setup>
-  import {
-    addRole,
-    changeRoleMenus,
-    changeRoleStatus,
-    editRole,
-    getRoleList,
-    getRoleMenuIds,
-  } from '@/api/system/role';
+  import { addRole, changeRoleMenus, changeRoleStatus, editRole, getRoleList, getRoleMenuIds } from '@/api/system/role';
   import { Role, RoleMenus, RoleParams } from '@/models/role';
   import { formatDateTime } from '@/utils';
   import { DataTableRowKey, FormInst, NButton, NSwitch, useDialog, useMessage } from 'naive-ui';
   import { h, onMounted, ref } from 'vue';
   import { useRouter } from 'vue-router';
-  import {
-    UserSwitchOutlined,
-    DeleteOutlined,
-    EditOutlined,
-    PlusOutlined,
-    MenuOutlined,
-  } from '@vicons/antd';
+  import { UserSwitchOutlined, DeleteOutlined, EditOutlined, PlusOutlined, MenuOutlined } from '@vicons/antd';
   import { getMenus } from '@/api/system/menu';
   import { handleTree } from '@/utils/menu';
   import { Menu } from '@/models/menu';
@@ -333,7 +312,7 @@
     pageCount: 1,
     showSizePicker: true,
     showQuickJumper: true,
-    pageSizes: [3, 5, 7],
+    pageSizes: [10, 20, 50],
     itemCount: 0,
     prefix({ itemCount }) {
       return `共 ${itemCount} 条`;
@@ -483,9 +462,7 @@
           updatedAt: '',
         };
 
-        const res = drawerFormData.value.roleId
-          ? await editRole(requestData)
-          : await addRole(requestData);
+        const res = drawerFormData.value.roleId ? await editRole(requestData) : await addRole(requestData);
 
         if (res?.code === 0) {
           showDrawer.value = false;

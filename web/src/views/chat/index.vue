@@ -33,10 +33,7 @@
 <template>
   <div class="flex w-full h-full overflow-hidden rounded-md">
     <div>
-      <div
-        v-if="chatListVisable"
-        class="relative flex h-full w-[260px] flex-col p-4 transition-all bg-[#ffffff99]"
-      >
+      <div v-if="chatListVisable" class="relative flex h-full w-[260px] flex-col p-4 transition-all bg-[#ffffff99]">
         <div class="flex flex-row justify-between h-10">
           <div class="flex items-center text-gray-500">
             <n-icon size="22" class="mx-2">

@@ -1,6 +1,6 @@
 import { TextLoader } from 'langchain/document_loaders/fs/text';
-import { DocxLoader } from 'langchain/document_loaders/fs/docx';
-import { PDFLoader } from 'langchain/document_loaders/fs/pdf';
+import { DocxLoader } from '@langchain/community/document_loaders/fs/docx';
+import { PDFLoader } from '@langchain/community/document_loaders/fs/pdf';
 import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter';
 import { Chroma } from '@langchain/community/vectorstores/chroma';
 import { OpenAIEmbeddings } from '@langchain/openai';
@@ -15,6 +15,7 @@ import { MessageService } from './message.service';
 import { extname } from 'path';
 import { ChatService } from './chat.service';
 import { FileDto } from '@/dtos/file.dto';
+import { LlmService } from './llm.service';
 
 export class FileService {
   constructor(
@@ -24,9 +25,20 @@ export class FileService {
     private configService: ConfigService,
     private readonly messageService: MessageService,
     private readonly chatService: ChatService,
+    private readonly llmService: LlmService,
   ) {}
 
-  //上传文件向量化
+  /**
+   * 该函数用于重构向量存储。
+   *
+   * @param {string} fileId - 文件ID
+   * @param {string} fileType - 文件类型
+   * @param {string} filePath - 文件路径
+   * @param {string} basePath - 基础路径
+   * @param {string} openAIApiKey - OpenAI API密钥
+   * @param {string} modelName - 模型名称
+   * @returns {Promise<void>}
+   */
   async refactorVectorStore(
     fileId: string,
     fileType: string,
@@ -37,6 +49,7 @@ export class FileService {
   ) {
     let loader: DocumentLoader;
 
+    // 根据文件类型选择合适的加载器
     switch (fileType) {
       case '.pdf':
         loader = new PDFLoader(filePath);
@@ -50,57 +63,35 @@ export class FileService {
       default:
         throw new Error(`Unknown file type: ${fileType}`);
     }
-    // Split the docs into chunks
-    // 文本切割,将文档拆分为块
+
+    // 文本切割,将文档拆分为块，这里要优化，不能只用中文符号切割
     const textsplitter = new RecursiveCharacterTextSplitter({
       separators: ['\n\n', '\n', '。', '！', '？'],
       chunkSize: 400,
       chunkOverlap: 100,
     });
 
+    // 加载文档并拆分
     const docs = await loader.loadAndSplit(textsplitter);
 
-    // Load the docs into the vector store
-    // 加载向量存储库
-    await Chroma.fromDocuments(
-      docs,
-      new OpenAIEmbeddings({ openAIApiKey, modelName }, { basePath }),
-      {
-        collectionName: fileId,
-        url: this.configService.get<string>('chromadb.db'),
-      },
-    );
+    const embeddings = modelName
+      ? new OpenAIEmbeddings({ openAIApiKey, modelName }, { basePath })
+      : new OpenAIEmbeddings({ openAIApiKey }, { basePath });
 
-    // const vectorStore = await MemoryVectorStore.fromDocuments(
-    //   docs,
-    //   new OpenAIEmbeddings({ openAIApiKey }, { basePath }),
-    // );
+    // 加载向量存储库
+    await Chroma.fromDocuments(docs, embeddings, {
+      collectionName: fileId,
+      url: this.configService.get<string>('chromadb.db'),
+    });
   }
 
   // 读取文档
   async chatfile(userName: string, dto: FileDto, file: Express.Multer.File) {
-    let basePath = '';
-    let openAIApiKey = 'EMPTY';
-    let modelName = '';
-    const llm: string = dto.llm;
-    switch (llm) {
-      case 'ChatGLM2':
-        // const apiUrl = this.configService.get<string>('llms.chatglm_6b_server_url');
-        // const res = new ChatglmService();
-        // return res.chat(apiUrl, message.messageText, messageHistory, temperature);
-        break;
-      case 'ChatGLM3':
-        basePath = this.configService.get<string>('llms.chatglm3_6b_server_url');
-        modelName = 'bge-large-zh-v1.5';
-        break;
-      case 'gpt-3.5-turbo':
-        basePath = this.configService.get<string>('llms.openai_proxy_url');
-        openAIApiKey = this.configService.get<string>('llms.openai_api_key');
-        modelName = 'text-embedding-3-small';
-        break;
-    }
+    // 获取模型信息
+    const model = await this.llmService.findByModelName(dto.llm);
 
     const fileType = extname(file.filename);
+
     // 上传文件
     const fileId = await this.addFile(
       dto.conversationId,
@@ -111,16 +102,28 @@ export class FileService {
       userName,
     );
 
-    await this.refactorVectorStore(fileId, fileType, file.path, basePath, openAIApiKey, modelName);
+    await this.refactorVectorStore(
+      fileId,
+      fileType,
+      file.path,
+      model.baseUrl,
+      model.apiKey,
+      model.defaultEmbeddingModel,
+    );
 
     return fileId;
   }
 
   /**
-   * 新增
+   * 新增文件
    *
-   * @param menu 信息
-   * @return 结果
+   * @param conversationId 对话ID
+   * @param fileName 文件名
+   * @param fileSize 文件大小
+   * @param fileType 文件类型
+   * @param path 文件路径
+   * @param username 用户名
+   * @return 文件ID
    */
   async addFile(
     conversationId: string,
@@ -131,7 +134,6 @@ export class FileService {
     username: string,
   ) {
     const fileId = uuidv4();
-
     const entity = new File();
     entity.fileId = fileId;
     entity.conversationId = conversationId;
@@ -144,7 +146,6 @@ export class FileService {
     entity.createdAt = new Date();
     entity.updatedAt = new Date();
     this.repository.save(entity);
-
     return fileId;
   }
 }

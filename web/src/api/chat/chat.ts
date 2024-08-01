@@ -1,10 +1,9 @@
 import { ChatParams, Conversation, Message } from '@/models/chat';
-import { Method } from '@/utils/axios/types';
+import { Method } from '@/utils/http/axiosplus';
 import http, { Result, httpStream } from '@/utils/http';
 
 // 获取对话列表
-export const getConversationList = () =>
-  http.request<Result<Conversation[]>>('chat/list', Method.POST);
+export const getConversationList = () => http.request<Result<Conversation[]>>('chat/list', Method.POST);
 
 // 新增对话
 export const addConversation = (data: Conversation) =>
@@ -27,12 +26,10 @@ export const getConversationByConversationId = (conversationId: String) =>
   http.request<Result<Conversation>>('chat/conversation/' + conversationId, Method.GET);
 
 // 新增消息
-export const addMessage = (data: Message) =>
-  http.request<Result<Message>>('chat/message/add', Method.POST, data);
+export const addMessage = (data: Message) => http.request<Result<Message>>('chat/message/add', Method.POST, data);
 
 // 更新消息
-export const editMessage = (data: Message) =>
-  http.request<Result<Message>>('chat/message/edit', Method.POST, data);
+export const editMessage = (data: Message) => http.request<Result<Message>>('chat/message/edit', Method.POST, data);
 
 // 改变状态为删除
 export const changeMessageStatus = (data: Message) =>

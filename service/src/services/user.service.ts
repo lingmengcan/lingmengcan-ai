@@ -51,26 +51,26 @@ export class UserService {
     let qb = this.repository.createQueryBuilder('User').andWhere('User.status != -1');
 
     if (userName) {
-      qb = qb.andWhere('User.userName like :value', {
-        value: '%' + userName + '%',
+      qb = qb.andWhere('User.userName like :userName', {
+        userName: '%' + userName + '%',
       });
     }
 
     if (nickName) {
-      qb = qb.andWhere('User.nickName like :value', {
-        value: '%' + nickName + '%',
+      qb = qb.andWhere('User.nickName like :nickName', {
+        nickName: '%' + nickName + '%',
       });
     }
 
     if (phone) {
-      qb = qb.andWhere('User.phone like :value', {
-        value: '%' + phone + '%',
+      qb = qb.andWhere('User.phone like :phone', {
+        phone: '%' + phone + '%',
       });
     }
 
     if (!isNullOrUndefined(status)) {
-      qb = qb.andWhere('User.status = :value', {
-        value: status,
+      qb = qb.andWhere('User.status = :status', {
+        status,
       });
     }
 

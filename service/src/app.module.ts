@@ -15,6 +15,7 @@ import { PromptModule } from './modules/prompt.module';
 import { DictModule } from './modules/dict.module';
 import { FileModule } from './modules/file.module';
 import { ModelModule } from './modules/model.module';
+import { MediaModule } from './modules/media.module';
 
 @Module({
   imports: [
@@ -26,12 +27,12 @@ import { ModelModule } from './modules/model.module';
     TypeOrmModule.forRootAsync({
       useFactory: (configService: ConfigService) => ({
         type: 'mysql',
-        host: configService.get<string>('mariadb.host'),
-        port: configService.get<number>('mariadb.port'),
-        username: configService.get<string>('mariadb.username'),
-        password: configService.get<string>('mariadb.password'),
-        database: configService.get<string>('mariadb.database'),
-        charset: configService.get<string>('mariadb.charset'),
+        host: configService.get<string>('mysql.host'),
+        port: configService.get<number>('mysql.port'),
+        username: configService.get<string>('mysql.username'),
+        password: configService.get<string>('mysql.password'),
+        database: configService.get<string>('mysql.database'),
+        charset: configService.get<string>('mysql.charset'),
         entities: [join(__dirname, './**/*.entity.{ts,js}')],
         synchronize: false,
       }),
@@ -46,6 +47,7 @@ import { ModelModule } from './modules/model.module';
     DictModule,
     FileModule,
     ModelModule,
+    MediaModule,
   ],
   controllers: [AppController],
   providers: [AppService],

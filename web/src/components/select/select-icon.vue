@@ -10,10 +10,7 @@
     </template>
     <n-grid :cols="4" x-gap="1">
       <n-grid-item v-for="item of icons" :key="item" style="height: 60px">
-        <div
-          class="flex flex-col items-center justify-center p-2 icon-wrapper"
-          @click="onIconClick(item)"
-        >
+        <div class="flex flex-col items-center justify-center p-2 icon-wrapper" @click="onIconClick(item)">
           <n-icon size="30" color="#0e7a0d">
             <component :is="vicons[item]" />
           </n-icon>

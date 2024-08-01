@@ -40,20 +40,20 @@ export class RoleService {
     let qb = this.repository.createQueryBuilder('Role').andWhere('Role.status != -1');
 
     if (roleName) {
-      qb = qb.andWhere('Role.roleName like :name', {
-        name: '%' + roleName + '%',
+      qb = qb.andWhere('Role.roleName like :roleName', {
+        roleName: '%' + roleName + '%',
       });
     }
 
     if (roleCode) {
-      qb = qb.andWhere('Role.roleCode like :value', {
-        value: '%' + roleCode + '%',
+      qb = qb.andWhere('Role.roleCode like :roleCode', {
+        roleCode: '%' + roleCode + '%',
       });
     }
 
     if (!isNullOrUndefined(status)) {
-      qb = qb.andWhere('Role.status = :value', {
-        value: status,
+      qb = qb.andWhere('Role.status = :status', {
+        status,
       });
     }
 
@@ -146,12 +146,7 @@ export class RoleService {
       menuIds.forEach((menuId) => {
         roleMenus.push({ roleId, menuId });
       });
-      await queryRunner.manager
-        .createQueryBuilder()
-        .insert()
-        .into(RoleMenu)
-        .values(roleMenus)
-        .execute();
+      await queryRunner.manager.createQueryBuilder().insert().into(RoleMenu).values(roleMenus).execute();
 
       // commit transaction now:
       await queryRunner.commitTransaction();

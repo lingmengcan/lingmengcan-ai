@@ -1,5 +1,5 @@
 import { lighten } from '@/utils';
-import * as NaiveUI from 'naive-ui';
+import { ConfigProviderProps, createDiscreteApi, lightTheme } from 'naive-ui';
 import { computed } from 'vue';
 
 /**
@@ -10,8 +10,8 @@ import { computed } from 'vue';
 
 export function setupNaiveDiscreteApi() {
   const appTheme = '#2d8cf0';
-  const configProviderPropsRef = computed(() => ({
-    theme: undefined, //NaiveUI.darkTheme,
+  const configProviderPropsRef = computed<ConfigProviderProps>(() => ({
+    theme: lightTheme,
     themeOverrides: {
       common: {
         primaryColor: appTheme,
@@ -23,8 +23,9 @@ export function setupNaiveDiscreteApi() {
       },
     },
   }));
-  const { message, dialog, notification, loadingBar } = NaiveUI.createDiscreteApi(
-    ['message', 'dialog', 'notification', 'loadingBar'],
+
+  const { message, notification, dialog, loadingBar, modal } = createDiscreteApi(
+    ['message', 'dialog', 'notification', 'loadingBar', 'modal'],
     {
       configProviderProps: configProviderPropsRef,
     },
@@ -34,4 +35,5 @@ export function setupNaiveDiscreteApi() {
   window['$dialog'] = dialog;
   window['$notification'] = notification;
   window['$loading'] = loadingBar;
+  window['$modal'] = modal;
 }

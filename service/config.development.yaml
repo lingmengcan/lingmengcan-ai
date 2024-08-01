@@ -3,12 +3,12 @@ http:
   port: 9999
   prefix: 'api'
 
-mariadb:
+mysql:
   host: 'localhost'
   port: 3306
-  database: 'lingmengcan'
+  database: 'lingmengcan-ai'
   username: 'lingmengcan'
-  password: '123456'
+  password: '1234556'
   charset: 'utf8'
 
 mongodb:
@@ -19,3 +19,7 @@ chromadb:
 
 files:
   destination: 'upload-files'
+  aigc: 'aigc-files'
+
+stablediffusion:
+  apiUrl: 'http://localhost:7861'

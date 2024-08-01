@@ -1,6 +1,8 @@
-import { ModelListDto } from '@/dtos/model.dto';
-import { Model } from '@/entities/model.entity';
-import { ModelService } from '@/services/model.service';
+import { DiffusionModelListDto, LlmListDto } from '@/dtos/model.dto';
+import { DiffusionModel } from '@/entities/diffusion-model.entity';
+import { Llm } from '@/entities/llm.entity';
+import { DiffusionModelService } from '@/services/diffusion-model.service';
+import { LlmService } from '@/services/llm.service';
 import { successJson } from '@/utils/result';
 import { Controller, UseGuards, Request, Post, Body } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
@@ -9,45 +11,33 @@ import { ApiTags } from '@nestjs/swagger';
 @ApiTags('model') // 添加 接口标签 装饰器
 @Controller('model')
 export class ModelController {
-  constructor(private readonly modelService: ModelService) {}
+  constructor(
+    private readonly llmService: LlmService,
+    private readonly diffusionModelService: DiffusionModelService,
+  ) {}
 
   /**
-   * 管理列表
+   * llm 管理列表
    *
    * @param dto
    * @returns
    */
   @UseGuards(AuthGuard('jwt'))
-  @Post('list')
-  async findAll(@Body() dto: ModelListDto) {
-    return successJson(await this.modelService.findAll(dto));
+  @Post('llm-list')
+  async findAll(@Body() dto: LlmListDto) {
+    return successJson(await this.llmService.findAll(dto));
   }
 
   /**
-   * model列表
+   * llm model列表
    *
    * @param dto
    * @returns
    */
   @UseGuards(AuthGuard('jwt'))
-  @Post('list-by-type')
+  @Post('llm-list-by-type')
   async findListByType(@Body('modelType') modelType: string) {
-    return successJson(await this.modelService.findListByType(modelType));
-  }
-
-  /**
-   * 变更状态
-   *
-   * @param model
-   * @param req
-   * @returns
-   */
-  @UseGuards(AuthGuard('jwt'))
-  @Post('change-status')
-  async changeStatus(@Body() model: Model, @Request() req: any) {
-    const userName = req.user.userName;
-    model.updatedUser = userName;
-    return successJson(await this.modelService.updateStatus(model));
+    return successJson(await this.llmService.findListByType(modelType));
   }
 
   /**
@@ -58,12 +48,12 @@ export class ModelController {
    * @returns
    */
   @UseGuards(AuthGuard('jwt'))
-  @Post('/add')
-  async add(@Body() model: Model, @Request() req: any) {
+  @Post('llm-add')
+  async add(@Body() llm: Llm, @Request() req: any) {
     const userName = req.user.userName;
-    model.updatedUser = userName;
-    model.createdUser = userName;
-    return successJson(await this.modelService.addModel(model));
+    llm.updatedUser = userName;
+    llm.createdUser = userName;
+    return successJson(await this.llmService.addModel(llm));
   }
 
   /**
@@ -74,10 +64,67 @@ export class ModelController {
    * @returns
    */
   @UseGuards(AuthGuard('jwt'))
-  @Post('edit')
-  async edit(@Body() model: Model, @Request() req: any) {
+  @Post('llm-edit')
+  async edit(@Body() llm: Llm, @Request() req: any) {
+    const userName = req.user.userName;
+    llm.updatedUser = userName;
+    return successJson(await this.llmService.updateModel(llm));
+  }
+
+  /**
+   * diffusion 管理列表
+   *
+   * @param dto
+   * @returns
+   */
+  @UseGuards(AuthGuard('jwt'))
+  @Post('diffusion-list')
+  async findAllDiffusion(@Body() dto: DiffusionModelListDto) {
+    return successJson(await this.diffusionModelService.findAll(dto));
+  }
+
+  /**
+   * llm model列表
+   *
+   * @param dto
+   * @returns
+   */
+  @UseGuards(AuthGuard('jwt'))
+  @Post('diffusion-list-by-type')
+  async findDiffusionListByType(@Body('modelType') modelType: string) {
+    return successJson(await this.diffusionModelService.findListByType(modelType));
+  }
+
+  /**
+   * 添加
+   *
+   * @param model
+   * @param req
+   * @returns
+   */
+  @UseGuards(AuthGuard('jwt'))
+  @Post('diffusion-add')
+  async addDiffusion(@Body() model: DiffusionModel, @Request() req: any) {
+    const userName = req.user.userName;
+
+    model.updatedUser = userName;
+    model.createdUser = userName;
+
+    return successJson(await this.diffusionModelService.addModel(model));
+  }
+
+  /**
+   * 编辑
+   *
+   * @param model
+   * @param req
+   * @returns
+   */
+  @UseGuards(AuthGuard('jwt'))
+  @Post('diffusion-edit')
+  async editDiffusion(@Body() model: DiffusionModel, @Request() req: any) {
     const userName = req.user.userName;
     model.updatedUser = userName;
-    return successJson(await this.modelService.updateModel(model));
+    return successJson(await this.diffusionModelService.updateModel(model));
   }
 }

@@ -6,6 +6,7 @@ import { Controller, UseGuards, Request, Post, Body } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiTags } from '@nestjs/swagger';
 
+@UseGuards(AuthGuard('jwt'))
 @ApiTags('dict') // 添加 接口标签 装饰器
 @Controller('dict')
 export class DictController {
@@ -31,7 +32,7 @@ export class DictController {
    */
   @UseGuards(AuthGuard('jwt'))
   @Post('list-by-type')
-  async findListByType(@Body('dictType') dictType: string) {
+  async findListByType(@Body('dictType') dictType: string | string[]) {
     return successJson(await this.dictService.findListByType(dictType));
   }
 

@@ -52,8 +52,8 @@ export class MenuService {
     }
 
     if (!isNullOrUndefined(status)) {
-      qb = qb.andWhere('Menu.status = :value', {
-        value: status,
+      qb = qb.andWhere('Menu.status = :status', {
+        status,
       });
     }
 

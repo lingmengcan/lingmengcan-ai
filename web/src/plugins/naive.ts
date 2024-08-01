@@ -46,6 +46,7 @@ import {
   NSelect,
   NRadioGroup,
   NRadio,
+  NRadioButton,
   NInputGroup,
   NTable,
   NInputNumber,
@@ -65,6 +66,7 @@ import {
   NPopover,
   NSlider,
   NDivider,
+  NCollapse,
 } from 'naive-ui';
 
 // https://www.naiveui.com/en-US/os-theme/docs/import-on-demand
@@ -116,6 +118,7 @@ const naive = create({
     NSelect,
     NRadioGroup,
     NRadio,
+    NRadioButton,
     NInputGroup,
     NTable,
     NInputNumber,
@@ -134,6 +137,7 @@ const naive = create({
     NPopover,
     NSlider,
     NDivider,
+    NCollapse,
   ],
 });
 

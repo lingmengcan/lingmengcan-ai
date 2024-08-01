@@ -32,12 +32,7 @@
 </script>
 
 <template>
-  <NConfigProvider
-    :locale="zhCN"
-    :theme="getDarkTheme"
-    :theme-overrides="getThemeOverrides"
-    :date-locale="dateZhCN"
-  >
+  <NConfigProvider :locale="zhCN" :theme="getDarkTheme" :theme-overrides="getThemeOverrides" :date-locale="dateZhCN">
     <n-dialog-provider>
       <n-notification-provider>
         <n-message-provider>

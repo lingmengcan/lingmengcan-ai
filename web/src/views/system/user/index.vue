@@ -1,11 +1,5 @@
 <script lang="ts" setup>
-  import {
-    addUser,
-    changeUserStatus,
-    editUser,
-    getUserList,
-    resetPassword,
-  } from '@/api/system/user';
+  import { addUser, changeUserStatus, editUser, getUserList, resetPassword } from '@/api/system/user';
   import { User, UserParams } from '@/models/user';
   import { formatDateTime } from '@/utils';
   import { DataTableRowKey, FormInst, NButton, NSwitch, useDialog, useMessage } from 'naive-ui';
@@ -216,7 +210,7 @@
     pageCount: 1,
     showSizePicker: true,
     showQuickJumper: true,
-    pageSizes: [3, 5, 7],
+    pageSizes: [10, 20, 50],
     itemCount: 0,
     prefix({ itemCount }) {
       return `共 ${itemCount} 条`;
@@ -357,9 +351,7 @@
       if (!errors) {
         const requestData: User = drawerFormData.value;
 
-        const res = drawerFormData.value.userId
-          ? await editUser(requestData)
-          : await addUser(requestData);
+        const res = drawerFormData.value.userId ? await editUser(requestData) : await addUser(requestData);
 
         if (res?.code === 0) {
           showDrawer.value = false;
@@ -421,9 +413,7 @@
         <n-form-item-gi :span="6">
           <n-space>
             <n-button @click="clearQuery">重置</n-button>
-            <n-button v-permission="['system_user_query']" type="primary" @click="handleQuery">
-              查询
-            </n-button>
+            <n-button v-permission="['system_user_query']" type="primary" @click="handleQuery">查询</n-button>
           </n-space>
         </n-form-item-gi>
       </n-grid>
@@ -507,11 +497,7 @@
           </n-radio-group>
         </n-form-item>
         <n-form-item label="描述" name="description">
-          <n-input
-            v-model:value="drawerFormData.description"
-            type="textarea"
-            placeholder="请输入用户描述"
-          />
+          <n-input v-model:value="drawerFormData.description" type="textarea" placeholder="请输入用户描述" />
         </n-form-item>
       </n-form>
       <template #footer>
@@ -526,12 +512,7 @@
   <n-modal v-model:show="showResetPwdModal" :show-icon="false" preset="dialog" title="重置密码">
     <div>
       <div class="flex mb-3">请输入"{{ resetPwdData.userName }}"的新密码</div>
-      <n-input
-        v-model="resetPwdData.password"
-        class="flex mb-3"
-        placeholder="请输入密码"
-        type="password"
-      />
+      <n-input v-model="resetPwdData.password" class="flex mb-3" placeholder="请输入密码" type="password" />
       <n-button type="primary" @click="onResetPwd">提交</n-button>
     </div>
   </n-modal>
