@@ -250,7 +250,7 @@ CREATE TABLE `llm` (
 LOCK TABLES `llm` WRITE;
 /*!40000 ALTER TABLE `llm` DISABLE KEYS */;
 INSERT INTO `llm` VALUES
-('3ada5390-cd0a-4dc5-89f4-a25aba1355a9','hunyuan-13B','GENERAL_LLM','通用模型','http://hunyuanapi.woa.com/openapi/v1','','',0,'腾讯公司开发的大型语言模型混元大模型（HunYuan）。主要功能是通过丰富的语义理解和计算能力，为用户提供问答式的服务。','admin','admin','2024-06-25 10:49:53','2024-06-25 14:36:06'),
+('3ada5390-cd0a-4dc5-89f4-a25aba1355a9','hunyuan-13B','GENERAL_LLM','通用模型','','','',0,'腾讯公司开发的大型语言模型混元大模型（HunYuan）。主要功能是通过丰富的语义理解和计算能力，为用户提供问答式的服务。','admin','admin','2024-06-25 10:49:53','2024-06-25 14:36:06'),
 ('601278f2-8bf1-4eff-a684-a7eff61d1274','text-embedding-3-small','EMBEDDING_LLM','Embedding','','','',0,'openai 嵌入式模型','admin','admin','2024-06-11 19:34:12','2024-06-24 20:16:39'),
 ('78e33981-4e01-445d-89e1-bfacc0affb0d','ChatGLM3-6B','GENERAL_LLM','通用模型','http://127.0.0.1:8000/v1/','','bge-large-zh-v1.5',0,'ChatGLM3 是智谱AI和清华大学 KEG 实验室联合发布的对话预训练模型','admin','admin','2024-06-11 16:47:27','2024-06-24 20:16:31'),
 ('86409bd7-666d-4ddb-9809-7c52ef3dc56a','gpt-4','GENERAL_LLM','通用模型','https://oai.hconeai.com/v1','','',0,'GPT-4（Generative Pretrained Transformer 4）是一种自然语言处理（NLP）AI模型。','admin','admin','2024-06-07 17:13:21','2024-06-24 20:16:16'),
