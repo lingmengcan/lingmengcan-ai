@@ -1,6 +1,8 @@
-# 大模型 AI 应用平台 lingmengcan-ai
+# <center>大模型 AI 应用平台 Lingmengcan AI</center>
 
-lingmengcan-ai 是一个基于大模型的 ai 系统，目前提供大语言模型对话、模型管理、文生图和后台角色管理等等功能。使用的技术栈，包括 stable deffusion、openai、chatgpt、LangChainJS 作为 ai 层，Vue 3、Naive UI 和 Tailwind CSS 构建 UI 层，以及 NestJS、LangChainJS、MySQL 为服务层，chromadb 为向量数据库; 该项目是一个可以实现 **完全本地化**推理的知识库增强方案,同时提供 AIGC 功能, 重点解决数据安全保护，私域化部署的企业痛点。
+- <center>[中文](Readme.md) ｜ [English](Readme.en-US.md)</center>
+
+lingmengcan-ai 是一个基于大模型的 ai 系统，目前提供大语言模型对话、模型管理、文生图和后台角色管理等等功能。使用的技术栈，包括 stable deffusion、openai、chatgpt、LangChainJS 作为 ai 层，Vue 3、Naive UI 和 Tailwind CSS 构建 UI 层，以及 NestJS、LangChainJS、MySQL 为服务层，chromadb 为向量数据库。该项目是一个可以实现**完全本地化**推理的知识库增强方案，同时提供 AIGC 功能， 重点解决数据安全保护，私域化部署的企业痛点。
 
 ## 特点
 
@@ -56,9 +58,10 @@ lingmengcan-ai 是一个基于大模型的 ai 系统，目前提供大语言模�
 
 ### 安装
 
-#### 存储层(mysql)
+#### 存储层(mysql、chromadb)
 
-- 安装 mysql，然后导入根目录的 lingmengcan.sql 文件
+- 安装 mysql，然后导入根目录的 lingmengcan.sql 文件，同时在配置文件配置 mysql 连接
+- 安装 chromadb，同时在配置文件配置 chromadb 连接
 
 #### 服务层(service)
 
@@ -66,8 +69,7 @@ lingmengcan-ai 是一个基于大模型的 ai 系统，目前提供大语言模�
   cd service
   pnpm install
 - 配置
-  - config.development.yaml\
-    在项目的根目录下，设置 config.development.yaml，chatglm3_6b_server_url 为 chatGLM3 的 ip 地址 或者 openai_api_key
+  - config.development.yaml，在系统模型管理里面，设置模型对应 url 和 api_key（如需要）
 - 运行
   pnpm run start
 
