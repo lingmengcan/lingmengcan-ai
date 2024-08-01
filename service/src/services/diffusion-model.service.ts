@@ -53,13 +53,11 @@ export class DiffusionModelService {
 
     // 默认20条数据
     const take = pageSize ? pageSize : 20;
-    let qb = this.repository
-      .createQueryBuilder('DiffusionModel')
-      .andWhere('DiffusionModel.status != -1');
+    let qb = this.repository.createQueryBuilder('DiffusionModel').andWhere('DiffusionModel.status != -1');
 
     if (modelName) {
-      qb = qb.andWhere('DiffusionModel.modelName like :value', {
-        value: '%' + modelName + '%',
+      qb = qb.andWhere('DiffusionModel.modelName like :modelName', {
+        modelName: '%' + modelName + '%',
       });
     }
 
@@ -69,15 +67,15 @@ export class DiffusionModelService {
 
       // 仅在数组不为空时添加查询条件
       if (modelTypeArray.length > 0) {
-        qb = qb.andWhere('DiffusionModel.modelType IN (:...value)', {
-          value: modelTypeArray,
+        qb = qb.andWhere('DiffusionModel.modelType IN (:...modelType)', {
+          modelType: modelTypeArray,
         });
       }
     }
 
     if (!isNullOrUndefined(status)) {
-      qb = qb.andWhere('DiffusionModel.status = :value', {
-        value: status,
+      qb = qb.andWhere('DiffusionModel.status = :status', {
+        status,
       });
     }
 
@@ -99,13 +97,11 @@ export class DiffusionModelService {
    * @returns
    */
   async findListByType(modelType: string) {
-    let qb = this.repository
-      .createQueryBuilder('DiffusionModel')
-      .andWhere('DiffusionModel.status = 0');
+    let qb = this.repository.createQueryBuilder('DiffusionModel').andWhere('DiffusionModel.status = 0');
 
     if (modelType) {
-      qb = qb.andWhere('DiffusionModel.modelType = :value', {
-        value: modelType,
+      qb = qb.andWhere('DiffusionModel.modelType = :modelType', {
+        modelType,
       });
     }
 
@@ -138,9 +134,11 @@ export class DiffusionModelService {
     const entity = await this.findOne(model.modelId);
     entity.baseModelId = model.baseModelId;
     entity.modelName = model.modelName;
+    entity.modelCode = model.modelCode;
     entity.modelTypeName = model.modelTypeName;
     entity.modelType = model.modelType;
     entity.modelCover = model.modelCover;
+    entity.tags = model.tags;
     entity.status = model.status;
     entity.description = model.description;
     entity.updatedUser = model.updatedUser;
@@ -161,9 +159,11 @@ export class DiffusionModelService {
     entity.modelId = modelId;
     entity.baseModelId = model.baseModelId;
     entity.modelName = model.modelName;
+    entity.modelCode = model.modelCode;
     entity.modelTypeName = model.modelTypeName;
     entity.modelType = model.modelType;
     entity.modelCover = model.modelCover;
+    entity.tags = model.tags;
     entity.status = model.status;
     entity.description = model.description;
     entity.createdUser = model.createdUser;

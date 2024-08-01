@@ -47,51 +47,59 @@
   };
 
   onMounted(async () => {
-    const dictArray = props.dictType ? await useDictStore().getDictListByType(props.dictType) : [];
+    const type = props.dictType ? props.dictType : '';
+    const dictArray = await useDictStore().getDictListByType(type);
 
-    const groups: Array<SelectOption | SelectGroupOption> = [];
+    if (type) {
+      const groups: Array<SelectOption | SelectGroupOption> = [];
 
-    // 创建一个映射，将每个 dictType 与父类型名称关联起来
-    const parentNameMap = dictArray.reduce((acc, dataItem) => {
-      acc[dataItem.dictCode] = dataItem.dictName;
-      return acc;
-    }, {});
+      // 创建一个映射，将每个 dictType 与父类型名称关联起来
+      const parentNameMap = dictArray.reduce((acc, dataItem) => {
+        acc[dataItem.dictCode] = dataItem.dictName;
+        return acc;
+      }, {});
 
-    dictArray.forEach((dict) => {
-      const parentName = parentNameMap[dict.dictType];
+      dictArray.forEach((dict) => {
+        const parentName = parentNameMap[dict.dictType];
 
-      // 判断是否存在父类型
-      if (parentName) {
-        if (!groups[dict.dictType]) {
-          groups[dict.dictType] = {
-            type: 'group',
-            label: parentName,
-            key: dict.dictType,
-            children: [],
-          };
-        }
-        groups[dict.dictType].children.push({
-          label: dict.dictName,
-          value: dict.dictCode,
-        });
-      } else {
-        const hasChildren = dictArray.some((dataItem) => dataItem.dictType === dict.dictCode);
-
-        if (!hasChildren) {
-          groups.push({
+        // 判断是否存在父类型
+        if (parentName) {
+          if (!groups[dict.dictType]) {
+            groups[dict.dictType] = {
+              type: 'group',
+              label: parentName,
+              key: dict.dictType,
+              children: [],
+            };
+          }
+          groups[dict.dictType].children.push({
             label: dict.dictName,
             value: dict.dictCode,
           });
+        } else {
+          const hasChildren = dictArray.some((dataItem) => dataItem.dictType === dict.dictCode);
+
+          if (!hasChildren) {
+            groups.push({
+              label: dict.dictName,
+              value: dict.dictCode,
+            });
+          }
         }
-      }
-    });
+      });
 
-    const result = Object.values(groups);
+      const result = Object.values(groups);
 
-    options.value = result;
+      options.value = result;
+    } else {
+      options.value = dictArray.map((item) => ({
+        label: item.dictName,
+        value: item.dictCode,
+      }));
+    }
   });
 </script>
 
 <template>
-  <n-select :value="selectValue" :multiple="multiple" :options="options" @update:value="handleSelect" />
+  <n-select :value="selectValue" :multiple="multiple" :options="options" filterable @update:value="handleSelect" />
 </template>

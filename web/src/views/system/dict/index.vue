@@ -175,7 +175,7 @@
     pageCount: 1,
     showSizePicker: true,
     showQuickJumper: true,
-    pageSizes: [3, 5, 7],
+    pageSizes: [10, 20, 50],
     itemCount: 0,
     prefix({ itemCount }) {
       return `共 ${itemCount} 条`;
@@ -193,6 +193,7 @@
   const query = async (page: number, pageSize = 10) => {
     try {
       tableLoading.value = true;
+
       const requestData: DictParams = {
         ...queryFormData.value,
         page: page,
@@ -317,9 +318,7 @@
       if (!errors) {
         const requestData: Dict = drawerFormData.value;
 
-        const res = drawerFormData.value.dictId
-          ? await editDict(requestData)
-          : await addDict(requestData);
+        const res = drawerFormData.value.dictId ? await editDict(requestData) : await addDict(requestData);
 
         if (res?.code === 0) {
           showDrawer.value = false;
@@ -353,7 +352,7 @@
           <n-input v-model:value="queryFormData.dictCode" placeholder="请输入字典编码" />
         </n-form-item-gi>
         <n-form-item-gi :span="6" label="字典类型" path="dictType">
-          <n-input v-model:value="queryFormData.dictType" placeholder="请输入字典类型" />
+          <selectDict v-model:dict-code="queryFormData.dictType" :multiple="true" />
         </n-form-item-gi>
         <n-form-item-gi :span="6" label="状态" path="status">
           <n-select v-model:value="queryFormData.status" :options="statusOptions" />
@@ -361,9 +360,7 @@
         <n-form-item-gi :span="6">
           <n-space>
             <n-button @click="clearQuery">重置</n-button>
-            <n-button v-permission="['system_dict_query']" type="primary" @click="handleQuery">
-              查询
-            </n-button>
+            <n-button v-permission="['system_dict_query']" type="primary" @click="handleQuery">查询</n-button>
           </n-space>
         </n-form-item-gi>
       </n-grid>
@@ -415,7 +412,7 @@
           <n-input v-model:value="drawerFormData.dictCode" placeholder="输入字典编码" />
         </n-form-item>
         <n-form-item label="字典类型" path="dictType">
-          <n-input v-model:value="drawerFormData.dictType" placeholder="输入字典类型" />
+          <selectDict v-model:dict-code="drawerFormData.dictType" placeholder="请选择字典类型" />
         </n-form-item>
         <n-form-item label="排序" path="sort">
           <n-input-number v-model:value="drawerFormData.sort" :min="0" />
@@ -430,11 +427,7 @@
           </n-radio-group>
         </n-form-item>
         <n-form-item label="描述" name="description">
-          <n-input
-            v-model:value="drawerFormData.description"
-            type="textarea"
-            placeholder="请输入字典描述"
-          />
+          <n-input v-model:value="drawerFormData.description" type="textarea" placeholder="请输入字典描述" />
         </n-form-item>
       </n-form>
       <template #footer>

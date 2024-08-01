@@ -73,6 +73,9 @@
         <n-form-item label="模型名称" path="modelName">
           <n-input v-model:value="drawerFormData.modelName" placeholder="输入模型名称" />
         </n-form-item>
+        <n-form-item label="模型编码" path="modelName">
+          <n-input v-model:value="drawerFormData.modelCode" placeholder="输入模型编码" />
+        </n-form-item>
         <n-form-item label="模型类型" path="modelType">
           <selectDict
             v-model:dict-code="drawerFormData.modelType"
@@ -83,7 +86,7 @@
         <n-form-item v-if="drawerFormData.modelType !== 'BASE_MODEL'" label="所属基础模型" name="BaseModelId">
           <selectDiffusion v-model:model-id="drawerFormData.baseModelId" model-type="BASE_MODEL" />
         </n-form-item>
-        <n-form-item label="模型标签" name="tags">
+        <n-form-item v-if="drawerFormData.modelType !== 'BASE_MODEL'" label="模型标签" name="tags">
           <selectDict
             v-model:dict-code="drawerFormData.tags"
             :multiple="true"
@@ -103,6 +106,7 @@
             with-credentials
             :headers="{ Authorization: `Bearer ${token}` }"
             @finish="afterUploaded"
+            @remove="removeImage"
           >
             点击上传
           </n-upload>
@@ -153,14 +157,15 @@
   // 新增/修改弹窗数据初始化
   const modelInitData: DiffusionModel = {
     modelId: '',
-    baseModelId: undefined,
+    baseModelId: '',
     modelName: '',
-    modelType: undefined,
+    modelCode: '',
+    modelType: '',
     modelTypeName: '',
     modelCover: '',
     status: '0',
     description: '',
-    tags: [],
+    tags: '',
   };
   const drawerFormData = ref(modelInitData);
   const modelCoverRef = ref<UploadFileInfo[]>([]);
@@ -228,6 +233,7 @@
     // 创建一个新的对象，包含 modelInitData 的属性和 item 的属性
     drawerFormData.value = { ...modelInitData, ...item, status: item.status.toString() };
 
+    modelCoverRef.value = [];
     if (item.modelCover) {
       modelCoverRef.value = [
         {
@@ -251,6 +257,10 @@
     }
   }
 
+  function removeImage() {
+    drawerFormData.value.modelCover = '';
+  }
+
   const handleAddandEdit = (e: MouseEvent) => {
     e.preventDefault();
     const messageReactive = message.loading('处理中', {
@@ -259,7 +269,6 @@
     drawerFormRef.value?.validate(async (errors) => {
       if (!errors) {
         const requestData: DiffusionModel = drawerFormData.value;
-        console.log(requestData);
 
         const res = drawerFormData.value.modelId
           ? await editDiffusionModel(requestData)

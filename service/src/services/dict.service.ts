@@ -50,26 +50,32 @@ export class DictService {
     let qb = this.repository.createQueryBuilder('Dict').andWhere('Dict.status != -1');
 
     if (dictName) {
-      qb = qb.andWhere('Dict.dictName like :value', {
-        value: '%' + dictName + '%',
+      qb = qb.andWhere('Dict.dictName like :dictName', {
+        dictName: '%' + dictName + '%',
       });
     }
 
     if (dictCode) {
-      qb = qb.andWhere('Dict.dictCode like :value', {
-        value: '%' + dictCode + '%',
+      qb = qb.andWhere('Dict.dictCode like :dictCode', {
+        dictCode: '%' + dictCode + '%',
       });
     }
 
     if (dictType) {
-      qb = qb.andWhere('Dict.dictType like :value', {
-        value: '%' + dictType + '%',
-      });
+      // 将单个字符串转换为数组
+      const typeArray = Array.isArray(dictType) ? dictType : [dictType];
+
+      // 仅在数组不为空时添加查询条件
+      if (typeArray.length > 0) {
+        qb = qb.andWhere('Dict.dictType IN (:...dictType)', {
+          dictType: typeArray,
+        });
+      }
     }
 
     if (!isNullOrUndefined(status)) {
-      qb = qb.andWhere('Dict.status = :value', {
-        value: status,
+      qb = qb.andWhere('Dict.status = :status', {
+        status,
       });
     }
 

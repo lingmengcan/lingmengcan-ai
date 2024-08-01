@@ -56,8 +56,8 @@ export class LlmService {
     let qb = this.repository.createQueryBuilder('Llm').andWhere('Llm.status != -1');
 
     if (modelName) {
-      qb = qb.andWhere('Llm.modelName like :value', {
-        value: '%' + modelName + '%',
+      qb = qb.andWhere('Llm.modelName like :modelName', {
+        modelName: '%' + modelName + '%',
       });
     }
 
@@ -67,15 +67,15 @@ export class LlmService {
 
       // 仅在数组不为空时添加查询条件
       if (modelTypeArray.length > 0) {
-        qb = qb.andWhere('Llm.modelType IN (:...value)', {
-          value: modelTypeArray,
+        qb = qb.andWhere('Llm.modelType IN (:...modelType)', {
+          modelType: modelTypeArray,
         });
       }
     }
 
     if (!isNullOrUndefined(status)) {
-      qb = qb.andWhere('Llm.status = :value', {
-        value: status,
+      qb = qb.andWhere('Llm.status = :status', {
+        status,
       });
     }
 
@@ -100,8 +100,8 @@ export class LlmService {
     let qb = this.repository.createQueryBuilder('Llm').andWhere('Llm.status = 0');
 
     if (modelType) {
-      qb = qb.andWhere('Llm.modelType = :value', {
-        value: modelType,
+      qb = qb.andWhere('Llm.modelType = :modelType', {
+        modelType,
       });
     }
 

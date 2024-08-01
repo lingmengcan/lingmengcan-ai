@@ -36,6 +36,7 @@ export class DrawController {
   async list(@Body() dto: MediaListDto, @Request() req: any) {
     const userName = req.user.userName;
     const res = await this.mediaService.findAll(dto, userName);
+
     return successJson(res);
   }
 }

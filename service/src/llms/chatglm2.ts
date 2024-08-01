@@ -100,7 +100,7 @@ export class ChatGlm6BLLM2 extends BaseChatModel {
     // 如果提供了stop选项，则在其后添加默认停止序列
     const stopSequences = stop
       ? stop.concat('User aborted the request.')
-      : this.stopSequences ?? ['User aborted the request.'];
+      : (this.stopSequences ?? ['User aborted the request.']);
 
     return {
       model: this.modelName,
@@ -154,8 +154,6 @@ export class ChatGlm6BLLM2 extends BaseChatModel {
         // 从解析的数据中提取所需信息
         // const responseText = parsedData.response;
 
-        // console.log(responseText);
-
         // 创建并 yield 一个新的 ChatGenerationChunk 实例
         yield new ChatGenerationChunk({
           message: new AIMessageChunk({
@@ -208,12 +206,10 @@ export class ChatGlm6BLLM2 extends BaseChatModel {
       });
     }
 
-    const generations: ChatGeneration[] = (res.response ?? '')
-      .split('\n\nAssistant:')
-      .map((message) => ({
-        text: message,
-        message: new AIMessage(message),
-      }));
+    const generations: ChatGeneration[] = (res.response ?? '').split('\n\nAssistant:').map((message) => ({
+      text: message,
+      message: new AIMessage(message),
+    }));
 
     return {
       generations,

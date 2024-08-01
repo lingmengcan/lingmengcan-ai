@@ -13,6 +13,7 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { MessageModule } from './message.module';
 import { ChatModule } from './chat.module';
 import { ModelModule } from './model.module';
+import fs from 'fs';
 
 @Module({
   imports: [
@@ -25,6 +26,10 @@ import { ModelModule } from './model.module';
             // 动态文件储存位置
             destination: (req, file, callback) => {
               const folderPath = configService.get<string>('files.destination') + '/' + dayjs().format('YYYY-MM-DD');
+              // 自动创建目录，如果不存在
+              if (!fs.existsSync(folderPath)) {
+                fs.mkdirSync(folderPath, { recursive: true });
+              }
               callback(null, folderPath);
             },
             //文件名定制

@@ -1,10 +1,9 @@
 {
   "name": "lingmengcan-service",
-  "version": "0.9.2.20240611",
+  "version": "0.9.9.20240801",
   "description": "lingmengcan-ai",
   "author": "lingmengcan",
   "private": true,
-  "license": "UNLICENSED",
   "scripts": {
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",

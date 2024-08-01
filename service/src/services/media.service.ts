@@ -5,7 +5,6 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
-import { isNullOrUndefined } from '@/utils';
 import fs from 'fs';
 import { ConfigService } from '@nestjs/config';
 import dayjs from 'dayjs';
@@ -26,7 +25,7 @@ export class MediaService {
    */
   async txt2img(dto: Txt2ImgDto, userName: string) {
     const stableDiffusionService = new StableDiffusionService();
-    const baseUrl = `http://127.0.0.1:7861`;
+    const baseUrl = this.configService.get<string>('stablediffusion.apiUrl');
     const txt2img = await stableDiffusionService.txt2img(dto, baseUrl);
 
     const images = txt2img.images;
@@ -38,16 +37,20 @@ export class MediaService {
     if (!fs.existsSync(basePath)) {
       fs.mkdirSync(basePath, { recursive: true });
     }
-    images.forEach((base64Image) => {
+
+    const resArray: Media[] = [];
+    images.forEach(async (base64Image) => {
       const imageName = `${uuidv4()}.png`;
       const imagePath = `${basePath}/${imageName}`;
       const buffer = this.convertBase64ToBuffer(base64Image);
       this.saveBufferAsImage(buffer, imagePath);
 
-      this.addMedia('image', imageName, `/${imagePath}`, 'sd', JSON.stringify(dto), 'completed', userName);
+      resArray.push(
+        await this.addMedia('image', imageName, `/${imagePath}`, 'sd', JSON.stringify(dto), 'completed', userName),
+      );
     });
 
-    return 'Success';
+    return { images: resArray };
   }
 
   /**
@@ -63,27 +66,31 @@ export class MediaService {
 
     // 默认10条数据
     const take = pageSize ? pageSize : 10;
-    const qb = this.repository.createQueryBuilder('Media').andWhere('Media.createdUser = :value', {
-      value: userName,
-    });
+    let qb = this.repository.createQueryBuilder('Media');
 
-    // if (mediaType) {
-    //   // 将单个字符串转换为数组
-    //   const typeArray = Array.isArray(mediaType) ? mediaType : [mediaType];
+    if (userName) {
+      qb = qb.andWhere('Media.createdUser = :userName', {
+        userName,
+      });
+    }
 
-    //   // 仅在数组不为空时添加查询条件
-    //   if (typeArray.length > 0) {
-    //     qb = qb.andWhere('Media.mediaType IN (:...value)', {
-    //       value: typeArray,
-    //     });
-    //   }
-    // }
+    if (status) {
+      qb = qb.andWhere('Media.status = :status', {
+        status,
+      });
+    }
 
-    // if (!isNullOrUndefined(status)) {
-    //   qb = qb.andWhere('Media.status = :value', {
-    //     value: status,
-    //   });
-    // }
+    if (mediaType) {
+      // 将单个字符串转换为数组
+      const typeArray = Array.isArray(mediaType) ? mediaType : [mediaType];
+
+      // 仅在数组不为空时添加查询条件
+      if (typeArray.length > 0) {
+        qb = qb.andWhere('Media.mediaType IN (:...mediaType)', {
+          mediaType: typeArray,
+        });
+      }
+    }
 
     qb.orderBy({ 'Media.createdAt': 'DESC' });
 
@@ -123,8 +130,9 @@ export class MediaService {
     entity.status = status;
     entity.createdUser = createdUser;
     entity.createdAt = new Date();
+    this.repository.save(entity);
 
-    return this.repository.save(entity);
+    return entity;
   }
 
   // 将 Base64 编码的字符串转换为 Buffer
@@ -136,6 +144,5 @@ export class MediaService {
   // 将 Buffer 写入 PNG 文件
   saveBufferAsImage = (buffer: Buffer, fileName: string): void => {
     fs.writeFileSync(fileName, buffer);
-    console.log(`Image saved as ${fileName}`);
   };
 }

@@ -16,7 +16,7 @@ export interface Txt2ImgParams {
   cfg_scale: number; // CFG比例，控制图像生成的一致性
   width: number; // 图像宽度
   height: number; // 图像高度
-  restore_faces?: boolean; // 是否恢复面部
+  restore_faces?: boolean; // 是否修复面部
   tiling?: boolean; // 是否平铺图像
   do_not_save_samples?: boolean; // 是否保存样本
   do_not_save_grid?: boolean; // 是否保存网格
@@ -64,10 +64,8 @@ export interface Txt2ImgParams2 {
   styles?: string[]; // 样式列表，可以包含多个样式
 }
 
-export interface Txt2ImgResponse {
-  images: string[];
-  parameters: Record<string, unknown>;
-  info: string;
+export interface Txt2ImgRes {
+  images: Media[];
 }
 
 // 媒体

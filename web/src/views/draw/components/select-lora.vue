@@ -11,11 +11,11 @@
               v-for="item in selectedItems"
               :key="item.modelId"
               closable
-              @close="removeItem(item)"
               class="m-[2px]"
               :data-model-id="item.modelId"
+              @close="removeItem(item)"
             >
-              {{ item.modelName }}
+              {{ item.modelCode }}
             </n-tag>
             <div v-if="selectedItems.length === 0" class="text-gray-300">请选择</div>
           </div>
@@ -57,7 +57,7 @@
   import { DiffusionModel } from '@/models/diffusion-model';
   import { getDiffusionModelList } from '@/api/draw/model';
 
-  const emit = defineEmits(['updated:value', 'selected']);
+  const emit = defineEmits(['update:modelCode', 'selected']);
 
   const popoverRef = ref<PopoverInst | null>(null);
   const showPopover = ref(false);
@@ -74,7 +74,6 @@
   };
 
   const removeItem = (item: DiffusionModel) => {
-    console.log(1);
     const index = selectedItems.value.indexOf(item);
     if (index > -1) {
       selectedItems.value.splice(index, 1);
@@ -108,8 +107,8 @@
   };
 
   function handleClick(item: DiffusionModel) {
-    emit('updated:value', item.modelName);
-    emit('selected', item.modelName);
+    emit('update:modelCode', item.modelCode);
+    emit('selected', item.modelCode);
     if (selectedItems.value.some((dataItem) => dataItem.modelId === item.modelId)) {
       // 这里已经选中项给个震动的动画
       const element = document.querySelector(`[data-model-id="${item.modelId}"]`);

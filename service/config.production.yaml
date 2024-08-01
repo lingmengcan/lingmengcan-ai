@@ -3,7 +3,7 @@ http:
   port: 9999
   prefix: 'api'
 
-mariadb:
+mysql:
   host: 'localhost'
   port: 3306
   database: 'lingmengcan-ai'
@@ -20,3 +20,6 @@ chromadb:
 files:
   destination: 'upload-files'
   aigc: 'aigc-files'
+
+stablediffusion:
+  apiUrl: 'http://localhost:7861'

@@ -9,8 +9,11 @@ export class DiffusionModel {
   @Column({ type: 'bigint', name: 'base_model_id' })
   baseModelId: string;
 
-  @Column('varchar', { name: 'model_name', length: 128 })
+  @Column('varchar', { name: 'model_name', length: 255 })
   modelName: string;
+
+  @Column('varchar', { name: 'model_code', length: 128 })
+  modelCode: string;
 
   @Column('varchar', { name: 'model_type', length: 32 })
   modelType: string;
@@ -20,6 +23,9 @@ export class DiffusionModel {
 
   @Column('varchar', { name: 'model_cover', length: 255 })
   modelCover: string;
+
+  @Column({ type: 'json', name: 'tags' })
+  tags: string;
 
   @Column('tinyint', {
     name: 'status',

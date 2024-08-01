@@ -5,8 +5,8 @@
         <span class="text-base">模型：</span>
         <n-tag>{{ modelName }}</n-tag>
         <selectModel
-          v-model:model-name="txt2imgParams.override_settings.sd_model_checkpoint"
-          @selected="handleSelectedModel"
+          v-model:model-name="modelName"
+          v-model:model-code="txt2imgParams.override_settings.sd_model_checkpoint"
         />
       </div>
       <n-tabs size="large" justify-content="space-evenly" type="line" animated class="flex-1 overflow-hidden">
@@ -20,7 +20,7 @@
                       个性化生成
                       <span class="text-xs text-gray-400">LoRA</span>
                     </div>
-                    <selectLora />
+                    <selectLora v-model:model-code="lora" />
                   </div>
                 </n-form-item-gi>
                 <n-form-item-gi :span="6">
@@ -141,43 +141,11 @@
                     </n-collapse-item> -->
                     <n-collapse-item title="高级设置" name="2">
                       <div class="w-full">
-                        <!-- <div class="pb-1">
+                        <div class="pb-1">
                           面部修复
                           <span class="text-xs text-gray-400">Restore faces</span>
-                          <n-switch v-model:value="active" size="small" class="float-right" />
-                          <n-collapse-transition :show="show">
-                            <n-grid :cols="6" :x-gap="25">
-                              <n-form-item-gi :span="6">
-                                <div class="w-full">
-                                  <div class="pb-1">
-                                    面部修复程度
-                                    <span class="text-xs text-gray-400">GFPGAN visibility</span>
-                                    <n-tag class="float-right" size="small">{{ step }}</n-tag>
-                                  </div>
-                                  <n-slider :min="0" :max="1" :step="0.01" />
-                                </div>
-                              </n-form-item-gi>
-                              <n-form-item-gi :span="3">
-                                <div class="w-full">
-                                  <div class="pb-1">
-                                    面部重建程度
-                                    <n-tag class="float-right" size="small">{{ scale }}</n-tag>
-                                  </div>
-                                  <n-slider :min="0" :max="1" :step="0.01" />
-                                </div>
-                              </n-form-item-gi>
-                              <n-form-item-gi :span="3">
-                                <div class="w-full">
-                                  <div class="pb-1">
-                                    面部重建权重
-                                    <n-tag class="float-right" size="small">{{ scale }}</n-tag>
-                                  </div>
-                                  <n-slider :min="0" :max="1" :step="0.01" />
-                                </div>
-                              </n-form-item-gi>
-                            </n-grid>
-                          </n-collapse-transition>
-                        </div> -->
+                          <n-switch v-model:value="txt2imgParams.restore_faces" size="small" class="float-right" />
+                        </div>
                         <div>
                           高分辨率修复
                           <span class="text-xs text-gray-400">Hires fix</span>
@@ -222,7 +190,10 @@
                                     高清化算法
                                     <span class="text-xs text-gray-400">Upscaler 1</span>
                                   </div>
-                                  <selectDict v-model:dict-code="txt2imgParams.hr_upscaler" dict-type="SAMPLER" />
+                                  <selectDict
+                                    v-model:dict-code="txt2imgParams.hr_upscaler"
+                                    dict-type="HIRES_FIX_UPSCALER"
+                                  />
                                 </div>
                               </n-form-item-gi>
                               <n-form-item-gi :span="6">
@@ -278,21 +249,17 @@
       </div>
     </div>
 
-    <n-infinite-scroll class="flex-1 pl-5" :distance="10" @load="handleLoad">
-      <div v-masonry transition-duration="0.3s" :gutter="12">
-        <template v-if="generating">
+    <n-infinite-scroll ref="scrollRef" class="flex-1 pl-5" :distance="10" @load="handleLoad">
+      <div v-masonry transition-duration="0s" :gutter="10" item-selector=".masonry-item">
+        <div v-for="image in images" :key="image.mediaId" v-masonry-tile class="w-64 masonry-item">
           <div
-            v-for="num in txt2imgParams.batch_size"
-            :key="num"
-            v-masonry-tile
+            v-if="image.status === 'in_progress'"
             class="flex items-center justify-center w-64 h-64 mb-3 bg-white rounded-md opacity-50"
           >
             <n-spin size="large" />
           </div>
-        </template>
 
-        <div v-for="image in images" :key="image.mediaId" v-masonry-tile class="w-64 masonry-item">
-          <n-image :src="image.filePath" class="w-full mb-3 rounded-md" />
+          <n-image v-else :src="image.filePath" class="w-full mb-3 rounded-md" />
         </div>
       </div>
       <div v-if="scrolling" class="flex items-center justify-center">
@@ -323,17 +290,19 @@
     cfg_scale: 7, // CFG比例，控制图像生成的一致性
     width: 512, // 图像宽度
     height: 512, // 图像高度
+    restore_faces: false, // 是否修复面部
     denoising_strength: 0.7, // 去噪强度
-    override_settings: { sd_model_checkpoint: 'v1-5pruned-emaonly' }, // 覆盖设置，包含自定义的设置
+    override_settings: { sd_model_checkpoint: 'v1-5-pruned-emaonly.safetensors [6ce0161689]' }, // 覆盖设置，包含自定义的设置
     enable_hr: false, // 是否启用高分辨率
-    hr_upscaler: '', // 高分辨率上高清算法
+    hr_upscaler: 'Latent', // 高分辨率上高清算法
     hr_second_pass_steps: 0, // 高分辨率第二阶段步骤数
     hr_resize_x: 1024, // 高分辨率调整后的宽度
     hr_resize_y: 1024, // 高分辨率调整后的高度
     sampler_index: 'DPM++ 2M', // 采样方法
   });
 
-  const modelName = ref('v1-5pruned-emaonly');
+  const modelName = ref('SD 1.5');
+  const lora = ref('');
 
   const generating = ref(false);
 
@@ -342,9 +311,12 @@
   const page = ref<number>(1);
   const pageSize = ref<number>(10);
   const itemCount = ref(0);
+
+  const scrollRef = ref<HTMLElement | null>(null);
   const scrolling = ref(false);
 
   const noMore = computed(() => pageSize.value * page.value > itemCount.value);
+
   // 获取所有图片
   const getImages = async (currentPage: number, currentPageSize = 10) => {
     try {
@@ -373,22 +345,43 @@
     }
   };
 
-  function handleSelectedModel(item: string) {
-    txt2imgParams.override_settings.sd_model_checkpoint = item;
-    modelName.value = item;
-  }
+  // function handleSelectedModel(item: string) {
+  //   txt2imgParams.override_settings.sd_model_checkpoint = item;
+  //   modelName.value = item;
+  // }
 
   const handleGenerate = async () => {
+    for (let i = 0; i < txt2imgParams.batch_size; i++) {
+      images.value.unshift({
+        mediaId: `mediaId${i}`,
+        mediaType: 'image',
+        fileName: '',
+        filePath: '',
+        ai: '',
+        generationParameters: '',
+        status: 'in_progress',
+      });
+    }
+
     generating.value = true;
+    const prompt = `${txt2imgParams.prompt} ${lora.value}`;
+
     const requestData = {
       ...txt2imgParams,
+      prompt,
     };
 
     const res = await txt2img(requestData);
 
     if (res?.code === 0) {
+      images.value.splice(0, txt2imgParams.batch_size);
+
+      const txt2imgs = res.data.images;
+
+      images.value.unshift(...txt2imgs);
+
+      // await getImages(1, pageSize.value);
       generating.value = false;
-      await getImages(page.value, pageSize.value);
     }
   };
 

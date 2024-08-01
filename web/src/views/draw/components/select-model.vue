@@ -39,7 +39,7 @@
   import { DiffusionModel } from '@/models/diffusion-model';
   import { getDiffusionModelList } from '@/api/draw/model';
 
-  const emit = defineEmits(['updated:value', 'selected']);
+  const emit = defineEmits(['update:modelCode', 'update:modelName']);
 
   const popoverRef = ref<PopoverInst | null>(null);
   const showPopover = ref(false);
@@ -55,7 +55,7 @@
     try {
       const requestData = {
         modelName: '',
-        modelType: 'BASE_MODEL',
+        modelType: 'CHECKPOINT_DIFFUSION',
         page: currentPage,
         pageSize: currentPageSize,
       };
@@ -77,8 +77,8 @@
   };
 
   function handleClick(item: DiffusionModel) {
-    emit('updated:value', item.modelName);
-    emit('selected', item.modelName);
+    emit('update:modelName', item.modelName);
+    emit('update:modelCode', item.modelCode);
     showPopover.value = false;
   }
 

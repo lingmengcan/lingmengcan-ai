@@ -210,7 +210,7 @@
     pageCount: 1,
     showSizePicker: true,
     showQuickJumper: true,
-    pageSizes: [3, 5, 7],
+    pageSizes: [10, 20, 50],
     itemCount: 0,
     prefix({ itemCount }) {
       return `共 ${itemCount} 条`;
