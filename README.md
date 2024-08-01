@@ -1,14 +1,15 @@
 # 大模型 AI 应用平台 lingmengcan-ai
 
-lingmengcan-ai 是一个基于大模型的 ai 系统，目前提供对话和后台角色管理。使用的技术栈，包括 Vue 3、Naive UI 和 Tailwind CSS 构建 UI 层，以及 NestJS、LangChainJS、MySQL 为服务层，chromadb 为向量数据库; 该项目是一个可以实现 **完全本地化**推理的知识库增强方案,同时提供 AIGC 功能, 重点解决数据安全保护，私域化部署的企业痛点。
+lingmengcan-ai 是一个基于大模型的 ai 系统，目前提供大语言模型对话、模型管理、文生图和后台角色管理等等功能。使用的技术栈，包括 stable deffusion、openai、chatgpt、LangChainJS 作为 ai 层，Vue 3、Naive UI 和 Tailwind CSS 构建 UI 层，以及 NestJS、LangChainJS、MySQL 为服务层，chromadb 为向量数据库; 该项目是一个可以实现 **完全本地化**推理的知识库增强方案,同时提供 AIGC 功能, 重点解决数据安全保护，私域化部署的企业痛点。
 
 ## 特点
 
-- **大模型**: 使用 openai(ChatGPT)或者本地本地部署 ChatGLM3 (https://github.com/THUDM/ChatGLM3) ，用 openai api 的格式统一所有本地模型
+- **大模型**: 使用 openai(ChatGPT)或者本地本地部署 ChatGLM3 (https://github.com/THUDM/ChatGLM3) ，用 openai api 的格式统一所有本地模型。
 - **对话**: 支持与大型语言模型进行高效、自然的对话交互。
 - **角色管理**: 包含一个完整的后台角色管理模块，便于用户管理和权限控制。
-- **AI 画图功能**: 后续完善。
+- **AI 画图功能**: 本地本地部署 stable diffusion webui (https://github.com/AUTOMATIC1111/stable-diffusion-webui)。并打开api模式。
 - **推理和训练**: 后续完善。
+- **私域化部署**: 支持完全本地化部署，无需依赖公网网络。
 
 ## 技术栈
 
@@ -22,6 +23,9 @@ lingmengcan-ai 是一个基于大模型的 ai 系统，目前提供对话和后�
   从文档处理角度来看，实现流程如下：
   ![实现原理图2](images/langchain+chatglm2.png)
 
+  AIGC 文生图，通过调用 stable diffusion webui 接口，生成图片。
+  ![效果如下](images/txt2img.png)
+
 - **数据层**: 使用 MySQL、chromadb，后续加入 redis、mongodb
 
 ## 快速开始
@@ -34,7 +38,14 @@ lingmengcan-ai 是一个基于大模型的 ai 系统，目前提供对话和后�
 - Node.js 18+
 - MySQL 5.7+
 
-### 如果本地已有模型：从本地加载模型
+### 本地部署 stable diffusion webui 或者，在配置文件配置
+
+- stablediffusion:
+  apiUrl: 'http://localhost:7861'
+
+  本地部署参考[stable-diffusion-webui](https://github.com/AUTOMATIC1111/stable-diffusion-webui)
+
+### 如果本地已有大语言模型：从本地加载模型
 
 请参考 [THUDM/ChatGLM3#从本地加载模型](https://github.com/THUDM/ChatGLM3#从本地加载模型)
 
@@ -70,12 +81,14 @@ lingmengcan-ai 是一个基于大模型的 ai 系统，目前提供对话和后�
 
 现在，您可以通过访问 http://localhost:8089 来体验 lingmengcan-ai。
 
-### 项目截图
+### 项目截图和功能演示
 
-![对话1](images/1.png)
-![对话2](images/2.png)
-![登录](images/3.png)
-![用户管理](images/4.png)
-![角色管理](images/5.png)
-![菜单管理](images/6.png)
-![字典管理](images/7.png)
+![大语言模型对话1](images/chat1.png)
+![大语言模型对话2](images/chat2.png)
+![大语言模型管理](images/llm-model1.png)
+![文生图](images/txt2img.png)
+![登录](images/login.png)
+![用户管理](images/user.png)
+![角色管理](images/role.png)
+![菜单管理](images/menu.png)
+![字典管理](images/dict.png)
