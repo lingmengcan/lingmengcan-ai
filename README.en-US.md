@@ -4,6 +4,10 @@
 
 Lingmengcan AI is an AI system based on large models.Currently, it provides functions such as large language model dialogue, model management, text-to-image generation, and background role management. The technology stack used includes Stable Diffusion, OpenAI, ChatGPT, LangChainJS as the AI layer, Vue 3, Naive UI, and Tailwind CSS for the UI layer, and NestJS, LangChainJS, and MySQL for the service layer, with ChromaDB as the vector database. This project is a knowledge base enhancement solution that can achieve **fully localized** reasoning and also provides AIGC functions, focusing on solving the pain points of enterprises regarding data security protection and private domain deployment.
 
+## Community
+
+- QQ Group 1 651535270
+
 ## Features
 
 - **Large Language Model**: Use OpenAI (ChatGPT) or locally deploy ChatGLM3 (https://github.com/THUDM/ChatGLM3) , and unify all local models in the OpenAI API format.
@@ -69,8 +73,8 @@ Please refer to [THUDM/ChatGLM3#Load the Model from Local](https://github.com/TH
   cd service
   pnpm install
 - Configuration
-  - config.development.yaml, in the system model management section, set the corresponding URL and API key of the model (if needed)
-- 运行
+  config.development.yaml, in the system model management section, set the corresponding URL and API key of the model (if needed)
+- Run
   pnpm run start
 
 #### Front-End UI Layer

@@ -4,6 +4,10 @@
 
 lingmengcan-ai 是一个基于大模型的 ai 系统，目前提供大语言模型对话、模型管理、文生图和后台角色管理等等功能。使用的技术栈，包括 stable deffusion、openai、chatgpt、LangChainJS 作为 ai 层，Vue 3、Naive UI 和 Tailwind CSS 构建 UI 层，以及 NestJS、LangChainJS、MySQL 为服务层，chromadb 为向量数据库。该项目是一个可以实现**完全本地化**推理的知识库增强方案，同时提供 AIGC 功能， 重点解决数据安全保护，私域化部署的企业痛点。
 
+## 社区
+
+- QQ 一群 651535270
+
 ## 特点
 
 - **大模型**: 使用 openai(ChatGPT)或者本地本地部署 ChatGLM3 (https://github.com/THUDM/ChatGLM3) ，用 openai api 的格式统一所有本地模型。
