@@ -83,10 +83,7 @@ export const asyncImportRoute = (routes: AppRouteRecordRaw[] | undefined): void 
 /**
  * 动态导入
  * */
-export const dynamicImport = (
-  viewsModules: Record<string, () => Promise<Recordable>>,
-  component: string,
-) => {
+export const dynamicImport = (viewsModules: Record<string, () => Promise<Recordable>>, component: string) => {
   const keys = Object.keys(viewsModules);
 
   const matchKeys = keys.filter((key) => {

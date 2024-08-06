@@ -17,8 +17,10 @@
         </n-form-item-gi>
         <n-form-item-gi :span="8">
           <n-space>
-            <n-button @click="clearQuery">重置</n-button>
-            <n-button v-permission="['llm_model_index']" type="primary" @click="handleQuery">查询</n-button>
+            <n-button @click="clearQuery">{{ $t('common.reset') }}</n-button>
+            <n-button v-permission="['llm_model_index']" type="primary" @click="handleQuery">
+              {{ $t('common.query') }}
+            </n-button>
           </n-space>
         </n-form-item-gi>
         <n-gi :span="6">
