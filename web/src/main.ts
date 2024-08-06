@@ -6,17 +6,16 @@ import { setupDirectives, setupNaiveDiscreteApi } from '@/plugins';
 import App from './App.vue';
 
 import router, { setupRouter } from './router';
-import { setupStore } from '@/store';
+import { store } from './store';
+import i18n from './locales';
+
 import { VueMasonryPlugin } from 'vue-masonry';
 
 async function bootstrap() {
   const app = createApp(App);
 
-  // 瀑布流
-  app.use(VueMasonryPlugin);
-
   // 挂载状态管理
-  setupStore(app);
+  app.use(store);
 
   // 注册全局常用的 naive-ui 组件
   // setupNaive(app);
@@ -28,6 +27,12 @@ async function bootstrap() {
 
   // 挂载路由
   setupRouter(app);
+
+  // 瀑布流
+  app.use(VueMasonryPlugin);
+
+  // 多语言
+  app.use(i18n);
 
   // 路由准备就绪后挂载 APP 实例
   // https://router.vuejs.org/api/interfaces/router.html#isready

@@ -1,8 +1,9 @@
 <script lang="ts" setup>
   import { computed } from 'vue';
-  import { zhCN, dateZhCN, darkTheme } from 'naive-ui';
+  import { darkTheme } from 'naive-ui';
   import { lighten } from '@/utils';
   import { NDialogProvider, NNotificationProvider, NMessageProvider } from 'naive-ui';
+  import { useLocale } from '@/locales/index';
 
   const designStore = {
     appTheme: '#2d8cf0',
@@ -28,19 +29,21 @@
     };
   });
 
+  const { getComponentsLocale, locale } = useLocale();
+
   const getDarkTheme = computed(() => (designStore.darkTheme ? darkTheme : undefined));
 </script>
 
 <template>
-  <NConfigProvider :locale="zhCN" :theme="getDarkTheme" :theme-overrides="getThemeOverrides" :date-locale="dateZhCN">
+  <n-config-provider :locale="getComponentsLocale" :theme="getDarkTheme" :theme-overrides="getThemeOverrides">
     <n-dialog-provider>
       <n-notification-provider>
         <n-message-provider>
-          <RouterView />
+          <router-view :key="locale" />
         </n-message-provider>
       </n-notification-provider>
     </n-dialog-provider>
-  </NConfigProvider>
+  </n-config-provider>
 </template>
 
 <style lang="less">

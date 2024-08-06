@@ -8,6 +8,9 @@
   import { ResultEnum } from '@/constants';
   import { LoginParams } from '@/models/user';
   import { getCaptche } from '@/api/system/user';
+  import { useI18n } from 'vue-i18n';
+
+  const { t } = useI18n();
 
   const formRef = ref();
   const message = useMessage();
@@ -23,9 +26,9 @@
   });
 
   const rules = {
-    username: { required: true, message: '请输入用户名', trigger: 'blur' },
-    password: { required: true, message: '请输入密码', trigger: 'blur' },
-    captcha: [{ required: true, message: '请输入验证码', trigger: 'blur' }],
+    username: { required: true, message: t('views.login.input.account'), trigger: 'blur' },
+    password: { required: true, message: t('views.login.input.password'), trigger: 'blur' },
+    captcha: [{ required: true, message: t('views.login.input.verification'), trigger: 'blur' }],
   };
 
   const userStore = useUserStore();
@@ -49,7 +52,7 @@
     formRef.value.validate(async (errors: any) => {
       if (!errors) {
         const { username, password, captcha } = formInline;
-        message.loading('登录中...');
+
         loading.value = true;
 
         const params: LoginParams = {
@@ -64,7 +67,7 @@
 
           if (res?.code == ResultEnum.SUCCESS) {
             const toPath = decodeURIComponent((route.query?.redirect || '/') as string);
-            message.success('登录成功，即将进入系统');
+            message.success(t('views.login.loginSuccess'));
             if (route.name === LOGIN_NAME) {
               router.replace('/');
             } else router.replace(toPath);
@@ -73,7 +76,7 @@
           loading.value = false;
         }
       } else {
-        message.error('请填写完整信息，并且进行验证码校验');
+        message.error(t('views.login.loginError'));
       }
     });
   };
@@ -88,12 +91,12 @@
         <div>
           <img src="@/assets/images/full-logo.png" alt="" />
         </div>
-        <div class="text-sm text-sky-300">你好，lingmengcan ai解决方案, 欢迎使用</div>
+        <div class="text-sm text-sky-300">{{ $t('views.login.welcome') }}</div>
       </div>
       <div>
         <n-form ref="formRef" label-placement="left" size="large" :model="formInline" :rules="rules">
           <n-form-item path="username">
-            <n-input v-model:value="formInline.username" placeholder="请输入用户名">
+            <n-input v-model:value="formInline.username" :placeholder="$t('views.login.input.account')">
               <template #prefix>
                 <n-icon size="18" color="#808695">
                   <PersonOutline />
@@ -106,7 +109,7 @@
               v-model:value="formInline.password"
               type="password"
               show-password-on="click"
-              placeholder="请输入密码"
+              :placeholder="$t('views.login.input.password')"
             >
               <template #prefix>
                 <n-icon size="18" color="#808695">
@@ -116,27 +119,28 @@
             </n-input>
           </n-form-item>
           <n-form-item path="captcha">
-            <n-input v-model:value="formInline.captcha" placeholder="请输入验证码">
+            <n-input v-model:value="formInline.captcha" :placeholder="$t('views.login.input.verification')">
               <template #prefix>
                 <n-icon size="18" color="#808695">
                   <ShieldOutline />
                 </n-icon>
               </template>
             </n-input>
-            <img :src="captchaUrl" @click="refreshCaptcha" />
+            <img :src="captchaUrl" class="cursor-pointer" @click="refreshCaptcha" />
           </n-form-item>
           <n-form-item>
-            <div class="flex justify-between">
-              <div class="flex-initial">
-                <n-checkbox v-model:checked="autoLogin">自动登录</n-checkbox>
-              </div>
-              <div class="flex-initial order-last">
-                <a href="javascript:">忘记密码</a>
+            <div class="flex">
+              <n-checkbox v-model:checked="autoLogin">{{ $t('views.login.remember') }}</n-checkbox>
+
+              <div class="flex items-center justify-center">
+                <a href="javascript:">{{ $t('views.login.forget') }}</a>
               </div>
             </div>
           </n-form-item>
           <n-form-item>
-            <n-button type="primary" size="large" :loading="loading" block @click="handleSubmit">登录</n-button>
+            <n-button type="primary" size="large" :loading="loading" block @click="handleSubmit">
+              {{ $t('views.login.signIn') }}
+            </n-button>
           </n-form-item>
         </n-form>
       </div>

@@ -1,15 +1,10 @@
 <template>
-  <div
-    class="z-10 flex items-center justify-between w-full h-16 p-0 transition-all duration-200 shadow-md"
-  >
+  <div class="z-10 flex items-center justify-between w-full h-16 p-0 transition-all duration-200 shadow-md">
     <!--顶部菜单-->
     <!--左侧菜单-->
     <div class="flex items-center">
       <!-- 菜单收起 -->
-      <div
-        class="flex m-3 cursor-pointer hover:bg-gray-200"
-        @click="emit('update:collapsed', !collapsed)"
-      >
+      <div class="flex m-3 cursor-pointer hover:bg-gray-200" @click="emit('update:collapsed', !collapsed)">
         <n-icon v-if="collapsed" size="20">
           <MenuUnfoldOutlined />
         </n-icon>
@@ -20,10 +15,7 @@
 
       <!-- 面包屑 -->
       <n-breadcrumb class="flex mr-10">
-        <template
-          v-for="routeItem in breadcrumbList"
-          :key="routeItem.name === 'Redirect' ? void 0 : routeItem.name"
-        >
+        <template v-for="routeItem in breadcrumbList" :key="routeItem.name === 'Redirect' ? void 0 : routeItem.name">
           <n-breadcrumb-item v-if="routeItem.meta.title">
             <span class="text-base">
               {{ routeItem.meta.title }}
@@ -37,27 +29,57 @@
     </div>
 
     <div class="flex items-center mr-5">
-      <!--切换全屏-->
-      <div
-        class="flex items-center h-16 px-3 text-center transition-all duration-200 ease-in-out cursor-pointer"
-      >
-        <n-tooltip placement="bottom" class="hover:bg-gray-200">
+      <!--github-->
+      <div class="flex items-center h-16 pr-2 cursor-pointer">
+        <n-tooltip placement="bottom">
           <template #trigger>
-            <n-icon size="18">
-              <component :is="fullscreenIcon" @click="toggleFullScreen" />
-            </n-icon>
+            <div class="flex items-center p-1 rounded hover:bg-slate-200">
+              <n-button text type="primary" @click="navToGitHub">
+                <n-icon size="18">
+                  <GithubOutlined />
+                </n-icon>
+              </n-button>
+            </div>
           </template>
-          <span>全屏</span>
+          <span>Github</span>
+        </n-tooltip>
+      </div>
+      <!--多语言-->
+      <div class="flex items-center h-16 pr-2 cursor-pointer">
+        <n-dropdown placement="bottom-start" trigger="click" :options="langList" @select="languageSelect">
+          <div class="flex items-center p-1 rounded hover:bg-slate-200">
+            <n-icon size="18">
+              <LanguageOutline />
+            </n-icon>
+          </div>
+        </n-dropdown>
+      </div>
+      <!--切换全屏-->
+      <div class="flex items-center h-16 pr-3 text-center cursor-pointer">
+        <n-tooltip placement="bottom">
+          <template #trigger>
+            <div class="flex items-center p-1 rounded hover:bg-slate-200">
+              <n-icon size="18">
+                <component :is="fullscreenIcon" @click="toggleFullScreen" />
+              </n-icon>
+            </div>
+          </template>
+          <span>{{ $t('layout.header.fullscreen') }}</span>
         </n-tooltip>
       </div>
       <!-- 个人中心 -->
-      <div
-        class="inline-block h-16 text-center transition-all duration-200 ease-in-out cursor-pointer"
-      >
-        <n-dropdown trigger="hover" :options="avatarOptions" @select="avatarSelect">
-          <div class="flex items-center h-16 px-1 hover:bg-gray-200">
+      <div class="items-center inline-block text-center transition-all duration-200 ease-in-out cursor-pointer">
+        <n-dropdown
+          trigger="hover"
+          placement="bottom-start"
+          :options="avatarOptions"
+          class="w-28"
+          @select="avatarSelect"
+        >
+          <div class="flex items-center p-1 rounded hover:bg-slate-200">
             <Avatar round />
-            <span class="ml-1 text-sky-500">{{ username }}</span>
+            <n-divider vertical />
+            <span class="ml-1 text-sky-900">{{ username }}</span>
           </div>
         </n-dropdown>
       </div>
@@ -67,17 +89,22 @@
 
 <script setup lang="ts">
   import { useUserStore } from '@/store/modules/user';
+  import { langList, useLocale } from '@/locales/index';
   import {
     MenuFoldOutlined,
     MenuUnfoldOutlined,
     FullscreenOutlined,
     FullscreenExitOutlined,
+    GithubOutlined,
   } from '@vicons/antd';
+  import { LanguageOutline } from '@vicons/ionicons5';
+
   import { useDialog, useMessage } from 'naive-ui';
   import { computed, shallowRef } from 'vue';
   import { RouteLocationMatched, useRoute, useRouter } from 'vue-router';
   import Menu from './menu.vue';
   import Avatar from '@/components/avatar/index.vue';
+  import { useI18n } from 'vue-i18n';
 
   defineProps({
     collapsed: {
@@ -115,10 +142,13 @@
     return routerMap.slice(0, 1);
   };
 
+  const navToGitHub = () => {
+    window.open('https://github.com/lingmengcan/lingmengcan-ai');
+  };
+
   // 切换全屏图标
   const toggleFullscreenIcon = () =>
-    (fullscreenIcon.value =
-      document.fullscreenElement !== null ? FullscreenExitOutlined : FullscreenOutlined);
+    (fullscreenIcon.value = document.fullscreenElement !== null ? FullscreenExitOutlined : FullscreenOutlined);
 
   // 监听全屏切换事件
   document.addEventListener('fullscreenchange', toggleFullscreenIcon);
@@ -134,13 +164,14 @@
     }
   };
 
+  const { t } = useI18n();
   const avatarOptions = [
     {
-      label: '个人设置',
+      label: t('layout.header.user'),
       key: 1,
     },
     {
-      label: '退出登录',
+      label: t('layout.header.signOut'),
       key: 2,
     },
   ];
@@ -157,16 +188,23 @@
     }
   };
 
+  // 切换语言
+  const { changeLocale } = useLocale();
+  //多语言下拉菜单
+  const languageSelect = (key: string) => {
+    changeLocale(key);
+  };
+
   // 退出登录
   const doLogout = () => {
     dialog.info({
-      title: '提示',
-      content: '您确定要退出登录吗',
-      positiveText: '确定',
-      negativeText: '取消',
+      title: t('common.info'),
+      content: t('layout.header.signOutMessage'),
+      positiveText: t('common.confirm'),
+      negativeText: t('common.cancel'),
       onPositiveClick: () => {
         userStore.logout().then(() => {
-          message.success('成功退出登录');
+          message.success(t('layout.header.signOutSuccess'));
 
           router
             .replace({
