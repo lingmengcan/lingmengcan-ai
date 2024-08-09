@@ -38,8 +38,8 @@ const importMessages = computed(() => {
 // 创建 i18n 实例
 export const i18n = createI18n({
   legacy: false,
-  locale: useLocalStorage(localeConfigKey, 'zh-CN').value || languages.value[0] || 'zh-CN',
-  fallbackLocale: 'zh-CN',
+  locale: useLocalStorage(localeConfigKey, 'enUS').value || languages.value[0] || 'enUS',
+  fallbackLocale: 'enUS',
   messages: importMessages.value,
   globalInjection: true,
 });
@@ -62,13 +62,13 @@ export const langList = computed(() => {
 export function useLocale() {
   const { locale } = useI18n({ useScope: 'global' });
   function changeLocale(lang: string) {
-    // 如果切换的语言不在对应语言文件里则默认为简体中文
+    // 如果切换的语言不在对应语言文件里则默认为English
     if (!langCode.includes(lang)) {
-      lang = 'zh-CN';
+      lang = 'en-US';
     }
 
     locale.value = lang;
-    useLocalStorage(localeConfigKey, 'zh-CN').value = lang;
+    useLocalStorage(localeConfigKey, 'en-US').value = lang;
   }
 
   const getComponentsLocale = computed(() => {
@@ -78,7 +78,7 @@ export function useLocale() {
       case 'zh-CN':
         return zhCN;
       default:
-        return zhCN;
+        return enUS;
     }
   });
 

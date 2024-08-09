@@ -11,5 +11,8 @@ export default {
     reset: 'Reset',
     query: 'Query',
     info: 'Info',
+    status: 'status',
+    paginationItemCount: 'items',
+    validationFailed: 'Validation failed',
   },
 };

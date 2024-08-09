@@ -11,5 +11,8 @@ export default {
     reset: '重置',
     query: '查询',
     info: '提示',
+    status: '状态',
+    paginationItemCount: '条数据',
+    validationFailed: '验证不通过',
   },
 };

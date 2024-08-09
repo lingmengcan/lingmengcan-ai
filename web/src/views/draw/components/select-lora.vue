@@ -57,7 +57,7 @@
   import { DiffusionModel } from '@/models/diffusion-model';
   import { getDiffusionModelList } from '@/api/draw/model';
 
-  const emit = defineEmits(['update:modelCode', 'selected']);
+  const emit = defineEmits(['update:loraList', 'selected']);
 
   const popoverRef = ref<PopoverInst | null>(null);
   const showPopover = ref(false);
@@ -107,8 +107,6 @@
   };
 
   function handleClick(item: DiffusionModel) {
-    emit('update:modelCode', item.modelCode);
-    emit('selected', item.modelCode);
     if (selectedItems.value.some((dataItem) => dataItem.modelId === item.modelId)) {
       // 这里已经选中项给个震动的动画
       const element = document.querySelector(`[data-model-id="${item.modelId}"]`);
@@ -121,6 +119,10 @@
     } else {
       selectedItems.value.push(item);
     }
+
+    const modelCodeList = selectedItems.value.map((model) => model.modelCode);
+    emit('update:loraList', modelCodeList);
+    emit('selected', modelCodeList);
     showPopover.value = false;
   }
 
