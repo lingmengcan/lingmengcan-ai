@@ -19,4 +19,18 @@ export default {
       description: '请输入模型描述',
     },
   },
+  stableDiffusion: {
+    controlNet: {
+      control: '控制',
+      controlType: '控制类型',
+      enable: '启用',
+      upload: '点击或者拖动文件上传',
+      weight: '权重',
+      guidanceStart: '引导介入时机',
+      guidanceEnd: '引导终止时机',
+      resolution: '预处理器分辨率',
+      thresholdA: '低阈值',
+      thresholdB: '高阈值',
+    },
+  },
 };

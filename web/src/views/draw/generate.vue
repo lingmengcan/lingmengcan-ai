@@ -11,9 +11,9 @@
       </div>
       <n-tabs size="large" justify-content="space-evenly" type="line" animated class="flex-1 overflow-hidden">
         <n-tab-pane name="txt2img" tab="文生图" class="flex flex-col h-full">
-          <stableDiffusion v-model:sdParams="txt2imgParams" v-model:loraList="loraList" />
+          <stableDiffusion v-model:txt2imgParams="txt2imgParams" v-model:loraList="loraList" />
         </n-tab-pane>
-        <n-tab-pane name="img2img" tab="图生图" disabled></n-tab-pane>
+        <n-tab-pane name="img2img" tab="图生图"></n-tab-pane>
         <n-tab-pane name="2video" tab="视频生成" disabled>视频生成</n-tab-pane>
       </n-tabs>
       <div class="flex justify-center pt-3 border-t">
@@ -141,8 +141,6 @@
       ...txt2imgParams,
       prompt,
     };
-
-    console.log(requestData);
 
     const res = await txt2img(requestData);
 

@@ -57,7 +57,7 @@ export interface Txt2ImgParams {
   infotext?: string; // 信息文本
 }
 
-export interface Controlnet {
+export interface ControlNetParams {
   enabled: boolean; // 启用
   control_mode: number; // 对应webui 的 Control Mode 可以直接填字符串 推荐使用下标 0 1 2
   model: string; // 对应webui 的 Model

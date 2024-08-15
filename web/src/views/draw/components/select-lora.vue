@@ -77,6 +77,10 @@
     const index = selectedItems.value.indexOf(item);
     if (index > -1) {
       selectedItems.value.splice(index, 1);
+
+      const modelCodeList = selectedItems.value.map((model) => model.modelCode);
+      emit('update:loraList', modelCodeList);
+      emit('selected', modelCodeList);
     }
   };
 
@@ -128,6 +132,8 @@
 
   function clearAllSelected() {
     selectedItems.value = [];
+    emit('update:loraList', []);
+    emit('selected', []);
   }
   onMounted(async () => {
     query(page.value, pageSize.value);

@@ -8,6 +8,8 @@ export default {
   common: {
     confirm: '确定',
     cancel: '取消',
+    open: '开',
+    close: '关',
     reset: '重置',
     query: '查询',
     info: '提示',

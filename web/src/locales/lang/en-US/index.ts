@@ -9,6 +9,8 @@ export default {
     confirm: 'Submit',
     cancel: 'Cancel',
     reset: 'Reset',
+    open: 'Open',
+    close: 'Close',
     query: 'Query',
     info: 'Info',
     status: 'status',

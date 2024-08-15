@@ -6,13 +6,13 @@ export class Dict {
   @PrimaryGeneratedColumn({ type: 'bigint', name: 'dict_id', unsigned: true })
   dictId: string;
 
-  @Column('varchar', { name: 'dict_name', length: 32 })
+  @Column('varchar', { name: 'dict_name', length: 100 })
   dictName: string;
 
-  @Column('varchar', { name: 'dict_code', length: 32 })
+  @Column('varchar', { name: 'dict_code', length: 100 })
   dictCode: string;
 
-  @Column('varchar', { name: 'dict_type', length: 32 })
+  @Column('varchar', { name: 'dict_type', length: 100 })
   dictType: string;
 
   @Column('int', { name: 'sort' })
