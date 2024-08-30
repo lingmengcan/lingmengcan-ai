@@ -9,87 +9,121 @@
           <n-switch v-model:value="controlNetParamsRef.enabled" size="small" class="!align-text-top"></n-switch>
         </div>
       </div>
-      <selectDict v-model:dict-code="controlNetParamsRef.module" dict-type="CONTROL_NET_TYPE" />
-    </n-gi>
-    <n-gi :span="6">
-      <imageUpload />
-    </n-gi>
-    <n-gi :span="6">
-      <inputSlider
-        v-model:value="controlNetParamsRef.weight"
-        :min="0"
-        :max="2"
-        :step="0.05"
-        :label="$t('views.draw.stableDiffusion.controlNet.weight')"
+      <n-select
+        :value="controlNetParamsRef.module"
+        :options="controlTypeOptions"
+        @update:value="handleControlTypeSelect"
       />
     </n-gi>
-    <n-gi :span="3">
-      <inputSlider
-        v-model:value="controlNetParamsRef.guidance_start"
-        size="tiny"
-        :min="0"
-        :max="1"
-        :step="0.01"
-        :label="$t('views.draw.stableDiffusion.controlNet.guidanceStart')"
-      />
-    </n-gi>
-    <n-gi :span="3">
-      <inputSlider
-        v-model:value="controlNetParamsRef.guidance_end"
-        :min="0"
-        :max="1"
-        :step="0.01"
-        :label="$t('views.draw.stableDiffusion.controlNet.guidanceEnd')"
-      />
-    </n-gi>
-    <n-gi :span="6">
-      <inputSlider
-        v-model:value="controlNetParamsRef.processor_res"
-        :min="64"
-        :max="2048"
-        :step="1"
-        :label="$t('views.draw.stableDiffusion.controlNet.resolution')"
-      />
-    </n-gi>
-    <n-gi :span="6">
-      <inputSlider
-        v-model:value="controlNetParamsRef.threshold_a"
-        :min="1"
-        :max="255"
-        :step="1"
-        :label="$t('views.draw.stableDiffusion.controlNet.thresholdA')"
-      />
-    </n-gi>
-    <n-gi :span="6">
-      <inputSlider
-        v-model:value="controlNetParamsRef.threshold_b"
-        :min="1"
-        :max="255"
-        :step="1"
-        :label="$t('views.draw.stableDiffusion.controlNet.thresholdB')"
-      />
-    </n-gi>
+    <template v-if="controlNetParamsRef.module">
+      <n-gi :span="6">
+        <imageUpload v-model:base64Image="controlNetParamsRef.input_image" />
+      </n-gi>
+      <n-gi :span="6">
+        <inputSlider
+          v-model:value="controlNetParamsRef.weight"
+          :min="0"
+          :max="2"
+          :step="0.05"
+          :label="$t('views.draw.stableDiffusion.controlNet.weight')"
+        />
+      </n-gi>
+      <n-gi :span="3">
+        <inputSlider
+          v-model:value="controlNetParamsRef.guidance_start"
+          :min="0"
+          :max="1"
+          :step="0.01"
+          :label="$t('views.draw.stableDiffusion.controlNet.guidanceStart')"
+        />
+      </n-gi>
+      <n-gi :span="3">
+        <inputSlider
+          v-model:value="controlNetParamsRef.guidance_end"
+          :min="0"
+          :max="1"
+          :step="0.01"
+          :label="$t('views.draw.stableDiffusion.controlNet.guidanceEnd')"
+        />
+      </n-gi>
+      <n-gi :span="6">
+        <inputSlider
+          v-model:value="controlNetParamsRef.processor_res"
+          :min="64"
+          :max="2048"
+          :step="1"
+          :label="$t('views.draw.stableDiffusion.controlNet.resolution')"
+        />
+      </n-gi>
+      <n-gi v-if="displayControlNetParams?.max_threshold_a" :span="6">
+        <inputSlider
+          v-model:value="controlNetParamsRef.threshold_a"
+          :min="displayControlNetParams.min_threshold_a"
+          :max="displayControlNetParams.max_threshold_a"
+          :step="displayControlNetParams.threshold_step"
+          :label="displayControlNetParams.threshold_a_label"
+        />
+      </n-gi>
+      <n-gi v-if="displayControlNetParams?.max_threshold_b" :span="6">
+        <inputSlider
+          v-model:value="controlNetParamsRef.threshold_b"
+          :min="displayControlNetParams.min_threshold_b"
+          :max="displayControlNetParams.max_threshold_b"
+          :step="displayControlNetParams.threshold_step"
+          :label="displayControlNetParams.threshold_b_label"
+        />
+      </n-gi>
+    </template>
   </n-grid>
 </template>
 
 <script setup lang="ts">
-  import selectDict from '@/components/select/select-dict.vue';
   import inputSlider from './input-slider.vue';
   import imageUpload from './image-upload.vue';
-  import { PropType, ref } from 'vue';
-  import { ControlNetParams } from '@/models/draw';
+  import { onMounted, PropType, ref } from 'vue';
+  import { SelectOption, SelectGroupOption } from 'naive-ui';
+  import { getPreprocessorList } from '@/api/draw';
+  import { ResultEnum } from '@/constants';
+  import { ControlNetParams, ControlNetPreprocessor, DisplayControlNetParams } from '@/models/draw';
 
   const props = defineProps({
     controlNetParams: {
       type: Object as PropType<ControlNetParams>,
       default: null,
     },
-
-    loraList: {
-      type: Array<String>,
-      default: [],
-    },
   });
 
   const controlNetParamsRef = ref<ControlNetParams>(props.controlNetParams);
+
+  const displayControlNetParams = ref<DisplayControlNetParams>();
+
+  // select options
+  const controlTypeOptions = ref<Array<SelectOption | SelectGroupOption>>([]);
+  const preprocessorList = ref<ControlNetPreprocessor[]>([]);
+
+  const handleControlTypeSelect = (value: string) => {
+    preprocessorList.value.forEach((item) => {
+      if (item.preprocessorCode === value) {
+        displayControlNetParams.value = item.params;
+        controlNetParamsRef.value.model = item.params.model;
+        controlNetParamsRef.value.threshold_a = item.params.threshold_a;
+        controlNetParamsRef.value.threshold_b = item.params.threshold_b;
+      }
+    });
+
+    controlNetParamsRef.value.module = value;
+  };
+
+  onMounted(async () => {
+    const res = await getPreprocessorList();
+
+    if (res && res.code === ResultEnum.SUCCESS) {
+      preprocessorList.value = res.data;
+
+      controlTypeOptions.value = preprocessorList.value.map((item) => ({
+        label: item.preprocessorName,
+        value: item.preprocessorCode,
+      }));
+    }
+  });
 </script>

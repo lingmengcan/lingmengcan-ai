@@ -58,20 +58,20 @@ export interface Txt2ImgParams {
 }
 
 export interface ControlNetParams {
-  enabled: boolean; // 启用
-  control_mode: number; // 对应webui 的 Control Mode 可以直接填字符串 推荐使用下标 0 1 2
-  model: string; // 对应webui 的 Model
-  module: string; // 对应webui 的 Preprocessor
-  weight: number; // 对应webui 的Control Weight
-  resize_mode: string;
-  threshold_a: number; // 阈值a 部分control module会用上
-  threshold_b: number; // 阈值b
-  guidance_start: number; // 什么时候介入 对应webui 的 Starting Control Step
-  guidance_end: number; // 什么时候退出 对应webui 的 Ending Control Step
-  pixel_perfect: boolean; // 像素完美
-  processor_res: number; // 预处理器分辨率
-  save_detected_map: boolean; // 因为使用了 controlnet API会返回生成controlnet的效果图，默认是True，如果不需要，改成False
-  input_image: string; // 图片 格式为base64
+  enabled?: boolean; // 启用
+  control_mode?: string; // 对应webui 的 Control Mode 可以直接填字符串 推荐使用下标 0 1 2
+  model?: string; // 对应webui 的 Model
+  module?: string; // 对应webui 的 Preprocessor
+  weight?: number; // 对应webui 的Control Weight
+  resize_mode?: string;
+  threshold_a?: number; // 阈值a 部分control module会用上
+  threshold_b?: number; // 阈值b
+  guidance_start?: number; // 什么时候介入 对应webui 的 Starting Control Step
+  guidance_end?: number; // 什么时候退出 对应webui 的 Ending Control Step
+  pixel_perfect?: boolean; // 像素完美
+  processor_res?: number; // 预处理器分辨率
+  save_detected_map?: boolean; // 因为使用了 controlnet API会返回生成controlnet的效果图，默认是True，如果不需要，改成False
+  input_image?: string; // 图片 格式为base64
 }
 
 // 图生图请求参数，省性能，不做转换，命名改为下划线分割
@@ -91,6 +91,17 @@ export interface Img2ImgParams extends Txt2ImgParams {
   initial_noise_multiplier: number; // 初始噪声的乘数
   latent_mask: string; // 潜在的掩码
   include_init_images: boolean; // 是否包含初始化图像
+}
+
+// 控制显示ControlNet参数
+export interface DisplayControlNetParams extends ControlNetParams {
+  threshold_step?: number;
+  max_threshold_a?: number;
+  min_threshold_a?: number;
+  max_threshold_b?: number;
+  min_threshold_b?: number;
+  threshold_b_label?: string;
+  threshold_a_label?: string;
 }
 
 export interface GenerateImgRes {
@@ -126,4 +137,20 @@ export interface MediaParams {
   status: string;
   page: number;
   pageSize: number;
+}
+
+// control net 预处理器
+export interface ControlNetPreprocessor {
+  preprocessorId: number;
+  preprocessorName: string;
+  preprocessorCode: string;
+  preprocessorType: string;
+  params: DisplayControlNetParams;
+  sort: number;
+  status: number;
+  description?: string;
+  createdUser?: string;
+  updatedUser?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }

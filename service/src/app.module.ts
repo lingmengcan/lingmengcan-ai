@@ -16,6 +16,7 @@ import { DictModule } from './modules/dict.module';
 import { FileModule } from './modules/file.module';
 import { ModelModule } from './modules/model.module';
 import { MediaModule } from './modules/media.module';
+import { DrawModule } from './modules/draw.module';
 
 @Module({
   imports: [
@@ -48,6 +49,7 @@ import { MediaModule } from './modules/media.module';
     FileModule,
     ModelModule,
     MediaModule,
+    DrawModule,
   ],
   controllers: [AppController],
   providers: [AppService],

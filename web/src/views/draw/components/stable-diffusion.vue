@@ -147,21 +147,25 @@
       <n-grid-item :span="6">
         <n-collapse arrow-placement="right" default-expanded-names="1">
           <n-collapse-item title="ControlNet" name="1">
-            <n-radio-group v-model:value="selectedIndex" name="left-size" class="pb-3">
-              <n-space>
-                <n-radio v-for="index in 3" :key="index" :value="index" @change="handleControlNetChange(index)">
-                  {{ $t('views.draw.stableDiffusion.controlNet.control') + ' ' + index }}
-                </n-radio>
-              </n-space>
-            </n-radio-group>
-
-            <div v-for="(params, index) in controlNetParamsList" :key="index">
-              <controlNet
-                v-if="index + 1 === selectedIndex"
-                :control-net-params="params"
-                @update:control-net-params="updateControlNetParams(index, $event)"
-              />
-            </div>
+            <n-tabs
+              v-model:value="controlNetValue"
+              justify-content="space-evenly"
+              type="card"
+              addable
+              closable
+              animated
+              @close="handleControNetRemove"
+              @add="handleControNetAdd"
+            >
+              <n-tab-pane
+                v-for="(params, index) in controlNetParamsListRef"
+                :key="index"
+                :name="index"
+                :tab="$t('views.draw.stableDiffusion.controlNet.control') + ' ' + index"
+              >
+                <controlNet :control-net-params="params" />
+              </n-tab-pane>
+            </n-tabs>
           </n-collapse-item>
         </n-collapse>
       </n-grid-item>
@@ -193,13 +197,10 @@
 
   const defaultControlNetParams: ControlNetParams = {
     enabled: true, // 启用
-    control_mode: 1, // 对应webui 的 Control Mode 可以直接填字符串 推荐使用下标 0 1 2
-    model: 'control_v11p_sd15_canny [d14c016b]', // 对应webui 的 Model
-    module: '', // 对应webui 的 Preprocessor
+    control_mode: 'Balanced', // 对应webui 的 Control Mode 可以直接填字符串 推荐使用下标 0 1 2
+    module: undefined, // 对应webui 的 Preprocessor
     weight: 1, // 对应webui 的Control Weight
-    resize_mode: '',
-    threshold_a: 100, // 阈值a 部分control module会用上
-    threshold_b: 200, // 阈值b
+    resize_mode: 'Crop and Resize',
     guidance_start: 0, // 什么时候介入 对应webui 的 Starting Control Step
     guidance_end: 1, // 什么时候退出 对应webui 的 Ending Control Step
     pixel_perfect: true, // 像素完美
@@ -208,17 +209,22 @@
     input_image: '', // 图片 格式为base64
   };
 
-  const selectedIndex = ref(1); // 用来存储当前选中的radio index
+  const controlNetParamsListRef = reactive(Array.from({ length: 1 }, () => ({ ...defaultControlNetParams })));
+  const controlNetValue = ref(0);
 
-  const controlNetParamsList = reactive(Array.from({ length: 3 }, () => ({ ...defaultControlNetParams })));
-
-  function updateControlNetParams(index: number, newParams: ControlNetParams) {
-    controlNetParamsList[index] = newParams;
+  function handleControNetAdd() {
+    controlNetParamsListRef.push({ ...defaultControlNetParams });
+    controlNetValue.value = controlNetParamsListRef.length - 1;
   }
 
-  const handleControlNetChange = (index: number) => {
-    selectedIndex.value = index;
-  };
+  function handleControNetRemove(index: number) {
+    controlNetParamsListRef.splice(index, 1);
+    console.log(index === controlNetValue.value);
+    if (index === controlNetValue.value) {
+      controlNetValue.value = Math.min(index, controlNetParamsListRef.length - 1);
+    }
+  }
+
   const selectedLora = () => {
     emit('update:loraList', loraListValue.value);
   };

@@ -15,7 +15,7 @@
   <n-slider v-model:value="valueRef" :min="min" :max="max" :step="step" />
 </template>
 <script setup lang="ts">
-  import { PropType, ref } from 'vue';
+  import { PropType, ref, watchEffect } from 'vue';
 
   const props = defineProps({
     value: {
@@ -41,4 +41,9 @@
   });
 
   const valueRef = ref(props.value);
+
+  //监控父组件变化
+  watchEffect(() => {
+    valueRef.value = props.value;
+  });
 </script>

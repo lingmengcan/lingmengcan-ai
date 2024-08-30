@@ -1,5 +1,6 @@
 <template>
   <n-upload
+    ref="uploadRef"
     v-model:file-list="fileList"
     accept=".png,.jpeg,.jpg"
     action="/api/file/upload-image"
@@ -37,10 +38,20 @@
 </template>
 <script setup lang="ts">
   import { ArrowUpCircleOutline, CloseCircleOutline } from '@vicons/ionicons5';
-  import { ref } from 'vue';
+  import { PropType, ref } from 'vue';
   import storage from '@/utils/storage';
   import { ACCESS_TOKEN } from '@/constants';
   import { useMessage, UploadFileInfo } from 'naive-ui';
+  import { fileToBase64 } from '@/utils';
+
+  const props = defineProps({
+    base64Image: {
+      type: String as PropType<string>,
+      default: null,
+    },
+  });
+
+  const base64ImageRef = ref(props.base64Image);
 
   const message = useMessage();
   const token = storage.get(ACCESS_TOKEN, '');
@@ -65,13 +76,17 @@
     return true;
   }
 
-  function afterUploaded({ event }: { event?: ProgressEvent }) {
+  async function afterUploaded({ file, event }: { file: UploadFileInfo; event?: ProgressEvent }) {
     // 定义允许的文件类型数组
     const res = JSON.parse((event?.target as XMLHttpRequest).response);
     if (res?.code === 0) {
-      const filePath = res.data;
+      // const filePath = res.data;
 
-      imageUrl.value = `${import.meta.env.VITE_APP_CDN_BASEURL}${filePath}`;
+      // imageUrl.value = `${import.meta.env.VITE_APP_CDN_BASEURL}${filePath}`;
+
+      base64ImageRef.value = await fileToBase64(file.file as File);
+      imageUrl.value = base64ImageRef.value;
+
       finishUploaded.value = true;
     }
   }
@@ -79,6 +94,8 @@
   function removeImage() {
     imageUrl.value = '';
     finishUploaded.value = false;
+
+    // fileList.value.length = 0;
 
     // 不设置延时会触发上传动作
     setTimeout(() => {

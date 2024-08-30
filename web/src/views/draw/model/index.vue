@@ -88,7 +88,7 @@
           />
         </n-form-item>
         <n-form-item
-          v-if="drawerFormData.modelType !== 'BASE_MODEL'"
+          v-if="drawerFormData.modelType !== 'BASE_MODEL' && drawerFormData.modelType !== 'NOT_DIFFUSION_MODEL'"
           :label="$t('views.draw.model.baseModel')"
           name="BaseModelId"
         >
@@ -171,10 +171,10 @@
   // 新增/修改弹窗数据初始化
   const modelInitData: DiffusionModel = {
     modelId: '',
-    baseModelId: '',
+    baseModelId: undefined,
     modelName: '',
     modelCode: '',
-    modelType: '',
+    modelType: undefined,
     modelTypeName: '',
     modelCover: '',
     status: '0',
