@@ -145,7 +145,7 @@
         </div>
       </n-gi>
       <n-grid-item :span="6">
-        <n-collapse arrow-placement="right" default-expanded-names="1">
+        <n-collapse arrow-placement="right">
           <n-collapse-item title="ControlNet" name="1">
             <n-tabs
               v-model:value="controlNetValue"
@@ -174,7 +174,7 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, PropType, reactive } from 'vue';
+  import { ref, PropType, reactive, watchEffect } from 'vue';
   import selectLora from './select-lora.vue';
   import controlNet from './control-net.vue';
   import { ControlNetParams, Txt2ImgParams } from '@/models/draw';
@@ -191,7 +191,7 @@
     },
   });
 
-  const txt2imgParamsRef = ref<Txt2ImgParams>(props.txt2imgParams);
+  const txt2imgParamsRef = ref(props.txt2imgParams);
   const loraListValue = ref(props.loraList);
   const emit = defineEmits(['update:loraList']);
 
@@ -206,20 +206,22 @@
     pixel_perfect: true, // 像素完美
     processor_res: 512, // 预处理器分辨率
     save_detected_map: true, // 因为使用了 controlnet API会返回生成controlnet的效果图，默认是True，如果不需要，改成False
-    input_image: '', // 图片 格式为base64
+    image: '', // 图片 格式为base64
   };
 
   const controlNetParamsListRef = reactive(Array.from({ length: 1 }, () => ({ ...defaultControlNetParams })));
+
   const controlNetValue = ref(0);
 
   function handleControNetAdd() {
     controlNetParamsListRef.push({ ...defaultControlNetParams });
+
     controlNetValue.value = controlNetParamsListRef.length - 1;
   }
 
   function handleControNetRemove(index: number) {
     controlNetParamsListRef.splice(index, 1);
-    console.log(index === controlNetValue.value);
+
     if (index === controlNetValue.value) {
       controlNetValue.value = Math.min(index, controlNetParamsListRef.length - 1);
     }
@@ -228,4 +230,9 @@
   const selectedLora = () => {
     emit('update:loraList', loraListValue.value);
   };
+
+  //监控父组件变化
+  watchEffect(() => {
+    txt2imgParamsRef.value.alwayson_scripts!.controlnet.args = controlNetParamsListRef;
+  });
 </script>

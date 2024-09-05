@@ -32,7 +32,7 @@
   const handleSelect = (value: string) => {
     preprocessorList.value.forEach((item) => {
       if (item.preprocessorCode === value) {
-        emit('update:controlNetParams', JSON.parse(item.params));
+        emit('update:controlNetParams', item.params);
       }
     });
 

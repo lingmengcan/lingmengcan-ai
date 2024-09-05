@@ -17,7 +17,7 @@
     </n-gi>
     <template v-if="controlNetParamsRef.module">
       <n-gi :span="6">
-        <imageUpload v-model:base64Image="controlNetParamsRef.input_image" />
+        <imageUpload v-model:base64Image="controlNetParamsRef.image" />
       </n-gi>
       <n-gi :span="6">
         <inputSlider

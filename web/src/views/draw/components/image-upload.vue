@@ -51,6 +51,8 @@
     },
   });
 
+  const emit = defineEmits(['update:base64Image']);
+
   const base64ImageRef = ref(props.base64Image);
 
   const message = useMessage();
@@ -85,6 +87,7 @@
       // imageUrl.value = `${import.meta.env.VITE_APP_CDN_BASEURL}${filePath}`;
 
       base64ImageRef.value = await fileToBase64(file.file as File);
+      emit('update:base64Image', base64ImageRef.value);
       imageUrl.value = base64ImageRef.value;
 
       finishUploaded.value = true;

@@ -73,6 +73,11 @@
     hr_resize_x: 1024, // 高分辨率调整后的宽度
     hr_resize_y: 1024, // 高分辨率调整后的高度
     sampler_index: 'DPM++ 2M', // 采样方法
+    alwayson_scripts: {
+      controlnet: {
+        args: [],
+      },
+    },
   });
 
   const generating = ref(false);

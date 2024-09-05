@@ -53,7 +53,11 @@ export interface Txt2ImgParams {
   script_args?: []; // 脚本参数
   send_images?: boolean; // 是否发送图像
   save_images?: boolean; // 是否保存图像
-  alwayson_scripts?: Record<string, any>; // 始终启用的脚本
+  alwayson_scripts?: {
+    controlnet: {
+      args: ControlNetParams[];
+    };
+  }; // 始终启用的脚本
   infotext?: string; // 信息文本
 }
 
@@ -71,7 +75,7 @@ export interface ControlNetParams {
   pixel_perfect?: boolean; // 像素完美
   processor_res?: number; // 预处理器分辨率
   save_detected_map?: boolean; // 因为使用了 controlnet API会返回生成controlnet的效果图，默认是True，如果不需要，改成False
-  input_image?: string; // 图片 格式为base64
+  image?: string; // 图片 格式为base64
 }
 
 // 图生图请求参数，省性能，不做转换，命名改为下划线分割
