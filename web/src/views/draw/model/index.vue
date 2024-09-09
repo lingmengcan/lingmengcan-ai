@@ -10,7 +10,10 @@
     >
       <n-grid :cols="24" :x-gap="24">
         <n-form-item-gi :span="5" path="modelName">
-          <n-input v-model:value="queryFormData.modelName" :placeholder="$t('views.draw.model.input.modelName')" />
+          <n-input
+            v-model:value="queryFormData.modelName"
+            :placeholder="$t('views.draw.model.placeholder.modelName')"
+          />
         </n-form-item-gi>
         <n-form-item-gi :span="5" path="modelType">
           <selectDict v-model:dict-code="queryFormData.modelType" :multiple="true" dict-type="DIFFUSION_MODEL_TYPE" />
@@ -75,10 +78,16 @@
         :rules="drawerRules"
       >
         <n-form-item :label="$t('views.draw.model.name')" path="modelName">
-          <n-input v-model:value="drawerFormData.modelName" :placeholder="$t('views.draw.model.input.modelName')" />
+          <n-input
+            v-model:value="drawerFormData.modelName"
+            :placeholder="$t('views.draw.model.placeholder.modelName')"
+          />
         </n-form-item>
         <n-form-item :label="$t('views.draw.model.code')" path="modelName">
-          <n-input v-model:value="drawerFormData.modelCode" :placeholder="$t('views.draw.model.input.modelCode')" />
+          <n-input
+            v-model:value="drawerFormData.modelCode"
+            :placeholder="$t('views.draw.model.placeholder.modelCode')"
+          />
         </n-form-item>
         <n-form-item :label="$t('views.draw.model.type')" path="modelType">
           <selectDict
@@ -105,7 +114,7 @@
           <n-input
             v-model:value="drawerFormData.description"
             type="textarea"
-            :placeholder="$t('views.draw.model.input.description')"
+            :placeholder="$t('views.draw.model.placeholder.description')"
           />
         </n-form-item>
         <n-form-item :label="$t('views.draw.model.cover')" name="modelCover">
@@ -185,10 +194,10 @@
   const modelCoverRef = ref<UploadFileInfo[]>([]);
 
   const drawerRules = {
-    modelName: { required: true, message: t('views.draw.model.input.modelName'), trigger: 'blur' },
-    description: { required: true, message: t('views.draw.model.input.description'), trigger: 'blur' },
-    modelType: { required: true, message: t('views.draw.model.input.modelType'), trigger: 'blur' },
-    status: { required: true, message: t('views.draw.model.input.status'), trigger: 'blur' },
+    modelName: { required: true, message: t('views.draw.model.placeholder.modelName'), trigger: 'blur' },
+    description: { required: true, message: t('views.draw.model.placeholder.description'), trigger: 'blur' },
+    modelType: { required: true, message: t('views.draw.model.placeholder.modelType'), trigger: 'blur' },
+    status: { required: true, message: t('views.draw.model.placeholder.status'), trigger: 'blur' },
   };
 
   // 绑定表格数据

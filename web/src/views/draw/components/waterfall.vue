@@ -22,6 +22,7 @@
     style: {
       top: string;
       left: string;
+      width: string;
     };
   }
 

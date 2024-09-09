@@ -17,7 +17,7 @@
             >
               {{ item.modelCode }}
             </n-tag>
-            <div v-if="selectedItems.length === 0" class="text-gray-300">请选择</div>
+            <div v-if="selectedItems.length === 0" class="text-gray-300">{{ $t('common.select') }}</div>
           </div>
           <button class="self-center ml-2 text-gray-500" @click.stop="clearAllSelected">&times;</button>
         </div>
@@ -45,7 +45,7 @@
         show-size-picker
         @update:page="handlePageChange"
       >
-        <template #prefix="{}">共 {{ itemCount }} 条数据</template>
+        <template #prefix="{}">{{ itemCount }} {{ $t('common.paginationItemCount') }}</template>
       </n-pagination>
     </n-popover>
   </div>
@@ -135,6 +135,7 @@
     emit('update:loraList', []);
     emit('selected', []);
   }
+
   onMounted(async () => {
     query(page.value, pageSize.value);
   });

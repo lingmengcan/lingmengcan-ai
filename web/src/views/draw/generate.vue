@@ -2,7 +2,7 @@
   <div class="flex w-full h-full overflow-hidden rounded-md">
     <div class="relative flex h-full w-[500px] flex-col py-3 transition-all bg-[#ffffff99]">
       <div class="px-4">
-        <span class="text-base">模型：</span>
+        <span class="text-base">{{ $t('views.draw.stableDiffusion.model') }}</span>
         <n-tag>{{ modelName }}</n-tag>
         <selectModel
           v-model:model-name="modelName"
@@ -10,11 +10,11 @@
         />
       </div>
       <n-tabs size="large" justify-content="space-evenly" type="line" animated class="flex-1 overflow-hidden">
-        <n-tab-pane name="txt2img" tab="文生图" class="flex flex-col h-full">
+        <n-tab-pane name="txt2img" :tab="$t('views.draw.stableDiffusion.txt2img')" class="flex flex-col h-full">
           <stableDiffusion v-model:txt2imgParams="txt2imgParams" v-model:loraList="loraList" />
         </n-tab-pane>
-        <n-tab-pane name="img2img" tab="图生图"></n-tab-pane>
-        <n-tab-pane name="2video" tab="视频生成" disabled>视频生成</n-tab-pane>
+        <n-tab-pane name="img2img" :tab="$t('views.draw.stableDiffusion.img2img')"></n-tab-pane>
+        <n-tab-pane name="2video" :tab="$t('views.draw.stableDiffusion.genVideo')" disabled></n-tab-pane>
       </n-tabs>
       <div class="flex justify-center pt-3 border-t">
         <n-button type="primary" :loading="generating" @click="handleGenerate">生成图片</n-button>

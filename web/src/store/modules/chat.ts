@@ -13,6 +13,7 @@ import {
 import { Message, Conversation } from '@/models/chat';
 import router from '@/router';
 import { defineStore } from 'pinia';
+import i18n from '@/locales';
 
 export interface ChatState {
   activeId: string | undefined;
@@ -37,8 +38,10 @@ export const useChatStore = defineStore('chat-store', {
     },
 
     async addConversation(temperature = 0.5, llm = 'ChatGLM3') {
+      // 显式类型注解
+      const t = i18n.global.t as (key: string) => string;
       const defaultConversation = {
-        conversationName: '新建对话',
+        conversationName: t('views.chat.new'),
         temperature,
         llm,
         userName: '',

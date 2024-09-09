@@ -2,7 +2,7 @@
   <n-popover ref="popoverRef" v-model:show="showPopover" trigger="click" placement="right-start" :show-arrow="false">
     <template #trigger>
       <n-button strong secondary class="float-right !px-5 !h-7 !text-xs" @click="showPopover = !showPopover">
-        切换
+        {{ $t('views.draw.stableDiffusion.changeModel') }}
       </n-button>
     </template>
     <n-grid :x-gap="12" :y-gap="12" cols="5" class="my-3 overflow-auto">
@@ -28,7 +28,7 @@
       show-size-picker
       @update:page="handlePageChange"
     >
-      <template #prefix="{}">共 {{ itemCount }} 条数据</template>
+      <template #prefix="{}">{{ itemCount }} {{ $t('common.paginationItemCount') }}</template>
     </n-pagination>
   </n-popover>
 </template>

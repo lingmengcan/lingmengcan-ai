@@ -95,7 +95,7 @@
                     <TrashOutline />
                   </n-icon>
                 </template>
-                删除后无法恢复，是否继续删除？
+                {{ $t('common.deleteConfirm') }}
               </n-popconfirm>
             </div>
           </n-button>

@@ -80,7 +80,7 @@
 <script setup lang="ts">
   import inputSlider from './input-slider.vue';
   import imageUpload from './image-upload.vue';
-  import { onMounted, PropType, ref } from 'vue';
+  import { onMounted, PropType, ref, watch } from 'vue';
   import { SelectOption, SelectGroupOption } from 'naive-ui';
   import { getPreprocessorList } from '@/api/draw';
   import { ResultEnum } from '@/constants';
@@ -93,7 +93,10 @@
     },
   });
 
-  const controlNetParamsRef = ref<ControlNetParams>(props.controlNetParams);
+  const emit = defineEmits(['update:controlNetParams']);
+
+  // 创建一个ref并初始化为props值
+  const controlNetParamsRef = ref<ControlNetParams>({ ...props.controlNetParams });
 
   const displayControlNetParams = ref<DisplayControlNetParams>();
 
@@ -113,6 +116,15 @@
 
     controlNetParamsRef.value.module = value;
   };
+
+  // 监听controlNetParamsRef的变化并emit给父组件
+  watch(
+    controlNetParamsRef,
+    (newVal) => {
+      emit('update:controlNetParams', newVal);
+    },
+    { deep: true }, // 深度监听对象的变化
+  );
 
   onMounted(async () => {
     const res = await getPreprocessorList();

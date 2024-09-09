@@ -2,23 +2,18 @@
   <div class="flex-1 px-4 pb-4 overflow-auto">
     <n-grid :cols="6" :x-gap="24" :y-gap="16">
       <n-gi :span="6">
-        <div class="pb-1">
-          个性化生成
-          <span class="text-xs text-gray-400">LoRA</span>
-        </div>
+        <div class="pb-1">{{ $t('views.draw.stableDiffusion.personalizedGeneration') }}</div>
         <selectLora v-model:lora-list="loraListValue" @selected="selectedLora" />
       </n-gi>
       <n-gi :span="6">
         <div class="pb-1">
-          描述词
-          <span class="text-xs text-gray-400">Prompt</span>
+          {{ $t('views.draw.stableDiffusion.prompt') }}
         </div>
         <n-input v-model:value="txt2imgParamsRef.prompt" type="textarea" rows="5" placeholder="Enter prompt here..." />
       </n-gi>
       <n-gi :span="6">
         <div class="pb-1">
-          反向词
-          <span class="text-xs text-gray-400">Negative Prompt</span>
+          {{ $t('views.draw.stableDiffusion.negativePrompt') }}
         </div>
         <n-input
           v-model:value="txt2imgParamsRef.negative_prompt"
@@ -29,47 +24,42 @@
       </n-gi>
       <n-gi :span="6">
         <div class="pb-1">
-          生成数量
+          {{ $t('views.draw.stableDiffusion.batchSize') }}
           <n-tag class="float-right" size="small">{{ txt2imgParamsRef.batch_size }}</n-tag>
         </div>
         <n-slider v-model:value="txt2imgParamsRef.batch_size" :min="1" :max="5" :step="1" />
       </n-gi>
       <n-gi :span="3">
         <div class="pb-1">
-          宽度
-          <span class="text-xs text-gray-400">Width</span>
+          {{ $t('views.draw.stableDiffusion.width') }}
           <n-tag class="float-right" size="small">{{ txt2imgParamsRef.width }}</n-tag>
         </div>
         <n-slider v-model:value="txt2imgParamsRef.width" :min="64" :max="2048" :step="1" />
       </n-gi>
       <n-gi :span="3">
         <div class="pb-1">
-          高度
-          <span class="text-xs text-gray-400">Height</span>
+          {{ $t('views.draw.stableDiffusion.height') }}
           <n-tag class="float-right" size="small">{{ txt2imgParamsRef.height }}</n-tag>
         </div>
         <n-slider v-model:value="txt2imgParamsRef.height" :min="64" :max="2048" :step="1" />
       </n-gi>
       <n-gi :span="3">
         <div class="pb-1">
-          计算步数
-          <span class="text-xs text-gray-400">Steps</span>
+          {{ $t('views.draw.stableDiffusion.steps') }}
           <n-tag class="float-right" size="small">{{ txt2imgParamsRef.steps }}</n-tag>
         </div>
         <n-slider v-model:value="txt2imgParamsRef.steps" :min="1" :max="99" :step="1" />
       </n-gi>
       <n-gi :span="3">
         <div class="pb-1">
-          精准度
-          <span class="text-xs text-gray-400">CFG Scale</span>
+          {{ $t('views.draw.stableDiffusion.cfgScale') }}
           <n-tag class="float-right" size="small">{{ txt2imgParamsRef.cfg_scale }}</n-tag>
         </div>
         <n-slider v-model:value="txt2imgParamsRef.cfg_scale" :min="1" :max="30" :step="1" />
       </n-gi>
       <n-gi :span="3">
         <div class="pb-1">
-          采样器
-          <span class="text-xs text-gray-400">Sampler</span>
+          {{ $t('views.draw.stableDiffusion.sampler') }}
         </div>
         <selectDict
           v-model:dict-code="txt2imgParamsRef.sampler_index"
@@ -78,35 +68,32 @@
         />
       </n-gi>
       <n-gi :span="3">
-        <div class="pb-1">使用指定种子</div>
+        <div class="pb-1">{{ $t('views.draw.stableDiffusion.seed') }}</div>
         <n-input-number v-model:value="txt2imgParamsRef.seed" :show-button="false" />
       </n-gi>
       <n-gi :span="6">
         <div>
-          面部修复
-          <span class="text-xs text-gray-400">Restore faces</span>
+          {{ $t('views.draw.stableDiffusion.restoreFaces') }}
           <n-switch v-model:value="txt2imgParamsRef.restore_faces" size="small" class="float-right" />
         </div>
       </n-gi>
       <n-gi :span="6">
         <div>
-          高分辨率修复
-          <span class="text-xs text-gray-400">Hires fix</span>
+          {{ $t('views.draw.stableDiffusion.hiresFix') }}
+
           <n-switch v-model:value="txt2imgParamsRef.enable_hr" size="small" class="float-right" />
           <n-collapse-transition :show="txt2imgParamsRef.enable_hr" class="pt-1">
             <n-grid :cols="6" :x-gap="24" :y-gap="16">
               <n-gi :span="3">
                 <div class="py-2">
-                  宽度
-                  <span class="text-xs text-gray-400">Width</span>
+                  {{ $t('views.draw.stableDiffusion.width') }}
                   <n-tag class="float-right" size="small">{{ txt2imgParamsRef.hr_resize_x }}</n-tag>
                 </div>
                 <n-slider v-model:value="txt2imgParamsRef.hr_resize_x" :min="512" :max="3840" :step="1" />
               </n-gi>
               <n-gi :span="3">
                 <div class="py-2">
-                  高度
-                  <span class="text-xs text-gray-400">Height</span>
+                  {{ $t('views.draw.stableDiffusion.height') }}
                   <n-tag class="float-right" size="small">
                     {{ txt2imgParamsRef.hr_resize_y }}
                   </n-tag>
@@ -115,15 +102,13 @@
               </n-gi>
               <n-gi :span="6">
                 <div class="pb-1">
-                  高清化算法
-                  <span class="text-xs text-gray-400">Upscaler 1</span>
+                  {{ $t('views.draw.stableDiffusion.upscaler1') }}
                 </div>
                 <selectDict v-model:dict-code="txt2imgParamsRef.hr_upscaler" dict-type="HIRES_FIX_UPSCALER" />
               </n-gi>
               <n-gi :span="6">
                 <div class="pb-1">
-                  高分辨率采样步数
-                  <span class="text-xs text-gray-400">Hires steps</span>
+                  {{ $t('views.draw.stableDiffusion.hiresSteps') }}
                   <n-tag class="float-right" size="small">
                     {{ txt2imgParamsRef.hr_second_pass_steps }}
                   </n-tag>
@@ -132,8 +117,7 @@
               </n-gi>
               <n-gi :span="6">
                 <div class="pb-1">
-                  重绘强度
-                  <span class="text-xs text-gray-400">Denoising strength</span>
+                  {{ $t('views.draw.stableDiffusion.denoisingStrength') }}
                   <n-tag class="float-right" size="small">
                     {{ txt2imgParamsRef.denoising_strength }}
                   </n-tag>
@@ -158,12 +142,12 @@
               @add="handleControNetAdd"
             >
               <n-tab-pane
-                v-for="(params, index) in controlNetParamsListRef"
+                v-for="(_, index) in controlNetParamsListRef"
                 :key="index"
                 :name="index"
                 :tab="$t('views.draw.stableDiffusion.controlNet.control') + ' ' + index"
               >
-                <controlNet :control-net-params="params" />
+                <controlNet v-model:control-net-params="controlNetParamsListRef[index]" />
               </n-tab-pane>
             </n-tabs>
           </n-collapse-item>
@@ -193,7 +177,7 @@
 
   const txt2imgParamsRef = ref(props.txt2imgParams);
   const loraListValue = ref(props.loraList);
-  const emit = defineEmits(['update:loraList']);
+  const emit = defineEmits(['update:txt2imgParams', 'update:loraList']);
 
   const defaultControlNetParams: ControlNetParams = {
     enabled: true, // 启用

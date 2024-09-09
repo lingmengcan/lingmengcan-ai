@@ -15,7 +15,7 @@
   <n-slider v-model:value="valueRef" :min="min" :max="max" :step="step" />
 </template>
 <script setup lang="ts">
-  import { PropType, ref, watchEffect } from 'vue';
+  import { PropType, ref, watch } from 'vue';
 
   const props = defineProps({
     value: {
@@ -40,10 +40,22 @@
     },
   });
 
+  const emit = defineEmits(['update:value']);
+
   const valueRef = ref(props.value);
 
-  //监控父组件变化
-  watchEffect(() => {
-    valueRef.value = props.value;
+  // 监听props变化并同步更新valueRef
+  watch(
+    () => props.value,
+    (newVal) => {
+      if (newVal) {
+        valueRef.value = newVal;
+      }
+    },
+  );
+
+  // 监听controlNetParamsRef的变化并emit给父组件
+  watch(valueRef, (newVal) => {
+    emit('update:value', newVal);
   });
 </script>

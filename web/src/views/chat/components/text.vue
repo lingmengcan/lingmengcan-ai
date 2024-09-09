@@ -5,6 +5,9 @@
   import mila from 'markdown-it-link-attributes';
   import hljs from 'highlight.js';
   import { copyToClip } from '@/utils';
+  import { useI18n } from 'vue-i18n';
+
+  const { t } = useI18n();
 
   interface Props {
     text?: string;
@@ -50,9 +53,9 @@
           const code = btn.parentElement?.nextElementSibling?.textContent;
           if (code) {
             copyToClip(code).then(() => {
-              btn.textContent = '复制成功';
+              btn.textContent = t('views.chat.copy');
               setTimeout(() => {
-                btn.textContent = '复制代码';
+                btn.textContent = t('views.chat.copySuccess');
               }, 1000);
             });
           }
@@ -85,7 +88,7 @@
 
 <template>
   <div ref="textRef" class="flex-1 w-full max-w-full text-sm dark:prose-invert md:text-base">
-    <div v-if="!asRawText" class="prose max-w-full" v-html="text"></div>
+    <div v-if="!asRawText" class="max-w-full prose" v-html="text"></div>
     <div v-else class="whitespace-pre-wrap" v-text="text" />
 
     <span v-if="loading" class="w-[4px] h-[20px] block animate-blink"></span>

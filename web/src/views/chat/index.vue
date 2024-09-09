@@ -6,7 +6,9 @@
   import List from './components/list.vue';
   import Conversation from './components/conversation.vue';
   import { useDialog, useMessage } from 'naive-ui';
+  import { useI18n } from 'vue-i18n';
 
+  const { t } = useI18n();
   const message = useMessage();
   const dialog = useDialog();
   const chatStore = useChatStore();
@@ -18,13 +20,13 @@
 
   function handleClear() {
     dialog.warning({
-      title: '清空',
-      content: '您确定要清空对话吗',
-      positiveText: '确定',
-      negativeText: '取消',
+      title: t('common.alert'),
+      content: t('views.chat.clearMessage'),
+      positiveText: t('common.confirm'),
+      negativeText: t('common.cancel'),
       onPositiveClick: () => {
         chatStore.clearConversationList().then(() => {
-          message.success('清空成功');
+          message.success(t('views.chat.clearSuccess'));
         });
       },
     });
@@ -39,7 +41,7 @@
             <n-icon size="22" class="mx-2">
               <ChatbubblesOutline />
             </n-icon>
-            <div>对话列表</div>
+            <div>{{ $t('views.chat.list') }}</div>
           </div>
           <n-button class="action-button" @click="chatListVisable = !chatListVisable">
             <template #icon>
@@ -56,7 +58,7 @@
                 <AddCircleOutline />
               </n-icon>
             </template>
-            创建新对话
+            {{ $t('views.chat.new') }}
           </n-button>
         </div>
 
@@ -69,7 +71,7 @@
                 <TrashOutline />
               </n-icon>
             </template>
-            清空列表
+            {{ $t('views.chat.clearList') }}
           </n-button>
         </div>
       </div>
