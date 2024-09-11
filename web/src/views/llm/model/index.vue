@@ -112,6 +112,9 @@
   import { Llm } from '@/models/llm';
   import { FormInst, useMessage } from 'naive-ui';
   import selectModel from '@/components/select/select-model.vue';
+  import { useI18n } from 'vue-i18n';
+
+  const { t } = useI18n();
 
   const message = useMessage();
 
@@ -226,7 +229,7 @@
         }
       } else {
         console.log(errors);
-        message.error('验证不通过');
+        message.error(t('common.validationFailed'));
       }
 
       messageReactive.destroy();

@@ -2,19 +2,21 @@
   <n-card :bordered="false">
     <n-form ref="formRef" inline label-placement="left" label-width="auto" :model="queryFormData">
       <n-grid :cols="24" :x-gap="24">
-        <n-form-item-gi :span="6" label="角色名称" path="roleName">
-          <n-input v-model:value="queryFormData.roleName" placeholder="请输入角色名称" />
+        <n-form-item-gi :span="6" :label="$t('views.system.role.roleName')" path="roleName">
+          <n-input v-model:value="queryFormData.roleName" :placeholder="$t('views.system.role.placeholder.roleName')" />
         </n-form-item-gi>
-        <n-form-item-gi :span="6" label="角色编码" path="roleCode">
-          <n-input v-model:value="queryFormData.roleCode" placeholder="请输入角色编码" />
+        <n-form-item-gi :span="6" :label="$t('views.system.role.roleCode')" path="roleCode">
+          <n-input v-model:value="queryFormData.roleCode" :placeholder="$t('views.system.role.placeholder.roleCode')" />
         </n-form-item-gi>
-        <n-form-item-gi :span="6" label="状态" path="status">
-          <n-select v-model:value="queryFormData.status" :options="statusOptions" />
+        <n-form-item-gi :span="6" :label="$t('common.status')" path="status">
+          <selectStatus v-model:status="queryFormData.status" />
         </n-form-item-gi>
         <n-form-item-gi :span="6">
           <n-space>
-            <n-button @click="clearQuery">重置</n-button>
-            <n-button v-permission="['system_role_query']" type="primary" @click="handleQuery">查询</n-button>
+            <n-button @click="clearQuery">{{ $t('common.reset') }}</n-button>
+            <n-button v-permission="['system_role_query']" type="primary" @click="handleQuery">
+              {{ $t('common.query') }}
+            </n-button>
           </n-space>
         </n-form-item-gi>
       </n-grid>
@@ -30,7 +32,7 @@
               <PlusOutlined />
             </n-icon>
           </template>
-          添加角色
+          {{ $t('views.system.role.add') }}
         </n-button>
       </div>
     </div>
@@ -59,31 +61,35 @@
         :model="drawerFormData"
         :rules="drawerRules"
       >
-        <n-form-item label="角色名称" path="roleName">
-          <n-input v-model:value="drawerFormData.roleName" placeholder="输入姓名" />
+        <n-form-item :label="$t('views.system.role.roleName')" path="roleName">
+          <n-input
+            v-model:value="drawerFormData.roleName"
+            :placeholder="$t('views.system.role.placeholder.roleName')"
+          />
         </n-form-item>
-        <n-form-item label="角色编码" path="roleCode">
-          <n-input v-model:value="drawerFormData.roleCode" placeholder="输入年龄" />
+        <n-form-item :label="$t('views.system.role.roleCode')" path="roleCode">
+          <n-input
+            v-model:value="drawerFormData.roleCode"
+            :placeholder="$t('views.system.role.placeholder.roleCode')"
+          />
         </n-form-item>
-        <n-form-item label="排序" path="sort">
+        <n-form-item :label="$t('views.system.role.sort')" path="sort">
           <n-input-number v-model:value="drawerFormData.sort" :min="0" />
         </n-form-item>
-        <n-form-item label="状态" name="status">
-          <n-radio-group v-model:value="drawerFormData.status">
-            <n-space>
-              <n-radio v-for="item in statusOptions" :key="item.value" :value="item.value">
-                {{ item.label }}
-              </n-radio>
-            </n-space>
-          </n-radio-group>
+        <n-form-item :label="$t('common.status')" name="status">
+          <selectStatus v-model:status="drawerFormData.status" />
         </n-form-item>
-        <n-form-item label="描述" name="description">
-          <n-input v-model:value="drawerFormData.description" type="textarea" placeholder="请输入角色描述" />
+        <n-form-item :label="$t('views.system.role.description')" name="description">
+          <n-input
+            v-model:value="drawerFormData.description"
+            type="textarea"
+            :placeholder="$t('views.system.role.placeholder.description')"
+          />
         </n-form-item>
       </n-form>
       <template #footer>
         <n-space>
-          <n-button type="primary" attr-type="button" @click="handleAddandEdit">确定</n-button>
+          <n-button type="primary" attr-type="button" @click="handleAddandEdit">{{ $t('common.submit') }}</n-button>
         </n-space>
       </template>
     </n-drawer-content>
@@ -108,13 +114,15 @@
     <template #action>
       <n-space>
         <n-button type="info" ghost icon-placement="left" @click="expandHandle">
-          全部{{ expandAll ? '收起' : '展开' }}
+          {{ expandAll ? $t('views.system.role.unexpand') : $t('views.system.role.expand') }}
         </n-button>
 
         <n-button type="info" ghost icon-placement="left" @click="checkedAllHandle">
-          全部{{ checkedAll ? '取消' : '选择' }}
+          {{ checkedAll ? $t('views.system.role.unselectAll') : $t('views.system.role.selectAll') }}
         </n-button>
-        <n-button type="primary" :table-loading="formBtnLoading" @click="confirmMenuForm">提交</n-button>
+        <n-button type="primary" :table-loading="formBtnLoading" @click="confirmMenuForm">
+          {{ $t('common.submit') }}
+        </n-button>
       </n-space>
     </template>
   </n-modal>
@@ -134,6 +142,9 @@
   import { RowData } from 'naive-ui/es/data-table/src/interface';
   import { renderIcon } from '@/utils/icons';
   import { hasPermission } from '@/utils/permission';
+  import { useI18n } from 'vue-i18n';
+
+  const { t } = useI18n();
 
   const message = useMessage();
   const dialog = useDialog();
@@ -169,17 +180,12 @@
   const drawerFormData = ref(roleInitData);
 
   const drawerRules = {
-    roleName: { required: true, message: '角色名称必填', trigger: 'blur' },
-    roleCode: { required: true, message: '角色编码必填', trigger: 'blur' },
-    status: { required: true, message: '状态必填', trigger: 'blur' },
-    sort: { type: 'number', required: true, message: '排序必填', trigger: 'blur' },
+    roleName: { required: true, message: t('views.system.role.placeholder.roleName'), trigger: 'blur' },
+    roleCode: { required: true, message: t('views.system.role.placeholder.roleCode'), trigger: 'blur' },
+    status: { required: true, message: t('views.system.role.placeholder.status'), trigger: 'blur' },
+    sort: { type: 'number', required: true, message: t('views.system.role.placeholder.sort'), trigger: 'blur' },
   };
 
-  // 状态select options
-  const statusOptions = ref([
-    { label: '正常', value: 0 },
-    { label: '停用', value: 1 },
-  ]);
   const queryFormData = ref({
     roleName: '',
     roleCode: '',
@@ -189,12 +195,12 @@
   const columns = [
     {
       key: 'roleId',
-      title: '角色ID',
+      title: t('views.system.role.roleId'),
       type: 'selection',
     },
     {
       key: 'roleName',
-      title: '角色名称',
+      title: t('views.system.role.roleName'),
       width: 120,
       ellipsis: {
         tooltip: true,
@@ -202,17 +208,17 @@
     },
     {
       key: 'roleCode',
-      title: '角色编码',
+      title: t('views.system.role.roleCode'),
       width: 120,
     },
     {
       key: 'sort',
-      title: '排序',
+      title: t('views.system.role.sort'),
       width: 60,
     },
     {
       key: 'status',
-      title: '状态',
+      title: t('common.status'),
       width: 60,
       align: 'center',
       fixed: 'left',
@@ -229,7 +235,7 @@
     },
     {
       key: 'createdAt',
-      title: '创建时间',
+      title: t('views.system.role.createdAt'),
       width: 120,
       render(row: RowData) {
         return h('span', formatDateTime(row['createdAt']));
@@ -237,7 +243,7 @@
     },
     {
       key: 'actions',
-      title: '操作',
+      title: t('common.table.actions'),
       align: 'center',
       fixed: 'right',
       width: 320,
@@ -252,7 +258,7 @@
               disabled: !hasPermission('system_role_edit'),
               onClick: () => handleMenu(row),
             },
-            { default: () => '菜单权限', icon: renderIcon(MenuOutlined) },
+            { default: () => t('views.system.role.menuRights'), icon: renderIcon(MenuOutlined) },
           ),
           h(
             NButton,
@@ -264,7 +270,7 @@
               disabled: !hasPermission('system_role_edit'),
               onClick: () => handleUser(row),
             },
-            { default: () => '分配用户', icon: renderIcon(UserSwitchOutlined) },
+            { default: () => t('views.system.role.roleUsers'), icon: renderIcon(UserSwitchOutlined) },
           ),
           h(
             NButton,
@@ -276,7 +282,7 @@
               onClick: () => handleEdit(row),
             },
             {
-              default: () => '编辑',
+              default: () => t('common.edit'),
               icon: renderIcon(EditOutlined),
             },
           ),
@@ -291,7 +297,7 @@
               onClick: () => handleDelete(row),
             },
             {
-              default: () => '删除',
+              default: () => t('common.delete'),
               icon: renderIcon(DeleteOutlined),
             },
           ),
@@ -315,7 +321,7 @@
     pageSizes: [10, 20, 50],
     itemCount: 0,
     prefix({ itemCount }) {
-      return `共 ${itemCount} 条`;
+      return `${itemCount} ${t('common.paginationItemCount')}`;
     },
     onChange: (page: number) => {
       pagination.value.page = page;
@@ -382,34 +388,34 @@
   // 改变状态
   const handleChangeStatus = (row: RowData) => {
     row.changing = true;
-    let text = '停用';
+    let text = t('common.disable');
 
     const role: Role = { roleId: '', roleName: '', roleCode: '', sort: 0, status: 0 };
     Object.assign(role, row);
 
     switch (row.status) {
       case 1:
-        text = '启用';
+        text = t('common.enable');
         role.status = 0;
         break;
       case 0:
-        text = '停用';
+        text = t('common.disable');
         role.status = 1;
         break;
       case -1:
-        text = '删除';
+        text = t('common.edit');
         break;
     }
 
     dialog.info({
-      title: '系统消息',
-      content: `确认要"${text}""${row.roleName}"角色吗？`,
-      positiveText: '确定',
-      negativeText: '取消',
+      title: t('common.info'),
+      content: t('views.system.role.confirmMessage', { action: text, user: row.roleName }),
+      positiveText: t('common.confirm'),
+      negativeText: t('common.cancel'),
       onPositiveClick: async () => {
         const res = await changeRoleStatus(role);
         if (res?.code === 0) {
-          message.success(`${text}成功`);
+          message.success(`${text}${t('common.success')}`);
         }
         row.changing = false;
         await query(pagination.value.page, pagination.value.pageSize);
@@ -422,7 +428,7 @@
 
   // 新增角色
   const handleAdd = async () => {
-    drawerTitle.value = '新增角色';
+    drawerTitle.value = `${t('common.add')}${t('views.system.role.index')}`;
     showDrawer.value = true;
     drawerFormData.value = roleInitData;
   };
@@ -435,7 +441,7 @@
 
   // 修改角色
   const handleEdit = async (row: RowData) => {
-    drawerTitle.value = '修改角色';
+    drawerTitle.value = `${t('common.add')}${t('views.system.role.index')}`;
     showDrawer.value = true;
     drawerFormData.value = {
       roleId: row.roleId,
@@ -471,7 +477,7 @@
         }
       } else {
         console.log(errors);
-        message.error('验证不通过');
+        message.error(t('common.validationFailed'));
       }
 
       messageReactive.destroy();
@@ -519,7 +525,7 @@
     };
 
     await changeRoleMenus(requestData);
-    message.success('保存成功');
+    message.success(t('common.success'));
     query(pagination.value.page, pagination.value.pageSize);
     formBtnLoading.value = false;
   };
