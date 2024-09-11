@@ -1,6 +1,6 @@
 {
   "name": "lingmengcan-web",
-  "version": "0.9.9.20240801",
+  "version": "1.0.0.20240911",
   "private": true,
   "type": "module",
   "scripts": {
