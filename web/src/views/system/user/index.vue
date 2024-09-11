@@ -11,6 +11,11 @@
   import { RowData } from 'naive-ui/es/data-table/src/interface';
   import { renderIcon } from '@/utils/icons';
   import { hasPermission } from '@/utils/permission';
+  import selectDict from '@/components/select/select-dict.vue';
+  import selectStatus from '@/components/select/select-status.vue';
+  import { useI18n } from 'vue-i18n';
+
+  const { t } = useI18n();
 
   const message = useMessage();
   const dialog = useDialog();
@@ -40,26 +45,13 @@
   const drawerFormData = ref(userInitData);
 
   const drawerRules = {
-    userName: { required: true, message: '用户名称必填', trigger: 'blur' },
-    nickName: { required: true, message: '用户名称必填', trigger: 'blur' },
-    phone: { required: true, message: '用户昵称必填', trigger: 'blur' },
-    email: { required: true, message: 'email必填', trigger: 'blur' },
-    sex: { required: true, message: '性别必填', trigger: 'blur' },
-    status: { required: true, message: '状态必填', trigger: 'blur' },
+    userName: { required: true, message: t('views.system.user.placeholder.userName'), trigger: 'blur' },
+    nickName: { required: true, message: t('views.system.user.placeholder.nickName'), trigger: 'blur' },
+    phone: { required: true, message: t('views.system.user.placeholder.phone'), trigger: 'blur' },
+    email: { required: true, message: t('views.system.user.placeholder.email'), trigger: 'blur' },
+    sex: { required: true, message: t('views.system.user.placeholder.sex'), trigger: 'blur' },
+    status: { required: true, message: t('views.system.user.placeholder.status'), trigger: 'blur' },
   };
-
-  // 状态select options
-  const statusOptions = ref([
-    { label: '正常', value: 0 },
-    { label: '停用', value: 1 },
-  ]);
-
-  // sex options
-  const sexOptions = ref([
-    { label: '男', value: '1' },
-    { label: '女', value: '0' },
-    { label: '未知', value: '2' },
-  ]);
 
   const queryFormData = ref({
     userName: '',
@@ -78,12 +70,12 @@
   const columns = [
     {
       key: 'userId',
-      title: '用户ID',
+      title: t('views.system.user.userId'),
       type: 'selection',
     },
     {
       key: 'userName',
-      title: '用户名称',
+      title: t('views.system.user.userName'),
       width: 100,
       ellipsis: {
         tooltip: true,
@@ -91,7 +83,7 @@
     },
     {
       key: 'nickName',
-      title: '用户昵称',
+      title: t('views.system.user.nickName'),
       width: 100,
       ellipsis: {
         tooltip: true,
@@ -99,7 +91,7 @@
     },
     {
       key: 'phone',
-      title: '电话',
+      title: t('views.system.user.nickName'),
       width: 100,
       ellipsis: {
         tooltip: true,
@@ -107,7 +99,7 @@
     },
     {
       key: 'email',
-      title: 'email',
+      title: t('views.system.user.email'),
       width: 120,
       ellipsis: {
         tooltip: true,
@@ -116,7 +108,7 @@
 
     {
       key: 'status',
-      title: '状态',
+      title: t('views.system.user.status'),
       width: 60,
       align: 'center',
       fixed: 'left',
@@ -133,7 +125,7 @@
     },
     {
       key: 'createdAt',
-      title: '创建时间',
+      title: t('views.system.user.createdAt'),
       width: 120,
       ellipsis: {
         tooltip: true,
@@ -144,7 +136,7 @@
     },
     {
       key: 'actions',
-      title: '操作',
+      title: t('common.table.actions'),
       align: 'center',
       fixed: 'right',
       width: 180,
@@ -160,7 +152,7 @@
               onClick: () => handleEdit(row),
             },
             {
-              default: () => '编辑',
+              default: () => t('common.edit'),
               icon: renderIcon(EditOutlined),
             },
           ),
@@ -175,7 +167,7 @@
               onClick: () => handleDelete(row),
             },
             {
-              default: () => '删除',
+              default: () => t('common.delete'),
               icon: renderIcon(DeleteOutlined),
             },
           ),
@@ -189,7 +181,7 @@
               onClick: () => handleResetPassword(row),
             },
             {
-              default: () => '重置密码',
+              default: () => t('views.system.user.resetPassword'),
               icon: renderIcon(ReloadOutlined),
             },
           ),
@@ -213,7 +205,7 @@
     pageSizes: [10, 20, 50],
     itemCount: 0,
     prefix({ itemCount }) {
-      return `共 ${itemCount} 条`;
+      return `${itemCount} ${t('common.paginationItemCount')}`;
     },
     onChange: (page: number) => {
       pagination.value.page = page;
@@ -281,34 +273,34 @@
   // 改变状态
   const handleChangeStatus = (row: RowData) => {
     row.changing = true;
-    let text = '停用';
+    let text = t('common.disable');
 
     const user: User = { ...userInitData };
     Object.assign(user, row);
 
     switch (row.status) {
       case 1:
-        text = '启用';
+        text = t('common.enable');
         user.status = 0;
         break;
       case 0:
-        text = '停用';
+        text = t('common.disable');
         user.status = 1;
         break;
       case -1:
-        text = '删除';
+        text = t('common.edit');
         break;
     }
 
     dialog.info({
-      title: '系统消息',
-      content: `确认要"${text}""${row.userName}"用户吗？`,
-      positiveText: '确定',
-      negativeText: '取消',
+      title: t('common.info'),
+      content: t('views.system.user.confirmMessage', { action: text, user: row.userName }),
+      positiveText: t('common.confirm'),
+      negativeText: t('common.cancel'),
       onPositiveClick: async () => {
         const res = await changeUserStatus(user);
         if (res?.code === 0) {
-          message.success(`${text}成功`);
+          message.success(`${text}${t('common.success')}`);
         }
         row.changing = false;
         await query(pagination.value.page, pagination.value.pageSize);
@@ -321,7 +313,7 @@
 
   // 新增用户
   const handleAdd = async () => {
-    drawerTitle.value = '新增用户';
+    drawerTitle.value = `${t('common.add')}${t('views.system.user.index')}`;
     showDrawer.value = true;
     drawerFormData.value = { ...userInitData };
   };
@@ -334,7 +326,7 @@
 
   // 修改用户
   const handleEdit = async (row: RowData) => {
-    drawerTitle.value = '修改用户';
+    drawerTitle.value = `${t('common.edit')}${t('views.system.user.index')}`;
     showDrawer.value = true;
 
     // 赋值
@@ -344,7 +336,7 @@
 
   const handleAddandEdit = (e: MouseEvent) => {
     e.preventDefault();
-    const messageReactive = message.loading('处理中', {
+    const messageReactive = message.loading('loading', {
       duration: 0,
     });
     drawerFormRef.value?.validate(async (errors) => {
@@ -360,7 +352,7 @@
         }
       } else {
         console.log(errors);
-        message.error('验证不通过');
+        message.error(t('common.validationFailed'));
       }
 
       messageReactive.destroy();
@@ -383,7 +375,7 @@
     });
     if (res?.code === 0) {
       showResetPwdModal.value = false;
-      message.success(`重置密码成功`);
+      message.success(`${t('views.system.user.resetPassword')}${t('common.success')}`);
     }
   };
 
@@ -398,22 +390,24 @@
   <n-card :bordered="false">
     <n-form ref="formRef" inline label-placement="left" label-width="auto" :model="queryFormData">
       <n-grid :cols="24" :x-gap="24">
-        <n-form-item-gi :span="6" label="用户名称" path="userName">
-          <n-input v-model:value="queryFormData.userName" placeholder="请输入用户名称" />
+        <n-form-item-gi :span="6" :label="$t('views.system.user.userName')" path="userName">
+          <n-input v-model:value="queryFormData.userName" :placeholder="$t('views.system.user.placeholder.userName')" />
         </n-form-item-gi>
-        <n-form-item-gi :span="6" label="用户昵称" path="userName">
-          <n-input v-model:value="queryFormData.nickName" placeholder="请输入用户昵称" />
+        <n-form-item-gi :span="6" :label="$t('views.system.user.nickName')" path="nickName">
+          <n-input v-model:value="queryFormData.nickName" :placeholder="$t('views.system.user.placeholder.nickName')" />
         </n-form-item-gi>
-        <n-form-item-gi :span="6" label="电话" path="userCode">
-          <n-input v-model:value="queryFormData.phone" placeholder="请输入电话" />
+        <n-form-item-gi :span="6" :label="$t('views.system.user.phone')" path="phone">
+          <n-input v-model:value="queryFormData.phone" :placeholder="$t('views.system.user.placeholder.phone')" />
         </n-form-item-gi>
-        <n-form-item-gi :span="6" label="状态" path="status">
-          <n-select v-model:value="queryFormData.status" :options="statusOptions" />
+        <n-form-item-gi :span="6" :label="$t('views.system.user.status')" path="status">
+          <selectStatus v-model:status="queryFormData.status" />
         </n-form-item-gi>
         <n-form-item-gi :span="6">
           <n-space>
-            <n-button @click="clearQuery">重置</n-button>
-            <n-button v-permission="['system_user_query']" type="primary" @click="handleQuery">查询</n-button>
+            <n-button @click="clearQuery">{{ $t('common.reset') }}</n-button>
+            <n-button v-permission="['system_user_query']" type="primary" @click="handleQuery">
+              {{ $t('common.query') }}
+            </n-button>
           </n-space>
         </n-form-item-gi>
       </n-grid>
@@ -429,7 +423,7 @@
               <PlusOutlined />
             </n-icon>
           </template>
-          添加用户
+          {{ $t('views.system.user.add') }}
         </n-button>
       </div>
     </div>
@@ -458,62 +452,70 @@
         :model="drawerFormData"
         :rules="drawerRules"
       >
-        <n-form-item label="用户名称" path="userName">
-          <n-input v-model:value="drawerFormData.userName" placeholder="输入用户名称" />
+        <n-form-item :label="$t('views.system.user.userName')" path="userName">
+          <n-input
+            v-model:value="drawerFormData.userName"
+            :placeholder="$t('views.system.user.placeholder.userName')"
+          />
         </n-form-item>
-        <n-form-item v-if="!drawerFormData.userId" label="密码" path="password">
+        <n-form-item v-if="!drawerFormData.userId" :label="$t('views.system.user.password')" path="password">
           <n-input
             v-model:value="drawerFormData.password"
             type="password"
             show-password-on="click"
-            placeholder="请输入密码"
+            :placeholder="$t('views.system.user.placeholder.password')"
           ></n-input>
         </n-form-item>
-        <n-form-item label="用户昵称" path="nickName">
-          <n-input v-model:value="drawerFormData.nickName" placeholder="输入用户昵称" />
+        <n-form-item :label="$t('views.system.user.nickName')" path="nickName">
+          <n-input
+            v-model:value="drawerFormData.nickName"
+            :placeholder="$t('views.system.user.placeholder.nickName')"
+          />
         </n-form-item>
-        <n-form-item label="email" path="email">
-          <n-input v-model:value="drawerFormData.email" placeholder="输入email" />
+        <n-form-item :label="$t('views.system.user.email')" path="email">
+          <n-input v-model:value="drawerFormData.email" :placeholder="$t('views.system.user.placeholder.email')" />
         </n-form-item>
-        <n-form-item label="电话" path="phone">
-          <n-input v-model:value="drawerFormData.phone" placeholder="输入电话" />
+        <n-form-item :label="$t('views.system.user.phone')" path="phone">
+          <n-input v-model:value="drawerFormData.phone" :placeholder="$t('views.system.user.placeholder.phone')" />
         </n-form-item>
-        <n-form-item label="性别" path="sex">
-          <n-radio-group v-model:value="drawerFormData.sex">
-            <n-space>
-              <n-radio v-for="item in sexOptions" :key="item.value" :value="item.value">
-                {{ item.label }}
-              </n-radio>
-            </n-space>
-          </n-radio-group>
+        <n-form-item :label="$t('views.system.user.sex')" path="sex">
+          <selectDict v-model:dict-code="drawerFormData.sex" dict-type="SYS_SEX" />
         </n-form-item>
-        <n-form-item label="状态" name="status">
-          <n-radio-group v-model:value="drawerFormData.status">
-            <n-space>
-              <n-radio v-for="item in statusOptions" :key="item.value" :value="item.value">
-                {{ item.label }}
-              </n-radio>
-            </n-space>
-          </n-radio-group>
+        <n-form-item :label="$t('views.system.user.status')" name="status">
+          <selectStatus v-model:status="drawerFormData.status" />
         </n-form-item>
-        <n-form-item label="描述" name="description">
-          <n-input v-model:value="drawerFormData.description" type="textarea" placeholder="请输入用户描述" />
+        <n-form-item :label="$t('views.system.user.description')" name="description">
+          <n-input
+            v-model:value="drawerFormData.description"
+            type="textarea"
+            :placeholder="$t('views.system.user.placeholder.description')"
+          />
         </n-form-item>
       </n-form>
       <template #footer>
         <n-space>
-          <n-button type="primary" attr-type="button" @click="handleAddandEdit">确定</n-button>
+          <n-button type="primary" attr-type="button" @click="handleAddandEdit">{{ $t('common.submit') }}</n-button>
         </n-space>
       </template>
     </n-drawer-content>
   </n-drawer>
 
   <!-- 重置密码对话框 -->
-  <n-modal v-model:show="showResetPwdModal" :show-icon="false" preset="dialog" title="重置密码">
+  <n-modal
+    v-model:show="showResetPwdModal"
+    :show-icon="false"
+    preset="dialog"
+    :title="`${$t('views.system.user.resetPassword')}: ${resetPwdData.userName}`"
+  >
     <div>
-      <div class="flex mb-3">请输入"{{ resetPwdData.userName }}"的新密码</div>
-      <n-input v-model="resetPwdData.password" class="flex mb-3" placeholder="请输入密码" type="password" />
-      <n-button type="primary" @click="onResetPwd">提交</n-button>
+      <div class="flex mb-3">{{ $t('views.system.user.resetPasswordInfo') }}</div>
+      <n-input
+        v-model="resetPwdData.password"
+        class="flex mb-3"
+        :placeholder="$t('views.system.user.placeholder.password')"
+        type="password"
+      />
+      <n-button type="primary" @click="onResetPwd">{{ $t('common.submit') }}</n-button>
     </div>
   </n-modal>
 </template>

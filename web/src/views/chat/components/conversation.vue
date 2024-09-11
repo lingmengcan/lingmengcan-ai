@@ -19,6 +19,9 @@
   import storage from '@/utils/storage';
   import { ACCESS_TOKEN } from '@/constants';
   import selectModel from '@/components/select/select-model.vue';
+  import { useI18n } from 'vue-i18n';
+
+  const { t } = useI18n();
 
   defineProps({
     chatListVisable: {
@@ -56,7 +59,7 @@
     if (loading.value) {
       // 更新回答
       if (answer.value) {
-        answer.value.messageText = '已暂停生成。';
+        answer.value.messageText = t('views.chat.PausedGeneration');
         answer.value.completed = 1;
         chatStore.updateChatByConversationId(answer.value);
       }
@@ -101,7 +104,7 @@
     const question = await chatStore.addChatByConversationId(newChat);
 
     if (fileId && question) {
-      question.messageText = '输出文档摘要';
+      question.messageText = t('views.chat.documentSummary');
     }
 
     // 创建回答
@@ -298,26 +301,34 @@
               </n-button>
             </template>
             <div>
-              <div class="w-full px-4 py-2 text-base font-bold border-b">参数设置</div>
+              <div class="w-full px-4 py-2 text-base font-bold border-b">{{ $t('views.chat.paramsetting') }}</div>
               <div class="flex flex-col w-full gap-6 p-4">
                 <div class="flex flex-col">
-                  <label class="mb-2 font-bold text-left text-neutral-700">生成温度</label>
+                  <label class="mb-2 font-bold text-left text-neutral-700">{{ $t('views.chat.temperature') }}</label>
                   <span class="text-xs text-black/50">
-                    较高的数值（例如0.8）会使输出更随机，而较低的数值（例如0.2）会使输出更加聚焦和确定性更强。
+                    {{ $t('views.chat.temperatureTips') }}
                   </span>
                   <span class="mt-2 mb-1 font-sans text-center text-neutral-900">
                     {{ temperature }}
                   </span>
                   <n-slider v-model:value="temperature" :step="0.1" :min="0" :max="1" />
                   <ul class="w mt-2 pb-8 flex justify-between px-[12px] text-neutral-500 text-xs">
-                    <li class="flex justify-center"><span class="absolute">保守</span></li>
-                    <li class="flex justify-center"><span class="absolute">中立</span></li>
-                    <li class="flex justify-center"><span class="absolute">随性</span></li>
+                    <li class="flex justify-center">
+                      <span class="absolute">{{ $t('views.chat.temperatureLevel1') }}</span>
+                    </li>
+                    <li class="flex justify-center">
+                      <span class="absolute">{{ $t('views.chat.temperatureLevel2') }}</span>
+                    </li>
+                    <li class="flex justify-center">
+                      <span class="absolute">{{ $t('views.chat.temperatureLevel3') }}</span>
+                    </li>
                   </ul>
                 </div>
               </div>
               <div class="w-full px-4 pb-4">
-                <n-button class="setting-button" @click="handleSetting">确定</n-button>
+                <n-button class="setting-button" @click="handleSetting">
+                  {{ $t('common.ok') }}
+                </n-button>
               </div>
             </div>
           </n-popover>
@@ -342,9 +353,9 @@
       <div id="scrollRef" ref="scrollRef" class="h-screen p-1 overflow-x-hidden">
         <template v-if="!conversation?.messages?.length">
           <div class="flex flex-col justify-center h-full items-center mx-auto space-y-4 max-w-[600px]">
-            <div class="text-4xl font-semibold text-center text-gray-800">你好，我是一个智能对话系统</div>
+            <div class="text-4xl font-semibold text-center text-gray-800">{{ $t('views.chat.hiContent1') }}</div>
             <div class="text-base text-center text-gray-500">
-              作为你的智能伙伴，可以回答问题、查找资料、提供建议和执行简单操作，帮助你更高效地获取所需信息并提供支持。
+              {{ $t('views.chat.hiContent2') }}
             </div>
           </div>
         </template>
@@ -361,7 +372,7 @@
               <template #icon>
                 <StopCircleOutline />
               </template>
-              停止生成
+              {{ $t('views.chat.stopGeneration') }}
             </n-button>
           </div>
         </template>
@@ -378,7 +389,7 @@
               :data="{ conversationId, llm: selectedLlm }"
               @finish="afterUploaded"
             >
-              <n-button>上传文件</n-button>
+              <n-button>{{ $t('common.upload') }}</n-button>
             </n-upload>
           </div>
 
@@ -392,7 +403,7 @@
                 autosize
                 round
                 class="max-h-72 py-2 h-[52px] resize-none"
-                placeholder="输入一条消息或键入“/”以选择提示..."
+                :placeholder="$t('views.chat.inputPlaceholder')"
                 @input="handleInput"
                 @focus="handleFocus"
                 @blur="handleBlur"

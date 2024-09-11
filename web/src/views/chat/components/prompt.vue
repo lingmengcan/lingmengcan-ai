@@ -5,6 +5,9 @@
   import { Prompt } from '@/models/chat';
   import { addPrompt, editPrompt } from '@/api/chat/prompt';
   import { usePromptStore } from '@/store/modules/prompt';
+  import { useI18n } from 'vue-i18n';
+
+  const { t } = useI18n();
 
   const emit = defineEmits(['selectPrompt']);
 
@@ -27,8 +30,8 @@
 
   const promptFormData = ref(promptInitData);
   const promptRules = {
-    title: { required: true, message: '标题必填', trigger: 'blur' },
-    content: { required: true, message: '内容必填', trigger: 'blur' },
+    title: { required: true, message: t('views.chat.prompt.title'), trigger: 'blur' },
+    content: { required: true, message: t('views.chat.prompt.content'), trigger: 'blur' },
   };
 
   function handleAdd() {
@@ -45,7 +48,7 @@
 
   const handleSave = (e: MouseEvent) => {
     e.preventDefault();
-    const messageReactive = message.loading('处理中', {
+    const messageReactive = message.loading('loading', {
       duration: 0,
     });
 
@@ -55,9 +58,7 @@
           ...promptFormData.value,
         };
 
-        const res = promptFormData.value.promptId
-          ? await editPrompt(requestData)
-          : await addPrompt(requestData);
+        const res = promptFormData.value.promptId ? await editPrompt(requestData) : await addPrompt(requestData);
 
         if (res?.code === 0) {
           isAdd.value = false;
@@ -66,7 +67,7 @@
         }
       } else {
         console.log(errors);
-        message.error('验证不通过');
+        message.error(t('common.validationFailed'));
       }
 
       messageReactive.destroy();
@@ -103,31 +104,31 @@
           <n-icon>
             <ChevronBackOutline />
           </n-icon>
-          新建提示词
+          {{ $t('views.chat.prompt.new') }}
         </n-button>
       </div>
       <div class="px-4">
         <n-form ref="promptFormRef" label-width="auto" :model="promptFormData" :rules="promptRules">
-          <n-form-item path="title" label="标题">
-            <n-input v-model:value="promptFormData.title" placeholder="请输入标题" />
+          <n-form-item path="title" :label="$t('views.chat.prompt.title')">
+            <n-input v-model:value="promptFormData.title" :placeholder="$t('views.chat.prompt.placeholder.title')" />
           </n-form-item>
-          <n-form-item path="content" label="内容">
+          <n-form-item path="content" :label="$t('views.chat.prompt.content')">
             <n-input
               v-model:value="promptFormData.content"
               type="textarea"
-              placeholder="请输入内容"
+              :placeholder="$t('views.chat.prompt.placeholder.content')"
             />
           </n-form-item>
           <n-form-item>
-            <n-button secondary class="setting-button" @click="handleSave">保存</n-button>
+            <n-button secondary class="setting-button" @click="handleSave">{{ $t('common.save') }}</n-button>
           </n-form-item>
         </n-form>
       </div>
     </template>
     <template v-else>
-      <div class="w-full px-4 py-2 text-base font-bold border-b">提示词</div>
+      <div class="w-full px-4 py-2 text-base font-bold border-b">{{ $t('views.chat.prompt.index') }}</div>
       <div class="px-4">
-        <n-button class="setting-button" :dashed="true" @click="handleAdd">新建提示词</n-button>
+        <n-button class="setting-button" :dashed="true" @click="handleAdd">{{ $t('views.chat.prompt.new') }}</n-button>
       </div>
       <div
         v-for="(item, index) of promptList"
@@ -137,7 +138,7 @@
         <div class="flex-1 pr-3" @click="handleSelect(item)">
           {{ item.title }}
         </div>
-        <div class="hidden items-center cursor-pointer group-hover:flex">
+        <div class="items-center hidden cursor-pointer group-hover:flex">
           <n-button text @click="handleEdit(item, $event)">
             <template #icon>
               <n-icon size="14">
@@ -156,7 +157,7 @@
                 </template>
               </n-button>
             </template>
-            删除后无法恢复，是否继续删除？
+            {{ $t('common.deleteConfirm') }}
           </n-popconfirm>
         </div>
       </div>

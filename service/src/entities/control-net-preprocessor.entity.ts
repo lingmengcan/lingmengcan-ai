@@ -1,19 +1,22 @@
 import { IsNotEmpty } from 'class-validator';
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity('dict')
-export class Dict {
-  @PrimaryGeneratedColumn({ type: 'bigint', name: 'dict_id', unsigned: true })
-  dictId: string;
+@Entity('control_net_preprocessor')
+export class ControlNetPreprocessor {
+  @PrimaryGeneratedColumn({ type: 'bigint', name: 'preprocessor_id', unsigned: true })
+  preprocessorId: number;
 
-  @Column('varchar', { name: 'dict_name', length: 100 })
-  dictName: string;
+  @Column('varchar', { name: 'preprocessor_name', length: 100 })
+  preprocessorName: string;
 
-  @Column('varchar', { name: 'dict_code', length: 100 })
-  dictCode: string;
+  @Column('varchar', { name: 'preprocessor_code', length: 100 })
+  preprocessorCode: string;
 
-  @Column('varchar', { name: 'dict_type', length: 100 })
-  dictType: string;
+  @Column('varchar', { name: 'preprocessor_type', length: 100 })
+  preprocessorType: string;
+
+  @Column({ type: 'json', name: 'params' })
+  params: string;
 
   @Column('int', { name: 'sort' })
   sort: number;

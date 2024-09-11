@@ -10,7 +10,10 @@
     >
       <n-grid :cols="24" :x-gap="24">
         <n-form-item-gi :span="5" path="modelName">
-          <n-input v-model:value="queryFormData.modelName" placeholder="请输入模型名称" />
+          <n-input
+            v-model:value="queryFormData.modelName"
+            :placeholder="$t('views.draw.model.placeholder.modelName')"
+          />
         </n-form-item-gi>
         <n-form-item-gi :span="5" path="modelType">
           <selectDict v-model:dict-code="queryFormData.modelType" :multiple="true" dict-type="DIFFUSION_MODEL_TYPE" />
@@ -25,7 +28,9 @@
         </n-form-item-gi>
         <n-gi :span="6">
           <div class="float-right">
-            <n-button v-permission="['llm_model_index']" type="primary" @click="handleAdd">录入模型</n-button>
+            <n-button v-permission="['llm_model_index']" type="primary" @click="handleAdd">
+              {{ $t('views.draw.model.add') }}
+            </n-button>
           </div>
         </n-gi>
       </n-grid>
@@ -45,7 +50,7 @@
       >
         <div>{{ item.description }}</div>
         <template #footer>
-          <div class="text-center">调试</div>
+          <div class="text-center">{{ $t('views.draw.model.view') }}</div>
         </template>
       </n-card>
     </n-grid-item>
@@ -59,7 +64,7 @@
     show-size-picker
     @update:page="handlePageChange"
   >
-    <template #prefix="{}">共 {{ itemCount }} 条数据</template>
+    <template #prefix="{}">{{ itemCount }} {{ $t('common.paginationItemCount') }}</template>
   </n-pagination>
 
   <!-- 新增修改模型 -->
@@ -72,33 +77,47 @@
         :model="drawerFormData"
         :rules="drawerRules"
       >
-        <n-form-item label="模型名称" path="modelName">
-          <n-input v-model:value="drawerFormData.modelName" placeholder="输入模型名称" />
+        <n-form-item :label="$t('views.draw.model.name')" path="modelName">
+          <n-input
+            v-model:value="drawerFormData.modelName"
+            :placeholder="$t('views.draw.model.placeholder.modelName')"
+          />
         </n-form-item>
-        <n-form-item label="模型编码" path="modelName">
-          <n-input v-model:value="drawerFormData.modelCode" placeholder="输入模型编码" />
+        <n-form-item :label="$t('views.draw.model.code')" path="modelName">
+          <n-input
+            v-model:value="drawerFormData.modelCode"
+            :placeholder="$t('views.draw.model.placeholder.modelCode')"
+          />
         </n-form-item>
-        <n-form-item label="模型类型" path="modelType">
+        <n-form-item :label="$t('views.draw.model.type')" path="modelType">
           <selectDict
             v-model:dict-code="drawerFormData.modelType"
             v-model:dict-name="drawerFormData.modelTypeName"
             dict-type="DIFFUSION_MODEL_TYPE"
           />
         </n-form-item>
-        <n-form-item v-if="drawerFormData.modelType !== 'BASE_MODEL'" label="所属基础模型" name="BaseModelId">
+        <n-form-item
+          v-if="drawerFormData.modelType !== 'BASE_MODEL' && drawerFormData.modelType !== 'NOT_DIFFUSION_MODEL'"
+          :label="$t('views.draw.model.baseModel')"
+          name="BaseModelId"
+        >
           <selectDiffusion v-model:model-id="drawerFormData.baseModelId" model-type="BASE_MODEL" />
         </n-form-item>
-        <n-form-item v-if="drawerFormData.modelType !== 'BASE_MODEL'" label="模型标签" name="tags">
+        <n-form-item v-if="drawerFormData.modelType !== 'BASE_MODEL'" :label="$t('views.draw.model.tags')" name="tags">
           <selectDict
             v-model:dict-code="drawerFormData.tags"
             :multiple="true"
             :dict-type="['DIFFUSION_TAGS', 'TOPIC', 'STYLE']"
           />
         </n-form-item>
-        <n-form-item label="模型描述" name="description">
-          <n-input v-model:value="drawerFormData.description" type="textarea" placeholder="请输入模型描述" />
+        <n-form-item :label="$t('views.draw.model.description')" name="description">
+          <n-input
+            v-model:value="drawerFormData.description"
+            type="textarea"
+            :placeholder="$t('views.draw.model.placeholder.description')"
+          />
         </n-form-item>
-        <n-form-item label="模型封面" name="modelCover">
+        <n-form-item :label="$t('views.draw.model.cover')" name="modelCover">
           <n-upload
             accept=".png,.jpeg,.jpg"
             action="/api/file/upload-image"
@@ -110,16 +129,16 @@
             @finish="afterUploaded"
             @remove="removeImage"
           >
-            点击上传
+            {{ $t('views.draw.model.upload') }}
           </n-upload>
         </n-form-item>
-        <n-form-item label="状态" name="status">
+        <n-form-item :label="$t('common.status')" name="status">
           <selectDict v-model:dict-code="drawerFormData.status" dict-type="SYS_STATUS" />
         </n-form-item>
       </n-form>
       <template #footer>
         <n-space>
-          <n-button type="primary" attr-type="button" @click="handleAddandEdit">确定</n-button>
+          <n-button type="primary" attr-type="button" @click="handleAddandEdit">{{ $t('common.confirm') }}</n-button>
         </n-space>
       </template>
     </n-drawer-content>
@@ -135,7 +154,9 @@
   import selectDiffusion from '@/components/select/select-diffusion.vue';
   import storage from '@/utils/storage';
   import { ACCESS_TOKEN } from '@/constants';
+  import { useI18n } from 'vue-i18n';
 
+  const { t } = useI18n();
   const message = useMessage();
 
   const token = storage.get(ACCESS_TOKEN, '');
@@ -159,10 +180,10 @@
   // 新增/修改弹窗数据初始化
   const modelInitData: DiffusionModel = {
     modelId: '',
-    baseModelId: '',
+    baseModelId: undefined,
     modelName: '',
     modelCode: '',
-    modelType: '',
+    modelType: undefined,
     modelTypeName: '',
     modelCover: '',
     status: '0',
@@ -173,11 +194,10 @@
   const modelCoverRef = ref<UploadFileInfo[]>([]);
 
   const drawerRules = {
-    modelName: { required: true, message: '模型名称必填', trigger: 'blur' },
-    description: { required: true, message: '模型描述必填', trigger: 'blur' },
-    modelType: { required: true, message: '模型类型必填', trigger: 'blur' },
-    sort: { type: 'number', required: true, message: '排序必填', trigger: 'blur' },
-    status: { required: true, message: '状态必填', trigger: 'blur' },
+    modelName: { required: true, message: t('views.draw.model.placeholder.modelName'), trigger: 'blur' },
+    description: { required: true, message: t('views.draw.model.placeholder.description'), trigger: 'blur' },
+    modelType: { required: true, message: t('views.draw.model.placeholder.modelType'), trigger: 'blur' },
+    status: { required: true, message: t('views.draw.model.placeholder.status'), trigger: 'blur' },
   };
 
   // 绑定表格数据
@@ -219,7 +239,7 @@
 
   // 新增
   const handleAdd = async () => {
-    drawerTitle.value = '录入模型';
+    drawerTitle.value = t('views.draw.model.add');
     showDrawer.value = true;
 
     drawerFormData.value = { ...modelInitData };
@@ -228,7 +248,7 @@
 
   // 修改字典
   const handleEdit = async (item: DiffusionModel) => {
-    drawerTitle.value = '修改模型';
+    drawerTitle.value = t('views.draw.model.edit');
     showDrawer.value = true;
 
     // 赋值
@@ -240,7 +260,7 @@
       modelCoverRef.value = [
         {
           id: '1',
-          name: '模型封面',
+          name: t('views.draw.model.cover'),
           status: 'finished',
           url: `${import.meta.env.VITE_APP_CDN_BASEURL}${item.modelCover}`,
         },
@@ -265,7 +285,7 @@
 
   const handleAddandEdit = (e: MouseEvent) => {
     e.preventDefault();
-    const messageReactive = message.loading('处理中', {
+    const messageReactive = message.loading('loading', {
       duration: 0,
     });
     drawerFormRef.value?.validate(async (errors) => {
@@ -282,8 +302,7 @@
           query(page.value, pageSize.value);
         }
       } else {
-        console.log(errors);
-        message.error('验证不通过');
+        message.error(t('common.validationFailed'));
       }
 
       messageReactive.destroy();

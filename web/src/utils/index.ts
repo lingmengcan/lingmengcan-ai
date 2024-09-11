@@ -59,6 +59,7 @@ export function formatDateTime(time = undefined, format = 'YYYY-MM-DD HH:mm:ss')
   return dayjs(time).format(format);
 }
 
+// 该函数用于将指定文本复制到剪贴板。它创建一个只读的文本区域，将文本设置为其值，选择文本并执行复制命令，然后从文档中移除文本区域。函数返回一个 Promise，成功时解析为复制的文本，失败时拒绝并返回错误。
 export function copyToClip(text: string) {
   return new Promise((resolve, reject) => {
     try {
@@ -73,5 +74,23 @@ export function copyToClip(text: string) {
     } catch (error) {
       reject(error);
     }
+  });
+}
+
+// 该函数将文件对象转换为Base64格式的字符串。它使用FileReader API读取文件，并在读取完成后返回一个Promise，成功时解析为Base64字符串，失败时拒绝Promise。
+export function fileToBase64(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      if (reader.result) {
+        resolve(reader.result.toString());
+      } else {
+        reject(new Error('Failed to convert file to Base64'));
+      }
+    };
+    reader.onerror = () => {
+      reject(new Error('FileReader encountered an error'));
+    };
+    reader.readAsDataURL(file);
   });
 }

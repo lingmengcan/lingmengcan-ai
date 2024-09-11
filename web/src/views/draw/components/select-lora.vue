@@ -17,7 +17,7 @@
             >
               {{ item.modelCode }}
             </n-tag>
-            <div v-if="selectedItems.length === 0" class="text-gray-300">请选择</div>
+            <div v-if="selectedItems.length === 0" class="text-gray-300">{{ $t('common.select') }}</div>
           </div>
           <button class="self-center ml-2 text-gray-500" @click.stop="clearAllSelected">&times;</button>
         </div>
@@ -45,7 +45,7 @@
         show-size-picker
         @update:page="handlePageChange"
       >
-        <template #prefix="{}">共 {{ itemCount }} 条数据</template>
+        <template #prefix="{}">{{ itemCount }} {{ $t('common.paginationItemCount') }}</template>
       </n-pagination>
     </n-popover>
   </div>
@@ -57,7 +57,7 @@
   import { DiffusionModel } from '@/models/diffusion-model';
   import { getDiffusionModelList } from '@/api/draw/model';
 
-  const emit = defineEmits(['update:modelCode', 'selected']);
+  const emit = defineEmits(['update:loraList', 'selected']);
 
   const popoverRef = ref<PopoverInst | null>(null);
   const showPopover = ref(false);
@@ -77,6 +77,10 @@
     const index = selectedItems.value.indexOf(item);
     if (index > -1) {
       selectedItems.value.splice(index, 1);
+
+      const modelCodeList = selectedItems.value.map((model) => model.modelCode);
+      emit('update:loraList', modelCodeList);
+      emit('selected', modelCodeList);
     }
   };
 
@@ -107,8 +111,6 @@
   };
 
   function handleClick(item: DiffusionModel) {
-    emit('update:modelCode', item.modelCode);
-    emit('selected', item.modelCode);
     if (selectedItems.value.some((dataItem) => dataItem.modelId === item.modelId)) {
       // 这里已经选中项给个震动的动画
       const element = document.querySelector(`[data-model-id="${item.modelId}"]`);
@@ -121,12 +123,19 @@
     } else {
       selectedItems.value.push(item);
     }
+
+    const modelCodeList = selectedItems.value.map((model) => model.modelCode);
+    emit('update:loraList', modelCodeList);
+    emit('selected', modelCodeList);
     showPopover.value = false;
   }
 
   function clearAllSelected() {
     selectedItems.value = [];
+    emit('update:loraList', []);
+    emit('selected', []);
   }
+
   onMounted(async () => {
     query(page.value, pageSize.value);
   });

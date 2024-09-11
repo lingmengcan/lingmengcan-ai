@@ -81,7 +81,8 @@ export function createRouterGuards(router: Router) {
   });
 
   router.afterEach((to, _, failure) => {
-    document.title = (to?.meta?.title as string) || document.title;
+    document.title = to?.meta?.title ? `${document.title}-${to.meta.title}` : document.title;
+
     if (isNavigationFailure(failure)) {
     }
     const asyncRouteStore = useAsyncRoute();

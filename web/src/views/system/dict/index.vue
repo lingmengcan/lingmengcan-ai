@@ -11,6 +11,10 @@
   import { RowData } from 'naive-ui/es/data-table/src/interface';
   import { renderIcon } from '@/utils/icons';
   import { hasPermission } from '@/utils/permission';
+  import selectStatus from '@/components/select/select-status.vue';
+  import { useI18n } from 'vue-i18n';
+
+  const { t } = useI18n();
 
   const message = useMessage();
   const dialog = useDialog();
@@ -38,18 +42,12 @@
   const drawerFormData = ref(dictInitData);
 
   const drawerRules = {
-    dictName: { required: true, message: '字典名称必填', trigger: 'blur' },
-    dictCode: { required: true, message: '字典编码必填', trigger: 'blur' },
-    dictType: { required: true, message: '字典类型必填', trigger: 'blur' },
-    sort: { type: 'number', required: true, message: '排序必填', trigger: 'blur' },
-    status: { required: true, message: '状态必填', trigger: 'blur' },
+    dictName: { required: true, message: t('views.system.dict.placeholder.dictName'), trigger: 'blur' },
+    dictCode: { required: true, message: t('views.system.dict.placeholder.dictCode'), trigger: 'blur' },
+    dictType: { required: true, message: t('views.system.dict.placeholder.dictType'), trigger: 'blur' },
+    sort: { type: 'number', required: true, message: t('views.system.dict.placeholder.sort'), trigger: 'blur' },
+    status: { required: true, message: t('views.system.dict.placeholder.status'), trigger: 'blur' },
   };
-
-  // 状态select options
-  const statusOptions = ref([
-    { label: '正常', value: 0 },
-    { label: '停用', value: 1 },
-  ]);
 
   const queryFormData = ref({
     dictName: '',
@@ -61,12 +59,12 @@
   const columns = [
     {
       key: 'dictId',
-      title: '字典ID',
+      title: t('views.system.dict.dictId'),
       type: 'selection',
     },
     {
       key: 'dictName',
-      title: '字典名称',
+      title: t('views.system.dict.dictName'),
       width: 100,
       ellipsis: {
         tooltip: true,
@@ -74,7 +72,7 @@
     },
     {
       key: 'dictCode',
-      title: '字典编码',
+      title: t('views.system.dict.dictCode'),
       width: 100,
       ellipsis: {
         tooltip: true,
@@ -82,7 +80,7 @@
     },
     {
       key: 'dictType',
-      title: '字典类型',
+      title: t('views.system.dict.dictType'),
       width: 100,
       ellipsis: {
         tooltip: true,
@@ -90,12 +88,12 @@
     },
     {
       key: 'sort',
-      title: '排序',
+      title: t('views.system.dict.sort'),
       width: 60,
     },
     {
       key: 'status',
-      title: '状态',
+      title: t('common.status'),
       width: 60,
       align: 'center',
       fixed: 'left',
@@ -112,7 +110,7 @@
     },
     {
       key: 'createdAt',
-      title: '创建时间',
+      title: t('views.system.dict.createdAt'),
       width: 120,
       ellipsis: {
         tooltip: true,
@@ -123,7 +121,7 @@
     },
     {
       key: 'actions',
-      title: '操作',
+      title: t('common.table.actions'),
       align: 'center',
       fixed: 'right',
       width: 180,
@@ -139,7 +137,7 @@
               onClick: () => handleEdit(row),
             },
             {
-              default: () => '编辑',
+              default: () => t('common.edit'),
               icon: renderIcon(EditOutlined),
             },
           ),
@@ -154,7 +152,7 @@
               onClick: () => handleDelete(row),
             },
             {
-              default: () => '删除',
+              default: () => t('common.delete'),
               icon: renderIcon(DeleteOutlined),
             },
           ),
@@ -178,7 +176,7 @@
     pageSizes: [10, 20, 50],
     itemCount: 0,
     prefix({ itemCount }) {
-      return `共 ${itemCount} 条`;
+      return `${itemCount} ${t('common.paginationItemCount')}`;
     },
     onChange: (page: number) => {
       pagination.value.page = page;
@@ -247,34 +245,34 @@
   // 改变状态
   const handleChangeStatus = (row: RowData) => {
     row.changing = true;
-    let text = '停用';
+    let text = t('common.disable');
 
     const dict: Dict = { ...dictInitData };
     Object.assign(dict, row);
 
     switch (row.status) {
       case 1:
-        text = '启用';
+        text = t('common.enable');
         dict.status = 0;
         break;
       case 0:
-        text = '停用';
+        text = t('common.disable');
         dict.status = 1;
         break;
       case -1:
-        text = '删除';
+        text = t('common.edit');
         break;
     }
 
     dialog.info({
-      title: '系统消息',
-      content: `确认要"${text}""${row.dictName}"字典吗？`,
-      positiveText: '确定',
-      negativeText: '取消',
+      title: t('common.info'),
+      content: t('views.system.dict.confirmMessage', { action: text, dict: row.dictName }),
+      positiveText: t('common.confirm'),
+      negativeText: t('common.cancel'),
       onPositiveClick: async () => {
         const res = await changeDictStatus(dict);
         if (res?.code === 0) {
-          message.success(`${text}成功`);
+          message.success(`${text}${t('common.success')}`);
         }
         row.changing = false;
         await query(pagination.value.page, pagination.value.pageSize);
@@ -287,7 +285,7 @@
 
   // 新增字典
   const handleAdd = async () => {
-    drawerTitle.value = '新增字典';
+    drawerTitle.value = `${t('common.add')}${t('views.system.dict.index')}`;
     showDrawer.value = true;
 
     drawerFormData.value = { ...dictInitData };
@@ -301,7 +299,7 @@
 
   // 修改字典
   const handleEdit = async (row: RowData) => {
-    drawerTitle.value = '修改字典';
+    drawerTitle.value = `${t('common.edit')}${t('views.system.dict.index')}`;
     showDrawer.value = true;
 
     // 赋值
@@ -327,7 +325,7 @@
         }
       } else {
         console.log(errors);
-        message.error('验证不通过');
+        message.error(t('common.validationFailed'));
       }
 
       messageReactive.destroy();
@@ -345,22 +343,24 @@
   <n-card :bordered="false">
     <n-form ref="formRef" inline label-placement="left" label-width="auto" :model="queryFormData">
       <n-grid :cols="24" :x-gap="24">
-        <n-form-item-gi :span="6" label="字典名称" path="dictName">
-          <n-input v-model:value="queryFormData.dictName" placeholder="请输入字典名称" />
+        <n-form-item-gi :span="6" :label="$t('views.system.dict.dictName')" path="dictName">
+          <n-input v-model:value="queryFormData.dictName" :placeholder="$t('views.system.dict.placeholder.dictName')" />
         </n-form-item-gi>
-        <n-form-item-gi :span="6" label="字典编码" path="dictCode">
-          <n-input v-model:value="queryFormData.dictCode" placeholder="请输入字典编码" />
+        <n-form-item-gi :span="6" :label="$t('views.system.dict.dictCode')" path="dictCode">
+          <n-input v-model:value="queryFormData.dictCode" :placeholder="$t('views.system.dict.placeholder.dictCode')" />
         </n-form-item-gi>
-        <n-form-item-gi :span="6" label="字典类型" path="dictType">
+        <n-form-item-gi :span="6" :label="$t('views.system.dict.dictType')" path="dictType">
           <selectDict v-model:dict-code="queryFormData.dictType" :multiple="true" />
         </n-form-item-gi>
-        <n-form-item-gi :span="6" label="状态" path="status">
-          <n-select v-model:value="queryFormData.status" :options="statusOptions" />
+        <n-form-item-gi :span="6" :label="$t('common.status')" path="status">
+          <selectStatus v-model:status="queryFormData.status" />
         </n-form-item-gi>
         <n-form-item-gi :span="6">
           <n-space>
-            <n-button @click="clearQuery">重置</n-button>
-            <n-button v-permission="['system_dict_query']" type="primary" @click="handleQuery">查询</n-button>
+            <n-button @click="clearQuery">{{ $t('common.reset') }}</n-button>
+            <n-button v-permission="['system_dict_query']" type="primary" @click="handleQuery">
+              {{ $t('common.query') }}
+            </n-button>
           </n-space>
         </n-form-item-gi>
       </n-grid>
@@ -376,7 +376,7 @@
               <PlusOutlined />
             </n-icon>
           </template>
-          添加字典
+          {{ $t('views.system.dict.add') }}
         </n-button>
       </div>
     </div>
@@ -405,34 +405,41 @@
         :model="drawerFormData"
         :rules="drawerRules"
       >
-        <n-form-item label="字典名称" path="dictName">
-          <n-input v-model:value="drawerFormData.dictName" placeholder="输入字典名称" />
+        <n-form-item :label="$t('views.system.dict.dictName')" path="dictName">
+          <n-input
+            v-model:value="drawerFormData.dictName"
+            :placeholder="$t('views.system.dict.placeholder.dictName')"
+          />
         </n-form-item>
-        <n-form-item label="字典编码" path="dictCode">
-          <n-input v-model:value="drawerFormData.dictCode" placeholder="输入字典编码" />
+        <n-form-item :label="$t('views.system.dict.dictCode')" path="dictCode">
+          <n-input
+            v-model:value="drawerFormData.dictCode"
+            :placeholder="$t('views.system.dict.placeholder.dictCode')"
+          />
         </n-form-item>
-        <n-form-item label="字典类型" path="dictType">
-          <selectDict v-model:dict-code="drawerFormData.dictType" placeholder="请选择字典类型" />
+        <n-form-item :label="$t('views.system.dict.dictType')" path="dictType">
+          <selectDict
+            v-model:dict-code="drawerFormData.dictType"
+            :placeholder="$t('views.system.dict.placeholder.dictType')"
+          />
         </n-form-item>
-        <n-form-item label="排序" path="sort">
+        <n-form-item :label="$t('views.system.dict.sort')" path="sort">
           <n-input-number v-model:value="drawerFormData.sort" :min="0" />
         </n-form-item>
-        <n-form-item label="状态" name="status">
-          <n-radio-group v-model:value="drawerFormData.status">
-            <n-space>
-              <n-radio v-for="item in statusOptions" :key="item.value" :value="item.value">
-                {{ item.label }}
-              </n-radio>
-            </n-space>
-          </n-radio-group>
+        <n-form-item :label="$t('common.status')" name="status">
+          <selectStatus v-model:status="drawerFormData.status" />
         </n-form-item>
-        <n-form-item label="描述" name="description">
-          <n-input v-model:value="drawerFormData.description" type="textarea" placeholder="请输入字典描述" />
+        <n-form-item :label="$t('views.system.dict.description')" name="description">
+          <n-input
+            v-model:value="drawerFormData.description"
+            type="textarea"
+            :placeholder="$t('views.system.dict.placeholder.description')"
+          />
         </n-form-item>
       </n-form>
       <template #footer>
         <n-space>
-          <n-button type="primary" attr-type="button" @click="handleAddandEdit">确定</n-button>
+          <n-button type="primary" attr-type="button" @click="handleAddandEdit">{{ $t('common.submit') }}</n-button>
         </n-space>
       </template>
     </n-drawer-content>

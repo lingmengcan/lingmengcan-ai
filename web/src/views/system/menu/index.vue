@@ -2,17 +2,17 @@
   <n-card :bordered="false">
     <n-form ref="formRef" inline label-placement="left" label-width="auto" :model="queryFormData">
       <n-grid :cols="24" :x-gap="24">
-        <n-form-item-gi :span="6" label="菜单名称" path="menuName">
-          <n-input v-model:value="queryFormData.menuName" placeholder="请输入菜单名称" />
+        <n-form-item-gi :span="6" :label="$t('views.system.menu.menuName')" path="menuName">
+          <n-input v-model:value="queryFormData.menuName" :placeholder="$t('views.system.menu.placeholder.menuName')" />
         </n-form-item-gi>
-        <n-form-item-gi :span="6" label="状态" path="status">
-          <SelectStatus v-model:status="queryFormData.status" />
+        <n-form-item-gi :span="6" :label="$t('common.status')" path="status">
+          <selectStatus v-model:status="queryFormData.status" />
         </n-form-item-gi>
         <n-form-item-gi :span="6">
           <n-space>
-            <n-button @click="clearQuery">重置</n-button>
+            <n-button @click="clearQuery">{{ $t('common.reset') }}</n-button>
             <n-button v-permission="['system_menu_query']" type="primary" @click="handleQuery">
-              查询
+              {{ $t('common.query') }}
             </n-button>
           </n-space>
         </n-form-item-gi>
@@ -30,7 +30,7 @@
               <PlusOutlined />
             </n-icon>
           </template>
-          添加菜单
+          {{ $t('views.system.menu.add') }}
         </n-button>
       </div>
     </div>
@@ -58,7 +58,7 @@
         :rules="drawerRules"
       >
         <n-grid :cols="24" :x-gap="24">
-          <n-form-item-gi :span="24" label="上级菜单" path="parentId">
+          <n-form-item-gi :span="24" :label="$t('views.system.menu.parentMenu')" path="parentId">
             <n-tree-select
               v-model:value="drawerFormData.parentId"
               :options="treeMenus"
@@ -66,7 +66,7 @@
               key-field="menuId"
             />
           </n-form-item-gi>
-          <n-form-item-gi :span="24" label="菜单类型" path="menuType">
+          <n-form-item-gi :span="24" :label="$t('views.system.menu.menuType')" path="menuType">
             <n-radio-group v-model:value="drawerFormData.menuType">
               <n-space>
                 <n-radio v-for="item in typeOptions" :key="item.value" :value="item.value">
@@ -75,80 +75,95 @@
               </n-space>
             </n-radio-group>
           </n-form-item-gi>
-          <n-form-item-gi :span="24" label="菜单图标" path="icon">
+          <n-form-item-gi :span="24" :label="$t('views.system.menu.icon')" path="icon">
             <SelectIcon v-model:value="drawerFormData.icon" @selected="onSelectedIcon" />
           </n-form-item-gi>
-          <n-form-item-gi :span="12" label="菜单名称" path="menuName">
-            <n-input v-model:value="drawerFormData.menuName" placeholder="请输入菜单名称" />
+          <n-form-item-gi :span="12" :label="$t('views.system.menu.menuName')" path="menuName">
+            <n-input
+              v-model:value="drawerFormData.menuName"
+              :placeholder="$t('views.system.menu.placeholder.menuName')"
+            />
           </n-form-item-gi>
-          <n-form-item-gi :span="12" label="菜单代码" path="menuCode">
-            <n-input v-model:value="drawerFormData.menuCode" placeholder="请输入菜单代码" />
+          <n-form-item-gi :span="12" :label="$t('views.system.menu.menuCode')" path="menuCode">
+            <n-input
+              v-model:value="drawerFormData.menuCode"
+              :placeholder="$t('views.system.menu.placeholder.menuCode')"
+            />
           </n-form-item-gi>
-          <n-form-item-gi :span="12" label="排序" path="sort">
+          <n-form-item-gi :span="12" :label="$t('views.system.menu.sort')" path="sort">
             <n-input-number v-model:value="drawerFormData.sort" :min="0" />
           </n-form-item-gi>
-          <n-form-item-gi :span="12" label="状态" path="status">
-            <SelectStatus v-model:status="drawerFormData.status" />
+          <n-form-item-gi :span="12" :label="$t('common.status')" path="status">
+            <selectStatus v-model:status="drawerFormData.status" />
           </n-form-item-gi>
           <n-form-item-gi
             v-if="drawerFormData.menuType !== 'action'"
             :span="12"
-            label="路由地址"
+            :label="$t('views.system.menu.path')"
             path="path"
           >
-            <n-input v-model:value="drawerFormData.path" placeholder="请输入路由地址" />
+            <n-input v-model:value="drawerFormData.path" :placeholder="$t('views.system.menu.placeholder.path')" />
           </n-form-item-gi>
           <n-form-item-gi
             v-if="drawerFormData.menuType === 'contents'"
             :span="12"
-            label="重定向"
+            :label="$t('views.system.menu.redirect')"
             path="redirect"
           >
-            <n-input v-model:value="drawerFormData.redirect" placeholder="请输入重定向地址" />
+            <n-input
+              v-model:value="drawerFormData.redirect"
+              :placeholder="$t('views.system.menu.placeholder.redirect')"
+            />
           </n-form-item-gi>
           <n-form-item-gi
             v-if="drawerFormData.menuType === 'button'"
             :span="12"
-            label="路由参数"
+            :label="$t('views.system.menu.query')"
             path="query"
           >
-            <n-input v-model:value="drawerFormData.query" placeholder="请输入路由参数" />
+            <n-input v-model:value="drawerFormData.query" :placeholder="$t('views.system.menu.placeholder.query')" />
           </n-form-item-gi>
           <n-form-item-gi
             v-if="drawerFormData.menuType !== 'button'"
             :span="12"
-            label="组件路径"
+            :label="$t('views.system.menu.component')"
             path="component"
           >
-            <n-input v-model:value="drawerFormData.component" placeholder="请输入组件路径" />
+            <n-input
+              v-model:value="drawerFormData.component"
+              :placeholder="$t('views.system.menu.placeholder.component')"
+            />
           </n-form-item-gi>
           <n-form-item-gi
             v-if="drawerFormData.menuType !== 'button'"
             :span="12"
-            label="权限标识"
+            :label="$t('views.system.menu.permissions')"
             path="permissions"
           >
-            <n-input v-model:value="drawerFormData.permissions" placeholder="请输入权限标识" />
+            <n-input
+              v-model:value="drawerFormData.permissions"
+              :placeholder="$t('views.system.menu.placeholder.permissions')"
+            />
           </n-form-item-gi>
-          <n-form-item-gi :span="12" label="是否缓存" path="cached">
+          <n-form-item-gi :span="12" :label="$t('views.system.menu.cached')" path="cached">
             <n-switch v-model:value="drawerFormData.cached" />
           </n-form-item-gi>
-          <n-form-item-gi :span="12" label="是否隐藏" path="hidden">
+          <n-form-item-gi :span="12" :label="$t('views.system.menu.hidden')" path="hidden">
             <n-switch v-model:value="drawerFormData.hidden" />
           </n-form-item-gi>
 
-          <n-form-item-gi label="描述" :span="24">
+          <n-form-item-gi :label="$t('views.system.menu.description')" :span="24">
             <n-input
               v-model:value="drawerFormData.description"
               type="textarea"
-              placeholder="请输入菜单描述"
+              :placeholder="$t('views.system.menu.placeholder.description')"
             />
           </n-form-item-gi>
         </n-grid>
       </n-form>
       <template #footer>
         <n-space>
-          <n-button type="primary" attr-type="button" @click="handleAddandEdit">确定</n-button>
+          <n-button type="primary" attr-type="button" @click="handleAddandEdit">{{ $t('common.submit') }}</n-button>
         </n-space>
       </template>
     </n-drawer-content>
@@ -157,7 +172,7 @@
 
 <script lang="ts" setup>
   import { h, onMounted, ref } from 'vue';
-  import SelectStatus from '@/components/select/select-status.vue';
+  import selectStatus from '@/components/select/select-status.vue';
   import SelectIcon from '@/components/select/select-icon.vue';
   import { DataTableRowKey, FormInst, NButton, NIcon, NTag, useDialog, useMessage } from 'naive-ui';
   import { RowData } from 'naive-ui/es/data-table/src/interface';
@@ -168,6 +183,9 @@
   import { handleTree } from '@/utils/menu';
   import { renderIcon, renderIonicons5 } from '@/utils/icons';
   import { hasPermission } from '@/utils/permission';
+  import { useI18n } from 'vue-i18n';
+
+  const { t } = useI18n();
 
   const message = useMessage();
   const dialog = useDialog();
@@ -190,12 +208,12 @@
     },
     {
       key: 'menuName',
-      title: '菜单名称',
+      title: t('views.system.menu.menuName'),
       width: 120,
     },
     {
       key: 'icon',
-      title: '图标',
+      title: t('views.system.menu.icon'),
       width: 50,
       render(row: RowData) {
         return row.icon ? h(renderIonicons5(row.icon, 20)) : null;
@@ -203,12 +221,12 @@
     },
     {
       key: 'sort',
-      title: '排序',
+      title: t('views.system.menu.sort'),
       width: 50,
     },
     {
       key: 'permissions',
-      title: '权限标识',
+      title: t('views.system.menu.permissions'),
       width: 120,
       ellipsis: {
         tooltip: true,
@@ -216,7 +234,7 @@
     },
     {
       key: 'component',
-      title: '组件路径',
+      title: t('views.system.menu.component'),
       width: 120,
       ellipsis: {
         tooltip: true,
@@ -224,7 +242,7 @@
     },
     {
       key: 'status',
-      title: '状态',
+      title: t('common.status'),
       width: 50,
       align: 'center',
       fixed: 'left',
@@ -236,14 +254,14 @@
             bordered: false,
           },
           {
-            default: () => (row['status'] === 0 ? '正常' : '停用'),
+            default: () => (row['status'] === 0 ? t('common.enable') : t('common.disable')),
           },
         );
       },
     },
     {
       key: 'createdAt',
-      title: '创建时间',
+      title: t('views.system.menu.createdAt'),
       width: 120,
       render(row: RowData) {
         return h('span', formatDateTime(row['createdAt']));
@@ -251,7 +269,7 @@
     },
     {
       key: 'actions',
-      title: '操作',
+      title: t('common.table.actions'),
       align: 'center',
       fixed: 'right',
       width: 240,
@@ -267,7 +285,7 @@
               disabled: !hasPermission('system_menu_add'),
               onClick: () => handleSubAdd(row.menuId),
             },
-            { default: () => '新增子菜单', icon: renderIcon(FolderAddOutlined) },
+            { default: () => t('views.system.menu.newSubMenu'), icon: renderIcon(FolderAddOutlined) },
           ),
           h(
             NButton,
@@ -279,7 +297,7 @@
               onClick: () => handleEdit(row),
             },
             {
-              default: () => '编辑',
+              default: () => t('common.edit'),
               icon: renderIcon(EditOutlined),
             },
           ),
@@ -294,7 +312,7 @@
               onClick: () => handleDelete(row),
             },
             {
-              default: () => '删除',
+              default: () => t('common.delete'),
               icon: renderIcon(DeleteOutlined),
             },
           ),
@@ -332,15 +350,15 @@
 
   const drawerFormData = ref(menuInitData);
   const drawerRules = {
-    menuName: { required: true, message: '菜单名称必填', trigger: 'blur' },
-    sort: { type: 'number', required: true, message: '排序必填', trigger: 'blur' },
+    menuName: { required: true, message: t('views.system.menu.placeholder.menuName'), trigger: 'blur' },
+    sort: { type: 'number', required: true, message: t('views.system.menu.placeholder.sort'), trigger: 'blur' },
   };
 
   // 状态 type options
   const typeOptions = ref([
-    { label: '目录', value: 'contents' },
-    { label: '菜单', value: 'menu' },
-    { label: '动作', value: 'action' },
+    { label: t('views.system.menu.contents'), value: 'contents' },
+    { label: t('views.system.menu.menu'), value: 'menu' },
+    { label: t('views.system.menu.action'), value: 'action' },
   ]);
 
   const treeMenus = ref<Menu[]>([]);
@@ -398,16 +416,16 @@
   const handleAdd = async () => {
     getTreeselect();
 
-    drawerTitle.value = '新增菜单';
+    drawerTitle.value = t('views.system.menu.add');
     showDrawer.value = true;
     drawerFormData.value = { ...menuInitData };
   };
 
-  // 新增菜单
+  // 新增子菜单
   const handleSubAdd = async (menuId: string) => {
     getTreeselect();
 
-    drawerTitle.value = '新增菜单';
+    drawerTitle.value = t('views.system.menu.add');
     showDrawer.value = true;
     drawerFormData.value = { ...menuInitData };
     drawerFormData.value.parentId = menuId;
@@ -416,14 +434,14 @@
   // 删除菜单 statu = -1
   const handleDelete = async (row: RowData) => {
     dialog.info({
-      title: '系统消息',
-      content: `确认要删除"${row.menuName}"菜单吗？`,
-      positiveText: '确定',
-      negativeText: '取消',
+      title: t('common.info'),
+      content: t('views.system.menu.confirmMessage', { menu: row.roleName }),
+      positiveText: t('common.confirm'),
+      negativeText: t('common.cancel'),
       onPositiveClick: async () => {
         const res = await deleteMenu(row.menuId);
         if (res?.code === 0) {
-          message.success(`删除成功`);
+          message.success(`${t('common.delete')}${t('common.success')}`);
         } else {
           message.warning(res.message);
         }
@@ -440,7 +458,7 @@
   const handleEdit = async (row: RowData) => {
     getTreeselect();
 
-    drawerTitle.value = '修改菜单';
+    drawerTitle.value = `${t('common.edit')}${t('views.system.menu.index')}`;
     showDrawer.value = true;
     drawerFormData.value = {
       menuId: row.menuId,
@@ -464,7 +482,7 @@
 
   const handleAddandEdit = (e: MouseEvent) => {
     e.preventDefault();
-    const messageReactive = message.loading('处理中', {
+    const messageReactive = message.loading('loading', {
       duration: 0,
     });
 
@@ -474,9 +492,7 @@
           ...drawerFormData.value,
         };
 
-        const res = drawerFormData.value.menuId
-          ? await editMenu(requestData)
-          : await addMenu(requestData);
+        const res = drawerFormData.value.menuId ? await editMenu(requestData) : await addMenu(requestData);
 
         if (res?.code === 0) {
           showDrawer.value = false;
@@ -485,7 +501,7 @@
         }
       } else {
         console.log(errors);
-        message.error('验证不通过');
+        message.error(t('common.validationFailed'));
       }
 
       messageReactive.destroy();
