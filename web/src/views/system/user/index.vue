@@ -91,7 +91,7 @@
     },
     {
       key: 'phone',
-      title: t('views.system.user.nickName'),
+      title: t('views.system.user.phone'),
       width: 100,
       ellipsis: {
         tooltip: true,
