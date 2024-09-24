@@ -16,6 +16,59 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
+-- Table structure for table `control_net_preprocessor`
+--
+
+DROP TABLE IF EXISTS `control_net_preprocessor`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `control_net_preprocessor` (
+  `preprocessor_id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `preprocessor_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `preprocessor_code` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `preprocessor_type` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `params` json NOT NULL,
+  `sort` int NOT NULL,
+  `status` tinyint(1) NOT NULL,
+  `description` varchar(512) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `created_user` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `updated_user` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `created_at` datetime NOT NULL,
+  `updated_at` datetime NOT NULL,
+  PRIMARY KEY (`preprocessor_id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=32 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `control_net_preprocessor`
+--
+
+LOCK TABLES `control_net_preprocessor` WRITE;
+/*!40000 ALTER TABLE `control_net_preprocessor` DISABLE KEYS */;
+INSERT INTO `control_net_preprocessor` VALUES
+(1,'canny (硬边缘检测)','canny','Canny','{\"model\": \"control_v11p_sd15_canny [d14c016b]\", \"module\": \"canny\", \"weight\": 1, \"threshold_a\": 100, \"threshold_b\": 200, \"guidance_end\": 1, \"processor_res\": 512, \"guidance_start\": 0, \"threshold_step\": 1, \"max_threshold_a\": 255, \"max_threshold_b\": 255, \"min_threshold_a\": 1, \"min_threshold_b\": 1, \"threshold_a_label\": \"Low Threshold\", \"threshold_b_label\": \"High Threshold\"}',1,0,'Canny (线稿检测)','admin','admin','2024-08-12 16:29:36','2024-08-12 16:32:24'),
+(2,'lineart_realistic（写实线稿）','lineart_realistic','Lineart','{\"model\": \"\", \"module\": \"lineart_realistic\", \"weight\": 1, \"guidance_end\": 1, \"processor_res\": 512, \"guidance_start\": 0}',2,0,'lineart_realistic（写实线稿）','admin','admin','2024-08-12 16:33:24','2024-08-12 16:42:46'),
+(3,'lineart_anime（动漫线稿）','lineart_anime','Lineart','{\"model\": \"\", \"module\": \"lineart_anime\", \"weight\": 1, \"guidance_end\": 1, \"processor_res\": 512, \"guidance_start\": 0}',3,0,'lineart_anime（动漫线稿）','admin','admin','2024-08-12 16:42:23','2024-08-12 16:42:23'),
+(4,'softedge_pidinet（软边缘检测 - PiDiNET算法）','softedge_pidinet','SoftEdge','{\"model\": \"\", \"module\": \"softedge_pidinet\", \"weight\": 1, \"guidance_end\": 1, \"processor_res\": 512, \"guidance_start\": 0}',4,0,'softedge_pidinet（软边缘检测 - PiDiNET算法）','admin','admin','2024-08-12 16:47:48','2024-08-12 16:47:48'),
+(5,'softedge_hed（软边缘检测 - HED）','softedge_hed','SoftEdge','{\"model\": \"\", \"module\": \"softedge_pidinet\", \"weight\": 1, \"guidance_end\": 1, \"processor_res\": 512, \"guidance_start\": 0}',5,0,'softedge_hed（软边缘检测 - HED）','admin','admin','2024-08-12 16:49:13','2024-08-12 16:49:13'),
+(6,'openpose（人体姿态检测 - 身体）','openpose','OpenPose','{\"model\": \"\", \"module\": \"openpose\", \"weight\": 1, \"guidance_end\": 1, \"processor_res\": 512, \"guidance_start\": 0}',6,0,'openpose（人体姿态检测）','admin','admin','2024-08-12 16:50:51','2024-08-12 16:51:16'),
+(7,'openpose_full（人体姿态检测 - 身、手、脸）','openpose_full','OpenPose','{\"model\": \"\", \"module\": \"openpose_full\", \"weight\": 1, \"guidance_end\": 1, \"processor_res\": 512, \"guidance_start\": 0}',7,0,'openpose_full（人体姿态检测 - 身、手、脸）','admin','admin','2024-08-12 16:52:35','2024-08-12 16:52:35'),
+(8,'openpose_faceonly（人体姿态检测 - 脸）','openpose_faceonly','OpenPose','{\"model\": \"\", \"module\": \"openpose_faceonly\", \"weight\": 1, \"guidance_end\": 1, \"processor_res\": 512, \"guidance_start\": 0}',8,0,'openpose_faceonly（人体姿态检测 - 脸）','admin','admin','2024-08-12 16:53:47','2024-08-12 16:53:47'),
+(9,'depth_leres（LeRes 深度估算）','depth_leres','Depth','{\"model\": \"\", \"module\": \"depth_leres\", \"weight\": 1, \"guidance_end\": 1, \"processor_res\": 512, \"guidance_start\": 0}',9,0,'depth_leres（LeRes 深度估算）','admin','admin','2024-08-12 16:55:28','2024-08-12 16:55:28'),
+(10,'depth_zoe（ZoE深度估算）','depth_zoe','Depth','{\"model\": \"\", \"module\": \"depth_zoe\", \"weight\": 1, \"guidance_end\": 1, \"processor_res\": 512, \"guidance_start\": 0}',10,0,'depth_zoe（ZoE深度估算）','admin','admin','2024-08-12 16:56:22','2024-08-12 16:56:22'),
+(11,'mlsd（直线检测）','mlsd','MLSD','{\"model\": \"\", \"module\": \"mlsd\", \"weight\": 1, \"threshold_a\": 0.1, \"threshold_b\": 0.1, \"guidance_end\": 1, \"processor_res\": 512, \"guidance_start\": 0, \"threshold_step\": 0.01, \"max_threshold_a\": 2, \"max_threshold_b\": 20, \"min_threshold_a\": 0.01, \"min_threshold_b\": 0.01, \"threshold_a_label\": \"MLSD Value Threshold\", \"threshold_b_label\": \"MLSD Distance Threshold\"}',11,0,'mlsd（直线检测）','admin','admin','2024-08-12 16:57:08','2024-08-12 16:57:08'),
+(12,'normal_bae（法线贴图）','normal_bae','NormalMap','{\"model\": \"\", \"module\": \"normal_bae\", \"weight\": 1, \"guidance_end\": 1, \"processor_res\": 512, \"guidance_start\": 0}',12,0,'normal_bae（法线贴图）','admin','admin','2024-08-12 16:59:11','2024-08-12 16:59:16'),
+(13,'scribble_hed（整体嵌套）','scribble_hed','Scribble','{\"model\": \"\", \"module\": \"scribble_hed\", \"weight\": 1, \"guidance_end\": 1, \"processor_res\": 512, \"guidance_start\": 0}',13,0,'scribble_hed（整体嵌套）','admin','admin','2024-08-12 17:00:40','2024-08-12 17:00:40'),
+(14,'seg_ofade20k（分块检测）','seg_ofade20k','Segmentation','{\"model\": \"\", \"module\": \"seg_ofade20k\", \"weight\": 1, \"guidance_end\": 1, \"processor_res\": 512, \"guidance_start\": 0}',14,0,'seg_ofade20k（分块检测）','admin','admin','2024-08-12 17:22:14','2024-08-12 17:22:14'),
+(15,'t2ia_style_clipvision（风格迁移）','t2ia_style_clipvision','T2I-Adapter','{\"model\": \"\", \"module\": \"t2ia_style_clipvision\", \"weight\": 1, \"guidance_end\": 1, \"processor_res\": 512, \"guidance_start\": 0}',15,0,'t2ia_style_clipvision（风格迁移）','admin','admin','2024-08-12 17:23:56','2024-08-12 17:23:56'),
+(16,'t2ia_sketch_pidi（像素差边缘检测）','t2ia_sketch_pidi','T2I-Adapter','{\"model\": \"\", \"module\": \"t2ia_sketch_pidi\", \"weight\": 1, \"guidance_end\": 1, \"processor_res\": 512, \"guidance_start\": 0}',16,0,'t2ia_sketch_pidi（像素差边缘检测）','admin','admin','2024-08-12 17:25:09','2024-08-12 17:25:09'),
+(17,'t2ia_color_grid（色彩像素化）','t2ia_color_grid','T2I-Adapter','{\"model\": \"\", \"module\": \"t2ia_color_grid\", \"weight\": 1, \"guidance_end\": 1, \"processor_res\": 512, \"guidance_start\": 0}',17,0,'t2ia_color_grid（色彩像素化）','admin','admin','2024-08-12 17:25:47','2024-08-12 17:25:47'),
+(18,'tile_resample（高清修复）','tile_resample','Tile','{\"model\": \"\", \"module\": \"tile_resample\", \"weight\": 1, \"threshold_a\": 1, \"guidance_end\": 1, \"processor_res\": 512, \"guidance_start\": 0, \"threshold_step\": 0.01, \"max_threshold_a\": 8, \"min_threshold_a\": 1, \"threshold_a_label\": \"Down Sampling Rate\"}',18,0,'tile_resample（高清修复）','admin','admin','2024-08-12 17:26:30','2024-08-12 17:26:30'),
+(19,'reference_only（图像参考）','reference_only','Reference','{\"model\": \"\", \"module\": \"reference_only\", \"weight\": 1, \"threshold_a\": 0.5, \"guidance_end\": 1, \"processor_res\": 512, \"guidance_start\": 0, \"threshold_step\": 0.01, \"max_threshold_a\": 1, \"min_threshold_a\": 0, \"threshold_a_label\": \"Style Fidelity (only for Balanced mode)\"}',19,0,'reference_only（图像参考）','admin','admin','2024-08-12 17:27:08','2024-08-12 17:27:23');
+/*!40000 ALTER TABLE `control_net_preprocessor` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `conversation`
 --
 
@@ -35,7 +88,6 @@ CREATE TABLE `conversation` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
-
 --
 -- Table structure for table `dict`
 --
@@ -45,9 +97,9 @@ DROP TABLE IF EXISTS `dict`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `dict` (
   `dict_id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `dict_type` varchar(32) COLLATE utf8mb4_general_ci NOT NULL DEFAULT '',
-  `dict_code` varchar(32) COLLATE utf8mb4_general_ci NOT NULL,
-  `dict_name` varchar(32) COLLATE utf8mb4_general_ci NOT NULL,
+  `dict_type` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '',
+  `dict_code` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `dict_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `sort` int NOT NULL,
   `status` tinyint(1) NOT NULL,
   `description` varchar(512) COLLATE utf8mb4_general_ci NOT NULL,
@@ -57,7 +109,7 @@ CREATE TABLE `dict` (
   `updated_at` datetime NOT NULL,
   PRIMARY KEY (`dict_id`) USING BTREE,
   UNIQUE KEY `dict_unique` (`dict_code`)
-) ENGINE=InnoDB AUTO_INCREMENT=85 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB AUTO_INCREMENT=106 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -147,7 +199,28 @@ INSERT INTO `dict` VALUES
 (81,'HIRES_FIX_UPSCALER','R-ESRGAN 4x+ Anime6B','R-ESRGAN 4x+ Anime6B',16,0,'R-ESRGAN 4x+ Anime6B','admin','admin','2024-08-01 15:01:14','2024-08-01 15:01:14'),
 (82,'HIRES_FIX_UPSCALER','ScuNET GAN','ScuNET GAN',17,0,'ScuNET GAN','admin','admin','2024-08-01 15:01:28','2024-08-01 15:01:28'),
 (83,'HIRES_FIX_UPSCALER','ScuNET PSNR','ScuNET PSNR',18,0,'ScuNET PSNR','admin','admin','2024-08-01 15:01:46','2024-08-01 15:01:46'),
-(84,'HIRES_FIX_UPSCALER','SwinIR 4x','SwinIR 4x',19,0,'SwinIR 4x','admin','admin','2024-08-01 15:02:08','2024-08-01 15:02:08');
+(84,'HIRES_FIX_UPSCALER','SwinIR 4x','SwinIR 4x',19,0,'SwinIR 4x','admin','admin','2024-08-01 15:02:08','2024-08-01 15:02:08'),
+(85,'0_ROOT_TYPE','CONTROL_NET_TYPE','控制类型',8,0,'stable diffusion ControlNet 控制类型','admin','admin','2024-08-12 16:26:58','2024-08-12 16:26:58'),
+(86,'CONTROL_NET_TYPE','Canny','Canny (硬边缘)',1,0,'Canny (硬边缘)','admin','admin','2024-08-12 16:29:36','2024-08-12 16:32:24'),
+(87,'CONTROL_NET_TYPE','Depth','Depth (深度)',2,0,'Depth (深度)','admin','admin','2024-08-12 16:33:24','2024-08-12 16:42:46'),
+(88,'CONTROL_NET_TYPE','IP-Adapter','IP-Adapter',3,0,'IP-Adapter','admin','admin','2024-08-12 16:42:23','2024-08-12 16:42:23'),
+(89,'CONTROL_NET_TYPE','Inpaint','Inpaint (局部重绘)',4,0,'Inpaint (局部重绘)','admin','admin','2024-08-12 16:47:48','2024-08-12 16:47:48'),
+(90,'CONTROL_NET_TYPE','Instant-ID','Instant-ID',5,0,'Instant-ID','admin','admin','2024-08-12 16:49:13','2024-08-12 16:49:13'),
+(91,'CONTROL_NET_TYPE','InstructP2P','InstructP2P',6,0,'InstructP2P','admin','admin','2024-08-12 16:50:51','2024-08-12 16:51:16'),
+(92,'CONTROL_NET_TYPE','Lineart','Lineart (线稿)',7,0,'Lineart (线稿)','admin','admin','2024-08-12 16:52:35','2024-08-12 16:52:35'),
+(93,'CONTROL_NET_TYPE','MLSD','MLSD (直线)',8,0,'MLSD (直线)','admin','admin','2024-08-12 16:53:47','2024-08-12 16:53:47'),
+(94,'CONTROL_NET_TYPE','NormalMap','NormalMap (法线贴图)',9,0,'NormalMap (法线贴图)','admin','admin','2024-08-12 16:55:28','2024-08-12 16:55:28'),
+(95,'CONTROL_NET_TYPE','OpenPose','OpenPose (姿态)',10,0,'OpenPose (姿态)','admin','admin','2024-08-12 16:56:22','2024-08-12 16:56:22'),
+(96,'CONTROL_NET_TYPE','Recolor','Recolor (重上色)',11,0,'Recolor (重上色)','admin','admin','2024-08-12 16:57:08','2024-08-12 16:57:08'),
+(97,'CONTROL_NET_TYPE','Reference','Reference (参考)',12,0,'Reference (参考)','admin','admin','2024-08-12 16:59:11','2024-08-12 16:59:16'),
+(98,'CONTROL_NET_TYPE','Revision','Revision',13,0,'Revision','admin','admin','2024-08-12 17:00:40','2024-08-12 17:00:40'),
+(99,'CONTROL_NET_TYPE','Scribble','Scribble (涂鸦)',14,0,'Scribble (涂鸦)','admin','admin','2024-08-12 17:22:14','2024-08-12 17:22:14'),
+(100,'CONTROL_NET_TYPE','Segmentation','Segmentation (语义分割)',15,0,'Segmentation (语义分割)','admin','admin','2024-08-12 17:23:56','2024-08-12 17:23:56'),
+(101,'CONTROL_NET_TYPE','Shuffle','Shuffle (随机洗牌)',16,0,'Shuffle (随机洗牌)','admin','admin','2024-08-12 17:25:09','2024-08-12 17:25:09'),
+(102,'CONTROL_NET_TYPE','SoftEdge','SoftEdge (软边缘)',17,0,'SoftEdge (软边缘)','admin','admin','2024-08-12 17:25:47','2024-08-12 17:25:47'),
+(103,'CONTROL_NET_TYPE','SparseCtrl','SparseCtrl (稀疏控制)',18,0,'SparseCtrl (稀疏控制)','admin','admin','2024-08-12 17:26:30','2024-08-12 17:26:30'),
+(104,'CONTROL_NET_TYPE','T2I-Adapter','T2I-Adapter',19,0,'T2I-Adapter','admin','admin','2024-08-12 17:27:08','2024-08-12 17:27:23'),
+(105,'CONTROL_NET_TYPE','Tile','Tile (分块)',20,0,'Tile (分块)','admin','admin','2024-08-12 17:27:09','2024-08-12 17:27:09');
 /*!40000 ALTER TABLE `dict` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -250,7 +323,7 @@ CREATE TABLE `llm` (
 LOCK TABLES `llm` WRITE;
 /*!40000 ALTER TABLE `llm` DISABLE KEYS */;
 INSERT INTO `llm` VALUES
-('3ada5390-cd0a-4dc5-89f4-a25aba1355a9','hunyuan-13B','GENERAL_LLM','通用模型','','','',0,'腾讯公司开发的大型语言模型混元大模型（HunYuan）。主要功能是通过丰富的语义理解和计算能力，为用户提供问答式的服务。','admin','admin','2024-06-25 10:49:53','2024-06-25 14:36:06'),
+('3ada5390-cd0a-4dc5-89f4-a25aba1355a9','hunyuan-13B','GENERAL_LLM','通用模型','http://hunyuanapi.tencent.com/openapi/v1','','',0,'腾讯公司开发的大型语言模型混元大模型（HunYuan）。主要功能是通过丰富的语义理解和计算能力，为用户提供问答式的服务。','admin','admin','2024-06-25 10:49:53','2024-06-25 14:36:06'),
 ('601278f2-8bf1-4eff-a684-a7eff61d1274','text-embedding-3-small','EMBEDDING_LLM','Embedding','','','',0,'openai 嵌入式模型','admin','admin','2024-06-11 19:34:12','2024-06-24 20:16:39'),
 ('78e33981-4e01-445d-89e1-bfacc0affb0d','ChatGLM3-6B','GENERAL_LLM','通用模型','http://127.0.0.1:8000/v1/','','bge-large-zh-v1.5',0,'ChatGLM3 是智谱AI和清华大学 KEG 实验室联合发布的对话预训练模型','admin','admin','2024-06-11 16:47:27','2024-06-24 20:16:31'),
 ('86409bd7-666d-4ddb-9809-7c52ef3dc56a','gpt-4','GENERAL_LLM','通用模型','https://oai.hconeai.com/v1','','',0,'GPT-4（Generative Pretrained Transformer 4）是一种自然语言处理（NLP）AI模型。','admin','admin','2024-06-07 17:13:21','2024-06-24 20:16:16'),
@@ -280,8 +353,6 @@ CREATE TABLE `media` (
   PRIMARY KEY (`media_id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
-
 
 --
 -- Table structure for table `menu`
@@ -389,6 +460,29 @@ CREATE TABLE `message` (
 
 
 --
+-- Table structure for table `model_tag`
+--
+
+DROP TABLE IF EXISTS `model_tag`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `model_tag` (
+  `tag_id` varchar(36) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `model_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  PRIMARY KEY (`tag_id`,`model_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `model_tag`
+--
+
+LOCK TABLES `model_tag` WRITE;
+/*!40000 ALTER TABLE `model_tag` DISABLE KEYS */;
+/*!40000 ALTER TABLE `model_tag` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `prompt`
 --
 
@@ -412,6 +506,8 @@ CREATE TABLE `prompt` (
 
 LOCK TABLES `prompt` WRITE;
 /*!40000 ALTER TABLE `prompt` DISABLE KEYS */;
+INSERT INTO `prompt` VALUES
+('e007b2ca-32df-4eb7-b141-39602f7dbe72','1','1','admin',0,'2024-09-09 16:30:56');
 /*!40000 ALTER TABLE `prompt` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -575,7 +671,7 @@ CREATE TABLE `user` (
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
 INSERT INTO `user` VALUES
-(1,'admin','超级管理员','admin@lmc.com','12345678901','MALE','','$2b$10$bgJ1x5CdyFAbt13v4.efFOT51F2Gxeg/C7xdfrdciDkgeayZPzl2K','127.0.0.1','2021-10-22 09:54:19',0,'超级管理员','admin','admin','2021-10-22 09:54:19','2024-06-27 16:39:55');
+(1,'admin','超级管理员','admin@lmc.com','12345678901','MALE','','$2b$10$bgJ1x5CdyFAbt13v4.efFOT51F2Gxeg/C7xdfrdciDkgeayZPzl2K','127.0.0.1','2021-10-22 09:54:19',0,'超级管理员','admin','admin','2021-10-22 09:54:19','2024-09-10 16:04:31');
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -592,4 +688,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-08-01 15:51:44
+-- Dump completed on 2024-09-24 11:25:08
