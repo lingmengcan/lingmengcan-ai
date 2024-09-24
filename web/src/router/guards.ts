@@ -81,7 +81,7 @@ export function createRouterGuards(router: Router) {
   });
 
   router.afterEach((to, _, failure) => {
-    document.title = to?.meta?.title ? `${document.title}-${to.meta.title}` : document.title;
+    document.title = to?.meta?.title ? `${import.meta.env.VITE_APP_TITLE}-${to.meta.title}` : document.title;
 
     if (isNavigationFailure(failure)) {
     }

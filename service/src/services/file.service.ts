@@ -9,13 +9,13 @@ import { v4 as uuidv4 } from 'uuid';
 import { File } from '@/entities/file.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
-import { DocumentLoader } from 'langchain/dist/document_loaders/base';
 import { ConfigService } from '@nestjs/config';
 import { MessageService } from './message.service';
 import { extname } from 'path';
 import { ChatService } from './chat.service';
 import { FileDto } from '@/dtos/file.dto';
 import { LlmService } from './llm.service';
+import { DocumentLoader } from '@langchain/core/document_loaders/base';
 
 export class FileService {
   constructor(
@@ -65,21 +65,23 @@ export class FileService {
     }
 
     // 文本切割,将文档拆分为块，这里要优化，不能只用中文符号切割
-    const textsplitter = new RecursiveCharacterTextSplitter({
+    const textSplitter = new RecursiveCharacterTextSplitter({
       separators: ['\n\n', '\n', '。', '！', '？'],
       chunkSize: 400,
       chunkOverlap: 100,
     });
 
     // 加载文档并拆分
-    const docs = await loader.loadAndSplit(textsplitter);
+    const docs = await loader.load();
+
+    const splitDocs = await textSplitter.splitDocuments(docs);
 
     const embeddings = modelName
       ? new OpenAIEmbeddings({ openAIApiKey, modelName }, { basePath })
       : new OpenAIEmbeddings({ openAIApiKey }, { basePath });
 
     // 加载向量存储库
-    await Chroma.fromDocuments(docs, embeddings, {
+    await Chroma.fromDocuments(splitDocs, embeddings, {
       collectionName: fileId,
       url: this.configService.get<string>('chromadb.db'),
     });
@@ -93,14 +95,7 @@ export class FileService {
     const fileType = extname(file.filename);
 
     // 上传文件
-    const fileId = await this.addFile(
-      dto.conversationId,
-      file.originalname,
-      file.size,
-      fileType,
-      file.path,
-      userName,
-    );
+    const fileId = await this.addFile(dto.conversationId, file.originalname, file.size, fileType, file.path, userName);
 
     await this.refactorVectorStore(
       fileId,

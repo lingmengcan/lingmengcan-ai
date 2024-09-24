@@ -80,20 +80,20 @@ export interface ControlNetParams {
 
 // 图生图请求参数，省性能，不做转换，命名改为下划线分割
 export interface Img2ImgParams extends Txt2ImgParams {
-  init_images: string[]; // 初始化图像的数组
+  init_images: string[]; // 初始图像(要求使用base64列表)
   resize_mode: number; // 调整大小的模式
   image_cfg_scale: number; // 图像配置的缩放比例
-  mask: string; // 掩码
-  mask_blur_x: number; // 掩码在 x 方向的模糊程度
-  mask_blur_y: number; // 掩码在 y 方向的模糊程度
-  mask_blur: number; // 掩码的整体模糊程度
-  mask_round: boolean; // 掩码是否为圆形
+  mask: string; // 蒙版base64
+  mask_blur_x: number; // 蒙版边缘在 x 方向的模糊程度
+  mask_blur_y: number; // 蒙版边缘在 y 方向的模糊程度
+  mask_blur: number; // 蒙版边缘模糊
+  mask_round: boolean; // 蒙版是否为圆形
   inpainting_fill: number; // 修复绘画的填充方式
   inpaint_full_res: boolean; // 是否为全分辨率的修复绘画
   inpaint_full_res_padding: number; // 全分辨率修复绘画的填充值
-  inpainting_mask_invert: number; // 修复绘画掩码的反转
+  inpainting_mask_invert: number; // 0 正常，1 则反转蒙版
   initial_noise_multiplier: number; // 初始噪声的乘数
-  latent_mask: string; // 潜在的掩码
+  latent_mask: string; // 潜在的蒙版
   include_init_images: boolean; // 是否包含初始化图像
 }
 

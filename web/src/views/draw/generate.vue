@@ -13,7 +13,9 @@
         <n-tab-pane name="txt2img" :tab="$t('views.draw.stableDiffusion.txt2img')" class="flex flex-col h-full">
           <stableDiffusion v-model:txt2imgParams="txt2imgParams" v-model:loraList="loraList" />
         </n-tab-pane>
-        <n-tab-pane name="img2img" :tab="$t('views.draw.stableDiffusion.img2img')"></n-tab-pane>
+        <n-tab-pane name="img2img" :tab="$t('views.draw.stableDiffusion.img2img')" class="flex flex-col h-full">
+          <stableDiffusion v-model:txt2imgParams="txt2imgParams" v-model:loraList="loraList" />
+        </n-tab-pane>
         <n-tab-pane name="2video" :tab="$t('views.draw.stableDiffusion.genVideo')" disabled></n-tab-pane>
       </n-tabs>
       <div class="flex justify-center pt-3 border-t">
