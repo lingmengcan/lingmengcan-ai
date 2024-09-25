@@ -17,6 +17,10 @@ import { AIMessage, HumanMessage } from '@langchain/core/messages';
 import { VectorStore } from '@langchain/core/vectorstores';
 import { Chroma } from '@langchain/community/vectorstores/chroma';
 import { LlmService } from './llm.service';
+import { Ollama } from '@langchain/ollama';
+import { Llm } from '@/entities/llm.entity';
+import { ChatPromptValueInterface } from '@langchain/core/dist/prompt_values';
+import { RunnableLike } from '@langchain/core/runnables';
 
 @Injectable()
 export class ChatService {
@@ -82,30 +86,32 @@ export class ChatService {
         },
       );
 
-      return this.chatfileOpenAi(
-        message.messageText,
-        temperature,
-        messageHistory,
-        model.baseUrl,
-        model.apiKey,
-        vectorStore,
-      );
+      return this.chatfileOpenAi(message.messageText, temperature, messageHistory, model, vectorStore);
     } else {
-      return this.chatOpenAi(message.messageText, temperature, messageHistory, model.baseUrl, model.apiKey);
+      return this.chatOpenAi(message.messageText, temperature, messageHistory, model);
     }
   }
 
   //自由对话
-  async chatOpenAi(
-    message: string,
-    temperature: number,
-    messageHistory: ChatMessageHistory,
-    basePath: string,
-    openAIApiKey: string,
-  ) {
+  async chatOpenAi(message: string, temperature: number, messageHistory: ChatMessageHistory, model: Llm) {
     //根据内容回答问题
-    // Instantiate your model and prompt.
-    const llm = new ChatOpenAI({ openAIApiKey, temperature, streaming: true }, { basePath });
+
+    // 工厂函数，创建模型实例
+    function createModelInstance(model: Llm, temperature: number): RunnableLike<ChatPromptValueInterface, unknown> {
+      if (model.apiType === 'LLM_API_OLLAMA') {
+        return new Ollama({
+          model: model.modelName,
+          temperature,
+        });
+      } else {
+        return new ChatOpenAI(
+          { openAIApiKey: model.apiKey, temperature, streaming: true },
+          { basePath: model.baseUrl },
+        );
+      }
+    }
+
+    const llm = createModelInstance(model, temperature);
 
     const prompt = ChatPromptTemplate.fromMessages([
       new MessagesPlaceholder('history'),
@@ -129,15 +135,17 @@ export class ChatService {
     message: string,
     temperature: number,
     messageHistory: ChatMessageHistory,
-    basePath: string,
-    openAIApiKey: string,
+    model: Llm,
     vectorStore: VectorStore,
   ) {
     const result = await vectorStore.similaritySearch(message, 1);
 
     //根据内容回答问题
     // Instantiate your model and prompt.
-    const llm = new ChatOpenAI({ openAIApiKey, temperature, streaming: true }, { basePath });
+    const llm = new ChatOpenAI(
+      { openAIApiKey: model.apiKey, temperature, streaming: true },
+      { basePath: model.baseUrl },
+    );
     const prompt = ChatPromptTemplate.fromMessages([
       SystemMessagePromptTemplate.fromTemplate(
         `基于已知内容, 回答用户问题。如果无法从中得到答案，请说'没有足够的相关信息'已知内容:${result[0].pageContent}`,

@@ -6,6 +6,7 @@ export interface Llm {
   modelTypeName?: string;
   baseUrl?: string;
   apiKey?: string;
+  apiType?: string;
   defaultEmbeddingModel?: string;
   status: string;
   description?: string;

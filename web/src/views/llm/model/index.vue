@@ -83,6 +83,9 @@
             dict-type="LLM_TYPE"
           />
         </n-form-item>
+        <n-form-item label="访问类型OpenAI/Ollama" name="apiType">
+          <selectDict v-model:dict-code="drawerFormData.apiType" dict-type="LLM_API_TYPE" />
+        </n-form-item>
         <n-form-item label="base url" name="baseUrl">
           <n-input v-model:value="drawerFormData.baseUrl" placeholder="请输入模型api url" />
         </n-form-item>
@@ -142,6 +145,7 @@
     modelTypeName: '',
     baseUrl: '',
     apiKey: '',
+    apiType: undefined,
     defaultEmbeddingModel: undefined,
     status: '0',
     description: '',

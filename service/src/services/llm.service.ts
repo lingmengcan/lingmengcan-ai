@@ -137,6 +137,7 @@ export class LlmService {
     entity.modelType = model.modelType;
     entity.baseUrl = model.baseUrl;
     entity.apiKey = model.apiKey;
+    entity.apiType = model.apiType;
     entity.defaultEmbeddingModel = model.defaultEmbeddingModel;
     entity.status = model.status;
     entity.description = model.description;
@@ -161,6 +162,7 @@ export class LlmService {
     entity.modelType = model.modelType;
     entity.baseUrl = model.baseUrl;
     entity.apiKey = model.apiKey;
+    entity.apiType = model.apiType;
     entity.defaultEmbeddingModel = model.defaultEmbeddingModel;
     entity.status = model.status;
     entity.description = model.description ?? '';
