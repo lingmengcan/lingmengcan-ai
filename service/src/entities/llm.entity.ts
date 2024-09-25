@@ -21,6 +21,9 @@ export class Llm {
   @Column('varchar', { name: 'api_key', length: 128 })
   apiKey: string;
 
+  @Column('varchar', { name: 'api_type', length: 32 })
+  apiType: string;
+
   @Column('varchar', { name: 'default_embedding_model', length: 128 })
   defaultEmbeddingModel: string;
 

@@ -305,6 +305,7 @@ CREATE TABLE `llm` (
   `model_type_name` varchar(32) COLLATE utf8mb4_bin NOT NULL,
   `base_url` varchar(512) COLLATE utf8mb4_bin NOT NULL,
   `api_key` varchar(512) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `api_type` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
   `default_embedding_model` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
   `status` tinyint(1) NOT NULL,
   `description` varchar(512) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
