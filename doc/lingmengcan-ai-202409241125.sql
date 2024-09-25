@@ -220,7 +220,10 @@ INSERT INTO `dict` VALUES
 (102,'CONTROL_NET_TYPE','SoftEdge','SoftEdge (软边缘)',17,0,'SoftEdge (软边缘)','admin','admin','2024-08-12 17:25:47','2024-08-12 17:25:47'),
 (103,'CONTROL_NET_TYPE','SparseCtrl','SparseCtrl (稀疏控制)',18,0,'SparseCtrl (稀疏控制)','admin','admin','2024-08-12 17:26:30','2024-08-12 17:26:30'),
 (104,'CONTROL_NET_TYPE','T2I-Adapter','T2I-Adapter',19,0,'T2I-Adapter','admin','admin','2024-08-12 17:27:08','2024-08-12 17:27:23'),
-(105,'CONTROL_NET_TYPE','Tile','Tile (分块)',20,0,'Tile (分块)','admin','admin','2024-08-12 17:27:09','2024-08-12 17:27:09');
+(105,'CONTROL_NET_TYPE','Tile','Tile (分块)',20,0,'Tile (分块)','admin','admin','2024-08-12 17:27:09','2024-08-12 17:27:09'),
+(106,'0_ROOT_TYPE','LLM_API_TYPE','大语言模型访问类型',9,0,'大语言模型访问类型','admin','admin','2024-09-24 16:53:33','2024-09-24 16:53:40'),
+(107,'LLM_API_TYPE','LLM_API_OPENAI','OpenAI',1,0,'openai','admin','admin','2024-09-24 16:54:46','2024-09-24 16:55:53'),
+(108,'LLM_API_TYPE','LLM_API_OLLAMA','Ollama',2,0,'Ollama','admin','admin','2024-09-24 16:55:13','2024-09-24 16:55:13');
 /*!40000 ALTER TABLE `dict` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -325,6 +328,7 @@ LOCK TABLES `llm` WRITE;
 /*!40000 ALTER TABLE `llm` DISABLE KEYS */;
 INSERT INTO `llm` VALUES
 ('3ada5390-cd0a-4dc5-89f4-a25aba1355a9','hunyuan-13B','GENERAL_LLM','通用模型','http://hunyuanapi.tencent.com/openapi/v1','','',0,'腾讯公司开发的大型语言模型混元大模型（HunYuan）。主要功能是通过丰富的语义理解和计算能力，为用户提供问答式的服务。','admin','admin','2024-06-25 10:49:53','2024-06-25 14:36:06'),
+('51770c03-75dc-4f72-84f8-73e7a1a96739','qwen2.5','GENERAL_LLM','通用模型','','','LLM_API_OLLAMA','bge-large-zh-v1.5',0,'qwen2.5','admin','admin','2024-09-24 16:33:29','2024-09-25 15:46:53'),
 ('601278f2-8bf1-4eff-a684-a7eff61d1274','text-embedding-3-small','EMBEDDING_LLM','Embedding','','','',0,'openai 嵌入式模型','admin','admin','2024-06-11 19:34:12','2024-06-24 20:16:39'),
 ('78e33981-4e01-445d-89e1-bfacc0affb0d','ChatGLM3-6B','GENERAL_LLM','通用模型','http://127.0.0.1:8000/v1/','','bge-large-zh-v1.5',0,'ChatGLM3 是智谱AI和清华大学 KEG 实验室联合发布的对话预训练模型','admin','admin','2024-06-11 16:47:27','2024-06-24 20:16:31'),
 ('86409bd7-666d-4ddb-9809-7c52ef3dc56a','gpt-4','GENERAL_LLM','通用模型','https://oai.hconeai.com/v1','','',0,'GPT-4（Generative Pretrained Transformer 4）是一种自然语言处理（NLP）AI模型。','admin','admin','2024-06-07 17:13:21','2024-06-24 20:16:16'),
