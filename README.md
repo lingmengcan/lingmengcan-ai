@@ -1,7 +1,7 @@
 <h1 align="center">AIGC Application Platform: Lingmengcan AI</h1>
 <p align="center">English | <a href="README.zh-CN.md">中文</a> </p>
 
-Lingmengcan AI is an AI system based on large models.Currently, it provides functions such as large language model dialogue, model management, text-to-image generation, and background role management. The technology stack used includes Stable Diffusion, OpenAI, ChatGPT, LangChainJS as the AI layer, Vue 3, Naive UI, and Tailwind CSS for the UI layer, and NestJS, LangChainJS, and MySQL for the service layer, with ChromaDB as the vector database. This project is a knowledge base enhancement solution that can achieve **fully localized** reasoning and also provides AIGC functions, focusing on solving the pain points of enterprises regarding data security protection and private domain deployment.
+Lingmengcan AI is an AI system based on large models.Currently, it provides functions such as large language model dialogue, model management, text-to-image generation, and background role management. The technology stack used includes Stable Diffusion, OpenAI, ChatGPT, LangChainJS as the AI layer, Vue 3, Naive UI, and Tailwind CSS for the UI layer, and NestJS, LangChainJS, Ollama, and MySQL for the service layer, with ChromaDB as the vector database. This project is a knowledge base enhancement solution that can achieve **fully localized** reasoning and also provides AIGC functions, focusing on solving the pain points of enterprises regarding data security protection and private domain deployment.
 
 ## Community
 
@@ -51,6 +51,12 @@ Ensure that your development environment meets the following requirements:
   Local deployment reference[stable-diffusion-webui](https://github.com/AUTOMATIC1111/stable-diffusion-webui)
 
 ### If You Have a Large Language Model Locally: Load the Model from Local
+
+#### Ollama
+
+Reference for Deploying Models Locally with Ollama [https://github.com/ollama/ollama](https://github.com/ollama/ollama)
+
+#### ChatGLM3
 
 Please refer to [THUDM/ChatGLM3#Load the Model from Local](https://github.com/THUDM/ChatGLM3#从本地加载模型)
 

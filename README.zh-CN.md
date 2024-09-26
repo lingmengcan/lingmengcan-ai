@@ -1,7 +1,7 @@
 <h1 align="center">大模型 AI 应用平台 Lingmengcan AI</h1>
 <p align="center"><a href="README.md">English</a> | 中文</p>
 
-lingmengcan-ai 是一个基于大模型的 ai 系统，目前提供大语言模型对话、模型管理、文生图和后台角色管理等等功能。使用的技术栈，包括 stable deffusion、openai、chatgpt、LangChainJS 作为 ai 层，Vue 3、Naive UI 和 Tailwind CSS 构建 UI 层，以及 NestJS、LangChainJS、MySQL 为服务层，chromadb 为向量数据库。该项目是一个可以实现**完全本地化**推理的知识库增强方案，同时提供 AIGC 功能， 重点解决数据安全保护，私域化部署的企业痛点。
+lingmengcan-ai 是一个基于大模型的 ai 系统，目前提供大语言模型对话、模型管理、文生图和后台角色管理等等功能。使用的技术栈，包括 stable deffusion、openai、chatgpt、LangChainJS 作为 ai 层，Vue 3、Naive UI 和 Tailwind CSS 构建 UI 层，以及 NestJS、LangChainJS、Ollama、MySQL 为服务层，chromadb 为向量数据库。该项目是一个可以实现**完全本地化**推理的知识库增强方案，同时提供 AIGC 功能， 重点解决数据安全保护，私域化部署的企业痛点。
 
 ## 社区
 
@@ -51,6 +51,12 @@ lingmengcan-ai 是一个基于大模型的 ai 系统，目前提供大语言模�
   本地部署参考[stable-diffusion-webui](https://github.com/AUTOMATIC1111/stable-diffusion-webui)
 
 ### 如果本地已有大语言模型：从本地加载模型
+
+#### Ollama
+
+通过 Ollama 本地部署模型参考[https://github.com/ollama/ollama](https://github.com/ollama/ollama)
+
+#### ChatGLM3
 
 请参考 [THUDM/ChatGLM3#从本地加载模型](https://github.com/THUDM/ChatGLM3#从本地加载模型)
 
