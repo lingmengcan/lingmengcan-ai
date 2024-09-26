@@ -11,10 +11,10 @@
       </div>
       <n-tabs size="large" justify-content="space-evenly" type="line" animated class="flex-1 overflow-hidden">
         <n-tab-pane name="txt2img" :tab="$t('views.draw.stableDiffusion.txt2img')" class="flex flex-col h-full">
-          <stableDiffusion v-model:txt2imgParams="txt2imgParams" v-model:loraList="loraList" />
+          <stableDiffusion v-model:txt2img-params="txt2imgParams" v-model:lora-list="loraList" />
         </n-tab-pane>
         <n-tab-pane name="img2img" :tab="$t('views.draw.stableDiffusion.img2img')" class="flex flex-col h-full">
-          <stableDiffusion v-model:txt2imgParams="txt2imgParams" v-model:loraList="loraList" />
+          <stableDiffusion v-model:txt2img-params="txt2imgParams" v-model:lora-list="loraList" />
         </n-tab-pane>
         <n-tab-pane name="2video" :tab="$t('views.draw.stableDiffusion.genVideo')" disabled></n-tab-pane>
       </n-tabs>
